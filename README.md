@@ -1,68 +1,124 @@
-<h1 align="center">T i e n d a - O n l i n e</h1>
-<h1 align="center"> 📚 Documentación de Instalaciones - Proyecto Angular 19.2.7 </h1>
+<h1 align="center">🪵 Barraca Santa Cruz🦫 </h1>
 
-<table>
+
+<table align="center" style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid blue; border-radius: 15px; background-color: #f4f4f9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); padding: 20px;">
   <tr>
-    <td><h1>Framework Angular</h1></td>
-    <td> <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="100"/></td>
+    <td style="border: none; padding: 0; padding-right: 20px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="120" style="transition: transform 0.3s ease-in-out;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    </td>
+    <td style="border: none; padding: 0;">
+      <h1 style="font-size: 100px; margin: 0; color: #e53e3e; font-family: 'Arial', sans-serif; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Angular </h1>
+    </td>
   </tr>
 </table>
 
-## 🛠 Instalaciones realizadas
-# 1. CLI angular
 
+
+---
+
+## 🛠 Instalaciones realizadas
+
+---
+
+# 1️⃣ 📚 Instalación de Angular CLI 19.2.7
 ```bash
 npm install -g @angular/cli@19.2.7
 ```
+
+# 2️⃣ Crear un Nuevo Proyecto Angular
 ```bash
-# Crear un nuevo proyecto Angular llamado 'frontend'
-ng new frontend
+ng new nombre-de-tu-proyecto
+cd nombre-de-tu-proyecto
+```
 
-# Moverse al directorio del proyecto
-cd frontend
-
-# Instalar Angular Material, un conjunto de componentes UI de Angular
-ng add @angular/material
-
-# Instalar Bootstrap para estilos CSS y diseño responsivo
+# 3️⃣ Instalar Bootstrap
+```bash
 npm install bootstrap
+```
 
-# Instalar iconos adicionales
+# 4️⃣ Instalar Bootstrap Icons
+```bash
 npm install bootstrap-icons
-npm install @fortawesome/fontawesome-free
-
-# Instalar Popper.js, que es una dependencia de Bootstrap para algunos componentes
-npm install @popperjs/core
-
-# Añadir soporte para HTTP, útil para hacer solicitudes al backend
-ng add @angular/common/http
-npm install @angular/common@latest
-                                                                          
-```
-## Generación de servicios y componentes
-En Angular, los servicios son útiles para manejar la lógica de negocio y los componentes son las piezas que construyen la interfaz. Aquí tienes comandos para generar diferentes servicios y componentes para tu proyecto:
-```bash
-# Generar un servicio para usuarios como ejemplo
-ng generate service services/Usuario
-
-# Generar componentes para la gestión de solicitudes
-ng generate component components/MadreUsuario/registrar-Usuario
-ng generate component components/MadreUsuario/listar-Usuario
-ng generate component components/MadreUsuario/editar-Usuario
-
-# para crear en las mismas carpetas usa estos comandos
-# Generar un servicio para manejar solicitudes
-ng generate service components/MadreUsuario/services/Usuario
-
-# Generar una clase para el modelo de solicitudes
-ng generate class components/MadreUsuario/models/Usuario
-                                                                           
 ```
 
-## Ejecutar el proyecto
-Para iniciar el servidor de desarrollo y probar tu proyecto Angular, ejecuta:
-
+# 5️⃣ Configurar Bootstrap y Bootstrap Icons
+En el archivo angular.json, sección stylesy scripts:
 ```bash
-# Ejecutar el proyecto en el servidor local
+"styles": [
+  "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+  "src/styles.css"
+],
+"scripts": [
+  "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+]
+```
+
+# 6️⃣ Corrección de HMR (Hot Module Replacement)
+Acción realizada:
+Desactivamos HMR para evitar errores de recarga caliente de módulos.
+
+Modificación en angular.json:
+```bash
+"development": {
+  "buildTarget": "FrontendBarraca:build:development",
+  "hmr": false
+}
+
+```
+# 7️⃣ SSR (Server-Side Rendering) ⚡ (Opcional)
+```bash
+npm run build:ssr
+npm run serve:ssr
+```
+
+---
+# 🚀 Comandos útiles
+---
+
+#▶️ Levantar servidor de desarrollo
+```bash
 ng serve
+```
+
+# 🧩 Crear Componentes
+```bash
+ng generate component nombre-del-componente
+```
+
+# 🔧 Crear Servicios
+```bash
+ng generate service nombre-del-servicio
+```
+
+# 📝 Crear Modelos
+```bash
+ng generate interface models/nombre-del-modelo
+```
+
+# 📦 Construcción de Producción
+```bash
+ng build --configuration production
+```
+# 📦 Configuracion Formatear codigo en .vscode carpeta 
+```bash
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // Recomendado para Angular
+  "editor.formatOnSaveMode": "file",
+  "files.autoSave": "off",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
+```
+# Instala las dependencias necesarias
+```bash
+npm install --save-dev prettier
 ```
