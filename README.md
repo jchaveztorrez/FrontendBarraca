@@ -16,6 +16,10 @@
   </div>
 </div>
 
+<div style="display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="80">
+  <h1 style="font-size: 80px; margin: 0;">Angular</h1>
+</div>
 
 
 
