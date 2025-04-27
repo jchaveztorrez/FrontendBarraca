@@ -34,6 +34,8 @@ cd nombre-de-tu-proyecto
 # 3️⃣ Instalar Bootstrap
 ```bash
 npm install bootstrap
+npm install @fortawesome/fontawesome-free
+
 ```
 
 # 4️⃣ Instalar Bootstrap Icons
