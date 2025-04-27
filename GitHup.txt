@@ -1,8 +1,6 @@
 crear un whatsap con bontones y lista par aresponder automaticamente
 
-Comandos para subir al repositorio de GitHup
-
-
+# Comandos para subir al repositorio de GitHup
 
 ojo entrar a esta ruta para cambiar a los usuarios de git 
 Panel de control\Todos los elementos de Panel de control\Administrador de credenciales
