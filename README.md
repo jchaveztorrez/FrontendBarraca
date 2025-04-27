@@ -3,7 +3,7 @@
 
 <table align="center">
   <tr>
-    <td><h1>Framework Angular</h1></td>
+    <td><h1>Angular</h1></td>
     <td><img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="100"/></td>
   </tr>
 </table>
