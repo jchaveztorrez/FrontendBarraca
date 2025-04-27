@@ -100,4 +100,25 @@ ng generate interface models/nombre-del-modelo
 ```bash
 ng build --configuration production
 ```
-
+# 📦 Configuracion Formatear codigo en .vscode carpeta 
+```bash
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // Recomendado para Angular
+  "editor.formatOnSaveMode": "file",
+  "files.autoSave": "off",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
+```
+# Instala las dependencias necesarias
+```bash
+npm install --save-dev prettier
+```
