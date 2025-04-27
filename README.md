@@ -1,68 +1,111 @@
-<h1 align="center">T i e n d a - O n l i n e</h1>
-<h1 align="center"> 📚 Documentación de Instalaciones - Proyecto Angular 19.2.7 </h1>
+<h1 align="center">🛒 Tienda Online</h1>
+<h2 align="center">📚 Documentación de Instalaciones - Proyecto Angular 19.2.7</h2>
 
-<table>
+<table align="center">
   <tr>
     <td><h1>Framework Angular</h1></td>
-    <td> <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="100"/></td>
+    <td><img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="100"/></td>
   </tr>
 </table>
 
-## 🛠 Instalaciones realizadas
-# 1. CLI angular
+---
 
+## 🛠 Instalaciones realizadas
+
+---
+
+# 1. CLI angular
 ```bash
 npm install -g @angular/cli@19.2.7
 ```
+
+# 2. Creación de Proyecto Angular
 ```bash
-# Crear un nuevo proyecto Angular llamado 'frontend'
-ng new frontend
+ng new nombre-del-proyecto
+```
 
-# Moverse al directorio del proyecto
-cd frontend
-
-# Instalar Angular Material, un conjunto de componentes UI de Angular
-ng add @angular/material
-
-# Instalar Bootstrap para estilos CSS y diseño responsivo
+# 3. Bootstrap
+```bash
 npm install bootstrap
-
-# Instalar iconos adicionales
+```
+# 4. Iconos de Bootstrap
+```bash
 npm install bootstrap-icons
-npm install @fortawesome/fontawesome-free
-
-# Instalar Popper.js, que es una dependencia de Bootstrap para algunos componentes
-npm install @popperjs/core
-
-# Añadir soporte para HTTP, útil para hacer solicitudes al backend
-ng add @angular/common/http
-npm install @angular/common@latest
-                                                                          
 ```
-## Generación de servicios y componentes
-En Angular, los servicios son útiles para manejar la lógica de negocio y los componentes son las piezas que construyen la interfaz. Aquí tienes comandos para generar diferentes servicios y componentes para tu proyecto:
+# 5. Configuración de Bootstrap y Bootstrap Icons
+En el archivo angular.json, sección stylesy scripts:
 ```bash
-# Generar un servicio para usuarios como ejemplo
-ng generate service services/Usuario
+"styles": [
+  "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+  "src/styles.css"
+],
+"scripts": [
+  "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+]
 
-# Generar componentes para la gestión de solicitudes
-ng generate component components/MadreUsuario/registrar-Usuario
-ng generate component components/MadreUsuario/listar-Usuario
-ng generate component components/MadreUsuario/editar-Usuario
-
-# para crear en las mismas carpetas usa estos comandos
-# Generar un servicio para manejar solicitudes
-ng generate service components/MadreUsuario/services/Usuario
-
-# Generar una clase para el modelo de solicitudes
-ng generate class components/MadreUsuario/models/Usuario
-                                                                           
 ```
+# 6. Corrección del HMR (Reemplazo de módulo en caliente)
+Acción realizada:
+Desactivamos HMR para evitar errores de recarga caliente de módulos.
 
-## Ejecutar el proyecto
-Para iniciar el servidor de desarrollo y probar tu proyecto Angular, ejecuta:
+Modificación en angular.json:
+```bash
+"development": {
+  "buildTarget": "FrontendBarraca:build:development",
+  "hmr": false
+}
+
+```
+# 7. Crear el proyecto Angular en la versión 19.2.7
+en esta parte sigue los pasos de instalcion cuidadosamente hasta finalizar la instlacion 
+```bash
+ng new nombre-de-tu-proyecto
+cd nombre-de-tu-proyecto
+
+```
+# 🚀 Comandos útiles
 
 ```bash
-# Ejecutar el proyecto en el servidor local
 ng serve
+
 ```
+# Crear componentes:
+```bash
+ng generate component nombre-del-componente
+
+```
+# Crear servicios:
+```bash
+ng generate service nombre-del-servicio
+# crear models
+```bash
+
+```
+```
+#Construcción de producción:
+```bash
+ng build --configuration production
+
+```
+#
+```bash
+
+```
+#
+```bash
+
+```
+#
+```bash
+
+```
+#
+```bash
+
+```
+#
+```bash
+
+```
+
