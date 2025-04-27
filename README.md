@@ -1,4 +1,4 @@
-<h1 align="center">🪵🦫 Barraca Santa Cruz 🇧🇴 </h1>
+<h1 align="center">🪵 Barraca Santa Cruz🦫 </h1>
 
 
 <table align="center" style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid blue; border-radius: 15px; background-color: #f4f4f9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); padding: 20px;">
