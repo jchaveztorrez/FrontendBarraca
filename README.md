@@ -1,7 +1,6 @@
 <h1 align="center">T i e n d a - O n l i n e</h1>
 <h1 align="center"> 📚 Documentación de Instalaciones - Proyecto Angular 19.2.7 </h1>
-## 🛠 Instalaciones realizadas
-pip3 install cloudinary
+
 <table>
   <tr>
     <td><h1>Framework Angular</h1></td>
@@ -9,10 +8,12 @@ pip3 install cloudinary
   </tr>
 </table>
 
-## Instalaciones
-Aquí te indico los comandos necesarios para crear y configurar un proyecto en Angular. Angular es el framework que utilizaremos para el frontend.
+## 🛠 Instalaciones realizadas
+# 1. CLI angular
 
-
+```bash
+npm install -g @angular/cli@19.2.7
+```
 ```bash
 # Crear un nuevo proyecto Angular llamado 'frontend'
 ng new frontend
