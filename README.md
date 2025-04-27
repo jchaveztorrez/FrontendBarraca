@@ -1,6 +1,6 @@
 <h1 align="center">T i e n d a - O n l i n e</h1>
 <h1 align="center"> 📚 Documentación de Instalaciones - Proyecto Angular 19.2.7 </h1>
-## intalacion de 
+## 🛠 Instalaciones realizadas
 pip3 install cloudinary
 <table>
   <tr>
