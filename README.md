@@ -2,15 +2,6 @@
 <h2 align="center">📚 Documentación de Instalaciones - Proyecto Angular 19.2.7</h2>
 
 
-
-<p align="center" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="80">
-  <span style="font-size: 80px; font-weight: bold;">Angular</span>
-</p>
-
-
-
-
 <table align="center" style="width: 100%; text-align: center; border: none;">
   <tr>
     <td style="border: none; padding: 0;">
@@ -21,9 +12,6 @@
     </td>
   </tr>
 </table>
-
-
-
 
 
 ---
