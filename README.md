@@ -1,5 +1,4 @@
-<h1 align="center">🛒 Tienda Online</h1>
-<h2 align="center">📚 Documentación de Instalaciones - Proyecto Angular 19.2.7</h2>
+<h1 align="center">🛒 B A R R A C A S A N T A C R U Z </h1>
 
 
 <table align="center" style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid blue; border-radius: 15px; background-color: #f4f4f9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); padding: 20px;">
@@ -21,7 +20,7 @@
 
 ---
 
-# 1️⃣ Instalación de Angular CLI
+# 1️⃣ 📚 Instalación de Angular CLI 19.2.7
 ```bash
 npm install -g @angular/cli@19.2.7
 ```
