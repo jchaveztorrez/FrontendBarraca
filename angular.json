@@ -27,9 +27,11 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+                "node_modules/bootstrap/dist/css/bootstrap.min.css",
+                "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+                "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -67,7 +69,8 @@
               "buildTarget": "FrontendBarraca:build:production"
             },
             "development": {
-              "buildTarget": "FrontendBarraca:build:development"
+              "buildTarget": "FrontendBarraca:build:development",
+              "hmr": false
             }
           },
           "defaultConfiguration": "development"
@@ -97,5 +100,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "4c038f79-05d2-42f8-975c-3c20cb1d7755"
   }
 }
