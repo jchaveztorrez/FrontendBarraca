@@ -12,7 +12,7 @@
     </td>
   </tr>
 </table>
-<table align="center" style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid white;">
+<table align="center" style="width: 100%; text-align: center; border-collapse: collapse; border: 1px solid blue;">
   <tr>
     <td style="border: none; padding: 0;">
       <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="80">
@@ -22,6 +22,7 @@
     </td>
   </tr>
 </table>
+
 
 
 ---
