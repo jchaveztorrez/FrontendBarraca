@@ -1,9 +1,8 @@
 <h1 align="center">🛒 Tienda Online</h1>
 <h2 align="center">📚 Documentación de Instalaciones - Proyecto Angular 19.2.7</h2>
-
-<div align="center" style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
-  <h1>Angular</h1>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="100">
+<div align="center" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+  <h1 style="margin: 0;">Angular</h1>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="60">
 </div>
 
 
