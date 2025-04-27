@@ -8,14 +8,13 @@
   <span style="font-size: 80px; font-weight: bold;">Angular</span>
 </p>
 
-<div style="display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
-  <div>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="80">
-  </div>
-  <div>
-    <h1 style="font-size: 80px; margin: 0;">Angular</h1>
-  </div>
-</div>
+<table align="center">
+  <tr>
+    <td><h1>Angular</h1></td>
+    <td><img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="100"/></td>
+  </tr>
+</table>
+otra forma de ordenar esto si nque se vean la lineas se puede 
 <table style="width: 100%; text-align: center; border: none;">
   <tr>
     <td style="border: none; padding: 0;">
