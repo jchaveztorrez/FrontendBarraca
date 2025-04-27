@@ -8,8 +8,7 @@
   <span style="font-size: 80px; font-weight: bold;">Angular</span>
 </p>
 
-
-<div style="display: flex; align-items: center; gap: 20px; flex-direction: row;">
+<div style="display: flex; align-items: center; justify-content: flex-start; gap: 20px;">
   <div>
     <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Angular_full_color_logo.svg" alt="Angular Logo" width="80">
   </div>
@@ -17,7 +16,6 @@
     <h1 style="font-size: 80px; margin: 0;">Angular</h1>
   </div>
 </div>
-
 
 
 
