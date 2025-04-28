@@ -11,9 +11,14 @@ git config --global user.name "TuNombreDeUsuarioGitHub"
 git config --global user.email "tu_correo@example.com"
 
 git init
+git status
 git add .
 git commit -m "Primer commit"
 
 git remote add origin https://github.com/TuUsuario/TuRepositorio.git
 git push -u origin main
+
+
+
+
 ⚡ ¡Y listo, tu proyecto estará en GitHub! ⚡

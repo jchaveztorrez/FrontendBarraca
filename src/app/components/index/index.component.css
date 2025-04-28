@@ -3,3 +3,27 @@
   transform: translateY(-5px);
   transition: box-shadow 0.3s ease-in-out;
 }
+/* heder */
+.nav-link {
+  color: #343a40; /* Color del texto */
+  text-decoration: none; /* Sin subrayado */
+  transition: color 0.3s ease; /* Transición suave */
+}
+
+.nav-link:hover {
+  color: #007bff; /* Color al pasar el cursor */
+}
+
+/* Estilo para el logo */
+.text-center span {
+  font-family: "Arial", sans-serif; /* Cambia a la fuente que prefieras */
+}
+
+.h5 {
+  font-size: 1.5rem; /* Tamaño de fuente para Barraca Carpintería */
+}
+
+.small {
+  font-size: 0.875rem; /* Tamaño de fuente para Torrez */
+}
+/* fin */
