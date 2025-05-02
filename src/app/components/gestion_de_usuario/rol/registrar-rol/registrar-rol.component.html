@@ -1,1 +1,24 @@
-<p>registrar-rol works!</p>
+<!-- registrar-rol.component.html -->
+<div class="px-5">
+  <h2>Registrar Rol</h2>
+  <form (ngSubmit)="registrar()">
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre del Rol</label>
+      <input type="text" id="nombre" name="nombre" class="form-control" />
+    </div>
+    <div class="mb-3">
+      <label for="descripcion" class="form-label">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        class="form-control"
+      ></textarea>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="registrar()">
+      Registrar
+    </button>
+    <button type="button" class="btn btn-secondary" (click)="cancelar()">
+      Cancelar
+    </button>
+  </form>
+</div>
