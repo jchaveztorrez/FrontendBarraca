@@ -1,0 +1,33 @@
+<div class="container">
+  <h2>Lista de Permisos</h2>
+  <button class="btn btn-primary" (click)="registrarPermiso()">
+    Registrar
+  </button>
+
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>Permiso</th>
+        <th>Descripción</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let permiso of permisos">
+        <td>{{ permiso.nombre }}</td>
+        <td>{{ permiso.descripcion }}</td>
+        <td>
+          <button
+            class="btn btn-warning btn-sm"
+            (click)="editarPermiso(permiso)"
+          >
+            Editar
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="permisos.length === 0">
+        <td colspan="3" class="text-center">No hay permisos registrados.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

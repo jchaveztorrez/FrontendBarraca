@@ -1,0 +1,27 @@
+<div class="px-5">
+  <h2>Lista de Roles</h2>
+  <button class="btn btn-primary" (click)="registrarRol()">Registrar</button>
+  <table class="table mt-3">
+    <thead>
+      <tr>
+        <th>Rol</th>
+        <th>Descripción</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rol of roles">
+        <td>{{ rol.nombre }}</td>
+        <td>{{ rol.descripcion }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm" (click)="editarRol(rol)">
+            Editar
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="roles.length === 0">
+        <td colspan="3" class="text-center">No hay roles registrados.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

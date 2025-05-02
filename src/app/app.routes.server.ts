@@ -5,10 +5,7 @@ export const serverRoutes: ServerRoute[] = [
     path: '',
     renderMode: RenderMode.Prerender, // Ruta para la página de inicio
   },
-  {
-    path: 'sucursal',
-    renderMode: RenderMode.Prerender, // Ruta para la página de sucursales
-  },
+  /* aqui debemos agregas las rutas  */
   {
     path: '**',
     renderMode: RenderMode.Prerender, // Ruta para manejar cualquier otra URL
