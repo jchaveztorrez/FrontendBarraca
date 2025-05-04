@@ -1,26 +1,91 @@
+import { Component, OnInit } from '@angular/core';
+import { Rol } from '../../../../models/models';
+import { ServiceService } from '../../../../services/service.service';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-listar-rol',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './listar-rol.component.html',
   styleUrl: './listar-rol.component.css',
 })
-export class ListarRolComponent {
-  roles = [
-    { nombre: 'Administrador', descripcion: 'Acceso total al sistema' },
-    { nombre: 'Supervisor', descripcion: 'Acceso limitado a reportes' },
-  ];
+export class ListarRolComponent implements OnInit {
+  roles: Rol[] = [];
+  rolesFiltrados: Rol[] = [];
+  rolesMostrados: Rol[] = [];
 
-  constructor(private router: Router) {}
+  busqueda = '';
+  filtroEstado: string = 'activos'; // por defecto solo activos
 
-  registrarRol(): void {
-    this.router.navigate(['app-panel-control/registrar-rol']);
+  limite = 10;
+
+  constructor(
+    private rolService: ServiceService,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.rolService.getRoles().subscribe((data) => {
+      this.roles = data;
+      this.filtrar();
+    });
   }
 
-  editarRol(rol: any): void {
-    this.router.navigate(['app-panel-control/editar-rol', 1]);
+  actualizarRolesMostrados(): void {
+    this.rolesMostrados = this.rolesFiltrados.slice(0, this.limite);
+  }
+
+  onScroll(event: Event): void {
+    const div = event.target as HTMLElement;
+    const alFinal = div.scrollTop + div.clientHeight >= div.scrollHeight - 5;
+    if (alFinal) {
+      this.limite += 10;
+      this.actualizarRolesMostrados();
+    }
+  }
+
+  filtrar(): void {
+    const texto = this.busqueda.trim();
+    const esMayus = texto === texto.toUpperCase();
+
+    this.rolesFiltrados = this.roles
+      .filter(({ nombre, estado }) => {
+        const coincideTexto = esMayus
+          ? nombre.includes(texto)
+          : nombre.toLowerCase().includes(texto.toLowerCase());
+
+        const coincideEstado =
+          (this.filtroEstado === 'activos' && estado) ||
+          (this.filtroEstado === 'inactivos' && !estado) ||
+          this.filtroEstado === 'todos';
+
+        return coincideTexto && coincideEstado;
+      })
+      .sort((a, b) => Number(b.estado) - Number(a.estado));
+
+    this.limite = 10;
+    this.actualizarRolesMostrados();
+  }
+
+  cambiarEstado(rol: Rol): void {
+    const actualizado = { ...rol, estado: !rol.estado };
+    this.rolService.updateRol(actualizado).subscribe({
+      next: () => {
+        rol.estado = actualizado.estado;
+        this.filtrar();
+      },
+      error: (err) => console.error('Error al cambiar el estado:', err),
+    });
+  }
+
+  irAEditar(id: number): void {
+    this.router.navigate(['app-panel-control/editar-rol', id]);
+  }
+
+  irARegistrar(): void {
+    this.router.navigate(['app-panel-control/registrar-rol']);
   }
 }

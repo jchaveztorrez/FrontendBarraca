@@ -19,21 +19,17 @@ export class PanelControlComponent implements OnInit {
   activeSection: string | null = null;
   isMobileView = false;
   isSidebarVisibleOnSmallScreens = true;
-
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
-
   ngOnInit(): void {
     this.checkScreenSize();
   }
-
   @HostListener('window:resize')
   onResize() {
     this.checkScreenSize();
   }
-
   @HostListener('document:click', ['$event'])
   handleOutsideClick(event: MouseEvent) {
     if (!this.isMobileView || !this.isSidebarVisibleOnSmallScreens) return;
@@ -46,7 +42,6 @@ export class PanelControlComponent implements OnInit {
       this.isSidebarVisibleOnSmallScreens = false;
     }
   }
-
   checkScreenSize() {
     if (isPlatformBrowser(this.platformId)) {
       const width = window.innerWidth;
@@ -54,19 +49,15 @@ export class PanelControlComponent implements OnInit {
       this.isSidebarVisibleOnSmallScreens = !this.isMobileView;
     }
   }
-
   toggleSection(section: string) {
     this.activeSection = this.activeSection === section ? null : section;
   }
-
   isActive(section: string) {
     return this.activeSection === section;
   }
-
   toggleSidebar() {
     this.isSidebarVisibleOnSmallScreens = !this.isSidebarVisibleOnSmallScreens;
   }
-
   logout() {
     this.router.navigate(['/index']);
   }

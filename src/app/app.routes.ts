@@ -31,6 +31,7 @@ import { EditarUsuarioComponent } from './components/gestion_de_usuario/usuario/
 import { RegistrarUsuarioRolSucursalComponent } from './components/gestion_de_usuario/usuario-rol-sucursal/registrar-usuario-rol-sucursal/registrar-usuario-rol-sucursal.component';
 import { ListarUsuarioRolSucursalComponent } from './components/gestion_de_usuario/usuario-rol-sucursal/listar-usuario-rol-sucursal/listar-usuario-rol-sucursal.component';
 import { EditarUsuarioRolSucursalComponent } from './components/gestion_de_usuario/usuario-rol-sucursal/editar-usuario-rol-sucursal/editar-usuario-rol-sucursal.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -40,6 +41,10 @@ export const routes: Routes = [
     path: 'app-panel-control',
     component: PanelControlComponent,
     children: [
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+      },
       // Permiso
       { path: 'listar-permiso', component: ListarPermisoComponent },
       { path: 'registrar-permiso', component: RegistrarPermisoComponent },
@@ -83,7 +88,7 @@ export const routes: Routes = [
       },
 
       // Ruta por defecto
-      { path: '', redirectTo: 'listar-permiso', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
 ];

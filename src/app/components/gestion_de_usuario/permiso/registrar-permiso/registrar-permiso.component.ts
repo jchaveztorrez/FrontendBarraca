@@ -1,10 +1,55 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ServiceService } from '../../../../services/service.service';
 
 @Component({
   selector: 'app-registrar-permiso',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './registrar-permiso.component.html',
   styleUrl: './registrar-permiso.component.css',
 })
-export class RegistrarPermisoComponent {}
+export class RegistrarPermisoComponent {
+  form!: FormGroup;
+
+  constructor(
+    private fb: FormBuilder,
+    private permisoService: ServiceService,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      id: [null],
+      nombre: [null, Validators.required],
+      estado: [true, Validators.required],
+    });
+  }
+
+  onSubmit(): void {
+    if (this.form.valid) {
+      this.permisoService.createPermiso(this.form.value).subscribe(() => {
+        this.router.navigate(['app-panel-control/listar-permiso']);
+      });
+    }
+  }
+
+  volver(): void {
+    this.router.navigate(['app-panel-control/listar-permiso']);
+  }
+
+  limpiarFormulario(): void {
+    this.form.reset({
+      id: null,
+      nombre: null,
+      estado: true,
+    });
+  }
+}
