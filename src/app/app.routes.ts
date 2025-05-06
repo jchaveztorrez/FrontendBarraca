@@ -32,6 +32,27 @@ import { RegistrarUsuarioRolSucursalComponent } from './components/gestion_de_us
 import { ListarUsuarioRolSucursalComponent } from './components/gestion_de_usuario/usuario-rol-sucursal/listar-usuario-rol-sucursal/listar-usuario-rol-sucursal.component';
 import { EditarUsuarioRolSucursalComponent } from './components/gestion_de_usuario/usuario-rol-sucursal/editar-usuario-rol-sucursal/editar-usuario-rol-sucursal.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { UsuarioForestalListarComponent } from './components/gestion_de_productos/usuario-forestal/usuario-forestal-listar/usuario-forestal-listar.component';
+import { UsuarioForestalRegistrarComponent } from './components/gestion_de_productos/usuario-forestal/usuario-forestal-registrar/usuario-forestal-registrar.component';
+import { UsuarioForestalEditarComponent } from './components/gestion_de_productos/usuario-forestal/usuario-forestal-editar/usuario-forestal-editar.component';
+import { TransporteListarComponent } from './components/gestion_de_productos/transporte/transporte-listar/transporte-listar.component';
+import { TransporteRegistrarComponent } from './components/gestion_de_productos/transporte/transporte-registrar/transporte-registrar.component';
+import { TransporteEditarComponent } from './components/gestion_de_productos/transporte/transporte-editar/transporte-editar.component';
+import { RomaneoListarComponent } from './components/gestion_de_productos/romaneo/romaneo-listar/romaneo-listar.component';
+import { RomaneoRegistrarComponent } from './components/gestion_de_productos/romaneo/romaneo-registrar/romaneo-registrar.component';
+import { RomaneoEditarComponent } from './components/gestion_de_productos/romaneo/romaneo-editar/romaneo-editar.component';
+import { InventarioListarComponent } from './components/gestion_de_productos/inventario/inventario-listar/inventario-listar.component';
+import { InventarioRegistrarComponent } from './components/gestion_de_productos/inventario/inventario-registrar/inventario-registrar.component';
+import { InventarioEditarComponent } from './components/gestion_de_productos/inventario/inventario-editar/inventario-editar.component';
+import { DetalleRomaneoListarComponent } from './components/gestion_de_productos/detalle-romaneo/detalle-romaneo-listar/detalle-romaneo-listar.component';
+import { DetalleRomaneoRegistrarComponent } from './components/gestion_de_productos/detalle-romaneo/detalle-romaneo-registrar/detalle-romaneo-registrar.component';
+import { DetalleRomaneoEditarComponent } from './components/gestion_de_productos/detalle-romaneo/detalle-romaneo-editar/detalle-romaneo-editar.component';
+import { VentaListarComponent } from './components/gestion_de_productos/venta/venta-listar/venta-listar.component';
+import { VentaRegistrarComponent } from './components/gestion_de_productos/venta/venta-registrar/venta-registrar.component';
+import { VentaEditarComponent } from './components/gestion_de_productos/venta/venta-editar/venta-editar.component';
+import { DetalleVentaListarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-listar/detalle-venta-listar.component';
+import { DetalleVentaRegistrarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-registrar/detalle-venta-registrar.component';
+import { DetalleVentaEditarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-editar/detalle-venta-editar.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -85,6 +106,65 @@ export const routes: Routes = [
       {
         path: 'editar-usuario-rol-sucursal/:id',
         component: EditarUsuarioRolSucursalComponent,
+      },
+      /* rutasde productos */
+      // Usuario Forestal
+      {
+        path: 'listar-usuario-forestal',
+        component: UsuarioForestalListarComponent,
+      },
+      {
+        path: 'registrar-usuario-forestal',
+        component: UsuarioForestalRegistrarComponent,
+      },
+      {
+        path: 'editar-usuario-forestal/:id',
+        component: UsuarioForestalEditarComponent,
+      },
+
+      // Transporte
+      { path: 'listar-transporte', component: TransporteListarComponent },
+      { path: 'registrar-transporte', component: TransporteRegistrarComponent },
+      { path: 'editar-transporte/:id', component: TransporteEditarComponent },
+
+      // Romaneo
+      { path: 'listar-romaneo', component: RomaneoListarComponent },
+      { path: 'registrar-romaneo', component: RomaneoRegistrarComponent },
+      { path: 'editar-romaneo/:id', component: RomaneoEditarComponent },
+
+      // Inventario
+      { path: 'listar-inventario', component: InventarioListarComponent },
+      { path: 'registrar-inventario', component: InventarioRegistrarComponent },
+      { path: 'editar-inventario/:id', component: InventarioEditarComponent },
+
+      // Detalle Romaneo
+      {
+        path: 'listar-detalle-romaneo',
+        component: DetalleRomaneoListarComponent,
+      },
+      {
+        path: 'registrar-detalle-romaneo',
+        component: DetalleRomaneoRegistrarComponent,
+      },
+      {
+        path: 'editar-detalle-romaneo/:id',
+        component: DetalleRomaneoEditarComponent,
+      },
+
+      // Venta
+      { path: 'listar-venta', component: VentaListarComponent },
+      { path: 'registrar-venta', component: VentaRegistrarComponent },
+      { path: 'editar-venta/:id', component: VentaEditarComponent },
+
+      // Detalle Venta
+      { path: 'listar-detalle-venta', component: DetalleVentaListarComponent },
+      {
+        path: 'registrar-detalle-venta',
+        component: DetalleVentaRegistrarComponent,
+      },
+      {
+        path: 'editar-detalle-venta/:id',
+        component: DetalleVentaEditarComponent,
       },
 
       // Ruta por defecto

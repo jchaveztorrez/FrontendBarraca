@@ -36,7 +36,7 @@ export class ServiceService {
 
   updateSucursal(sucursal: Sucursal): Observable<Sucursal> {
     return this.http.put<Sucursal>(
-      `${this.apiUrl}sucursal/${sucursal.id}/`, // Asegúrate de que termine con /
+      `${this.apiUrl}sucursal/${sucursal.id}/`,
       sucursal,
     );
   }
