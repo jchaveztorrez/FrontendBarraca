@@ -18,7 +18,7 @@ export class ListarUsuarioRolSucursalComponent implements OnInit {
   mostrados: UsuarioRolSucursal[] = [];
 
   busqueda = '';
-  limite = 10;
+  limite = 20;
 
   constructor(
     private servicio: ServiceService,

@@ -1,0 +1,79 @@
+<h2 class="mb-4 text-primary">Lista de Producto Madera</h2>
+
+<!-- Filtros -->
+<div
+  class="mb-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2"
+>
+  <div class="d-flex flex-row gap-2 w-100">
+    <input
+      type="text"
+      [(ngModel)]="busqueda"
+      (input)="filtrar()"
+      class="form-control"
+      placeholder="Buscar por nombre de especie..."
+    />
+  </div>
+
+  <button class="btn btn-success" (click)="irARegistrar()">
+    <i class="bi bi-plus-circle me-1"></i> Registrar
+  </button>
+</div>
+
+<!-- Tabla -->
+<div
+  class="table-responsive rounded border"
+  style="max-height: 400px; overflow-y: auto"
+  (scroll)="onScroll($event)"
+>
+  <table class="table table-bordered table-hover align-middle text-center mb-0">
+    <thead class="table-primary">
+      <tr>
+        <th scope="col">Especie</th>
+        <th scope="col">Ancho (plg)</th>
+        <th scope="col">Espesor (plg)</th>
+        <th scope="col">Largo (ft)</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Volumen</th>
+        <th scope="col">Precio Compra</th>
+        <th scope="col">Precio Barraca</th>
+        <th scope="col">Precio Venta</th>
+        <th scope="col">Sucursal</th>
+        <th scope="col">Fecha Registro</th>
+        <th scope="col">Fecha Modificación</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let producto of mostrados">
+        <td>{{ producto.especie }}</td>
+        <td>{{ producto.ancho }}</td>
+        <td>{{ producto.espesor }}</td>
+        <td>{{ producto.largo }}</td>
+        <td>{{ producto.cantidad }}</td>
+
+        <td>{{ producto.volumen }}</td>
+        <td>{{ producto.precio_compra }}</td>
+        <td>{{ producto.precio_barraca }}</td>
+        <td>{{ producto.precio_venta }}</td>
+        <td>{{ producto.sucursal.nombre }}</td>
+        <td>{{ producto.fecha_registro | date: "dd/MM/yyyy" }}</td>
+        <td>{{ producto.fecha_modificacion | date: "dd/MM/yyyy" }}</td>
+        <td>{{ producto.estado }}</td>
+        <td>
+          <button
+            class="btn btn-warning btn-sm"
+            (click)="irAEditar(producto.id)"
+          >
+            <i class="bi bi-pencil"></i> Editar
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="mostrados.length === 0">
+        <td colspan="13" class="text-center text-muted py-4">
+          No se encontraron registros.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -32,27 +32,23 @@ import { RegistrarUsuarioRolSucursalComponent } from './components/gestion_de_us
 import { ListarUsuarioRolSucursalComponent } from './components/gestion_de_usuario/usuario-rol-sucursal/listar-usuario-rol-sucursal/listar-usuario-rol-sucursal.component';
 import { EditarUsuarioRolSucursalComponent } from './components/gestion_de_usuario/usuario-rol-sucursal/editar-usuario-rol-sucursal/editar-usuario-rol-sucursal.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { UsuarioForestalListarComponent } from './components/gestion_de_productos/usuario-forestal/usuario-forestal-listar/usuario-forestal-listar.component';
-import { UsuarioForestalRegistrarComponent } from './components/gestion_de_productos/usuario-forestal/usuario-forestal-registrar/usuario-forestal-registrar.component';
-import { UsuarioForestalEditarComponent } from './components/gestion_de_productos/usuario-forestal/usuario-forestal-editar/usuario-forestal-editar.component';
-import { TransporteListarComponent } from './components/gestion_de_productos/transporte/transporte-listar/transporte-listar.component';
-import { TransporteRegistrarComponent } from './components/gestion_de_productos/transporte/transporte-registrar/transporte-registrar.component';
-import { TransporteEditarComponent } from './components/gestion_de_productos/transporte/transporte-editar/transporte-editar.component';
-import { RomaneoListarComponent } from './components/gestion_de_productos/romaneo/romaneo-listar/romaneo-listar.component';
-import { RomaneoRegistrarComponent } from './components/gestion_de_productos/romaneo/romaneo-registrar/romaneo-registrar.component';
-import { RomaneoEditarComponent } from './components/gestion_de_productos/romaneo/romaneo-editar/romaneo-editar.component';
-import { InventarioListarComponent } from './components/gestion_de_productos/inventario/inventario-listar/inventario-listar.component';
-import { InventarioRegistrarComponent } from './components/gestion_de_productos/inventario/inventario-registrar/inventario-registrar.component';
-import { InventarioEditarComponent } from './components/gestion_de_productos/inventario/inventario-editar/inventario-editar.component';
-import { DetalleRomaneoListarComponent } from './components/gestion_de_productos/detalle-romaneo/detalle-romaneo-listar/detalle-romaneo-listar.component';
-import { DetalleRomaneoRegistrarComponent } from './components/gestion_de_productos/detalle-romaneo/detalle-romaneo-registrar/detalle-romaneo-registrar.component';
-import { DetalleRomaneoEditarComponent } from './components/gestion_de_productos/detalle-romaneo/detalle-romaneo-editar/detalle-romaneo-editar.component';
+
+// Productos
+
 import { VentaListarComponent } from './components/gestion_de_productos/venta/venta-listar/venta-listar.component';
 import { VentaRegistrarComponent } from './components/gestion_de_productos/venta/venta-registrar/venta-registrar.component';
 import { VentaEditarComponent } from './components/gestion_de_productos/venta/venta-editar/venta-editar.component';
 import { DetalleVentaListarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-listar/detalle-venta-listar.component';
 import { DetalleVentaRegistrarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-registrar/detalle-venta-registrar.component';
 import { DetalleVentaEditarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-editar/detalle-venta-editar.component';
+import { ProductoMaderaListarComponent } from './components/gestion_de_productos/ProductoMadera/producto-madera-listar/producto-madera-listar.component';
+import { ProductoMaderaRegistrarComponent } from './components/gestion_de_productos/ProductoMadera/producto-madera-registrar/producto-madera-registrar.component';
+import { ProductoMaderaEditarComponent } from './components/gestion_de_productos/ProductoMadera/producto-madera-editar/producto-madera-editar.component';
+import { FacturaReciboRegistrarComponent } from './components/gestion_de_productos/FacturaRecibo/factura-recibo-registrar/factura-recibo-registrar.component';
+import { FacturaReciboEditarComponent } from './components/gestion_de_productos/FacturaRecibo/factura-recibo-editar/factura-recibo-editar.component';
+import { FacturaReciboListarComponent } from './components/gestion_de_productos/FacturaRecibo/factura-recibo-listar/factura-recibo-listar.component';
+import { VenderComponent } from './components/vender/vender.component';
+import { CarritoComponent } from './components/carrito/carrito.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -62,10 +58,9 @@ export const routes: Routes = [
     path: 'app-panel-control',
     component: PanelControlComponent,
     children: [
-      {
-        path: 'dashboard',
-        component: DashboardComponent,
-      },
+      //ruta para vender
+      { path: 'vender', component: VenderComponent },
+
       // Permiso
       { path: 'listar-permiso', component: ListarPermisoComponent },
       { path: 'registrar-permiso', component: RegistrarPermisoComponent },
@@ -108,47 +103,18 @@ export const routes: Routes = [
         component: EditarUsuarioRolSucursalComponent,
       },
       /* rutasde productos */
-      // Usuario Forestal
+      // ProductoMadera
       {
-        path: 'listar-usuario-forestal',
-        component: UsuarioForestalListarComponent,
+        path: 'listar-producto-madera',
+        component: ProductoMaderaListarComponent,
       },
       {
-        path: 'registrar-usuario-forestal',
-        component: UsuarioForestalRegistrarComponent,
+        path: 'registrar-producto-madera',
+        component: ProductoMaderaRegistrarComponent,
       },
       {
-        path: 'editar-usuario-forestal/:id',
-        component: UsuarioForestalEditarComponent,
-      },
-
-      // Transporte
-      { path: 'listar-transporte', component: TransporteListarComponent },
-      { path: 'registrar-transporte', component: TransporteRegistrarComponent },
-      { path: 'editar-transporte/:id', component: TransporteEditarComponent },
-
-      // Romaneo
-      { path: 'listar-romaneo', component: RomaneoListarComponent },
-      { path: 'registrar-romaneo', component: RomaneoRegistrarComponent },
-      { path: 'editar-romaneo/:id', component: RomaneoEditarComponent },
-
-      // Inventario
-      { path: 'listar-inventario', component: InventarioListarComponent },
-      { path: 'registrar-inventario', component: InventarioRegistrarComponent },
-      { path: 'editar-inventario/:id', component: InventarioEditarComponent },
-
-      // Detalle Romaneo
-      {
-        path: 'listar-detalle-romaneo',
-        component: DetalleRomaneoListarComponent,
-      },
-      {
-        path: 'registrar-detalle-romaneo',
-        component: DetalleRomaneoRegistrarComponent,
-      },
-      {
-        path: 'editar-detalle-romaneo/:id',
-        component: DetalleRomaneoEditarComponent,
+        path: 'editar-producto-madera/:id',
+        component: ProductoMaderaEditarComponent,
       },
 
       // Venta
@@ -166,9 +132,32 @@ export const routes: Routes = [
         path: 'editar-detalle-venta/:id',
         component: DetalleVentaEditarComponent,
       },
-
+      //facturarecibo
+      // FacturaRecibo
+      {
+        path: 'listar-factura-recibo',
+        component: FacturaReciboListarComponent,
+      },
+      {
+        path: 'registrar-factura-recibo',
+        component: FacturaReciboRegistrarComponent,
+      },
+      {
+        path: 'editar-factura-recibo/:id',
+        component: FacturaReciboEditarComponent,
+      },
+      //carrito
+      {
+        path: 'carrito',
+        component: CarritoComponent,
+      },
+      // dashbhoard
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+      },
       // Ruta por defecto
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'vender', pathMatch: 'full' },
     ],
   },
 ];

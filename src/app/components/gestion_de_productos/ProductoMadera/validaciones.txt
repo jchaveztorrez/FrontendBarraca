@@ -1,0 +1,5 @@
+validar los espacio no debe admitir espacio en blanco vacios 
+si despues de un texto hay puro espacio en blanco ya o 
+despuesdel texto hya un espacio y luego sigue le texto ejemplo 
+andres benito ese espacio entre andres y benito es valiudo 
+pero eso esto no es valido    andres un espacio en blanco 

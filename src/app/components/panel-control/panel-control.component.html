@@ -38,6 +38,20 @@
     </div>
 
     <ul class="list-group">
+      <li class="d-flex align-items-center">
+        <div class="col-auto pe-2">
+          <i class="bi bi-cart fs-2 text-dark"></i>
+        </div>
+        <div class="col text-start">
+          <a
+            routerLink="/app-panel-control/vender"
+            class="text-dark text-decoration-none"
+            (click)="closeSidebarOnMobile()"
+          >
+            vender
+          </a>
+        </div>
+      </li>
       <!-- Gestión de Usuarios -->
       <li
         class="d-flex align-items-center"
@@ -174,75 +188,11 @@
           </div>
           <div class="col text-start">
             <a
-              routerLink="/app-panel-control/listar-usuario-forestal"
+              routerLink="/app-panel-control/listar-producto-madera"
               class="text-dark text-decoration-none"
               (click)="closeSidebarOnMobile()"
             >
-              Usuario Forestal
-            </a>
-          </div>
-        </li>
-
-        <!-- Transporte -->
-        <li class="d-flex align-items-center">
-          <div class="col-auto pe-2">
-            <i class="bi bi-truck fs-2 text-dark"></i>
-          </div>
-          <div class="col text-start">
-            <a
-              routerLink="/app-panel-control/listar-transporte"
-              class="text-dark text-decoration-none"
-              (click)="closeSidebarOnMobile()"
-            >
-              Transporte
-            </a>
-          </div>
-        </li>
-
-        <!-- Romaneo -->
-        <li class="d-flex align-items-center">
-          <div class="col-auto pe-2">
-            <i class="bi bi-clipboard-data fs-2 text-dark"></i>
-          </div>
-          <div class="col text-start">
-            <a
-              routerLink="/app-panel-control/listar-romaneo"
-              class="text-dark text-decoration-none"
-              (click)="closeSidebarOnMobile()"
-            >
-              Romaneo
-            </a>
-          </div>
-        </li>
-
-        <!-- Inventario -->
-        <li class="d-flex align-items-center">
-          <div class="col-auto pe-2">
-            <i class="bi bi-box-seam fs-2 text-dark"></i>
-          </div>
-          <div class="col text-start">
-            <a
-              routerLink="/app-panel-control/listar-inventario"
-              class="text-dark text-decoration-none"
-              (click)="closeSidebarOnMobile()"
-            >
-              Inventario
-            </a>
-          </div>
-        </li>
-
-        <!-- Detalle Romaneo -->
-        <li class="d-flex align-items-center">
-          <div class="col-auto pe-2">
-            <i class="bi bi-list-task fs-2 text-dark"></i>
-          </div>
-          <div class="col text-start">
-            <a
-              routerLink="/app-panel-control/listar-detalle-romaneo"
-              class="text-dark text-decoration-none"
-              (click)="closeSidebarOnMobile()"
-            >
-              Detalle Romaneo
+              Producto Madera
             </a>
           </div>
         </li>
@@ -275,6 +225,21 @@
               (click)="closeSidebarOnMobile()"
             >
               Detalle Venta
+            </a>
+          </div>
+        </li>
+        <!-- Factura recivo -->
+        <li class="d-flex align-items-center">
+          <div class="col-auto pe-2">
+            <i class="bi bi-receipt fs-2 text-dark"></i>
+          </div>
+          <div class="col text-start">
+            <a
+              routerLink="/app-panel-control/listar-factura-recibo"
+              class="text-dark text-decoration-none"
+              (click)="closeSidebarOnMobile()"
+            >
+              Facturas Recivos
             </a>
           </div>
         </li>

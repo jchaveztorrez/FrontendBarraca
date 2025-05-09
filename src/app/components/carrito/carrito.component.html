@@ -1,0 +1,112 @@
+<!-- aqui tenemos que agregar una funcionalidad donde desde la vista de vender se pueda quitar el producto que se agrego al carrito tambien un boton que quite todo 
+  directamente lo que se agrego a la vista del carrito  -->
+<!-- en la vista del carrito tambien agregar un boton que me permita quitar todos lo producto que estan en la lista cuando se quite en ambas vistas debe quitarse  -->
+
+<div class="container mt-4">
+  <h3 class="text-center mb-4">Carrito de Venta</h3>
+
+  <!-- Tabla del carrito -->
+  <div class="table-responsive">
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table-secondary">
+        <tr>
+          <th>Cantidad</th>
+          <th>Detalle</th>
+
+          <th>Precio Unitario (Bs.)</th>
+          <th>Total (Bs.)</th>
+          <th>Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of carrito">
+          <td>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              [(ngModel)]="producto.cantidad"
+              [min]="1"
+              (ngModelChange)="actualizarCantidad(producto)"
+            />
+          </td>
+          <td class="text-start text-break">
+            {{ producto.especie }} de {{ producto.ancho }} plg de ancho,
+            {{ producto.espesor }} plg de espesor y {{ producto.largo }} pies de
+            largo
+          </td>
+          <td>{{ producto.precio_venta }}</td>
+          <td>{{ producto.precio_venta * producto.cantidad }}</td>
+          <td>
+            <button
+              class="btn btn-outline-danger btn-sm"
+              (click)="eliminarDelCarrito(producto.id)"
+            >
+              🗑️
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="carrito.length === 0">
+          <td colspan="6" class="text-muted text-center py-3">
+            No hay productos en el carrito.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Totales -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <label class="form-label fw-bold">Total Venta (Bs.)</label>
+      <input
+        type="number"
+        class="form-control"
+        [value]="calcularTotal()"
+        readonly
+      />
+    </div>
+    <div class="col-md-4">
+      <label class="form-label fw-bold">Monto Pagado (Bs.)</label>
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Ingrese el monto pagado"
+      />
+    </div>
+    <div class="col-md-4">
+      <label class="form-label fw-bold">Cambio (Bs.)</label>
+      <input type="number" class="form-control" value="0" readonly />
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="row text-center mb-4 g-2">
+    <div class="col-6 col-md-3">
+      <button class="btn btn-success w-100 rounded-pill fw-bold fs-5">
+        ✅ Recibo
+      </button>
+    </div>
+    <div class="col-6 col-md-3">
+      <button class="btn btn-warning text-dark w-100 rounded-pill fw-bold fs-5">
+        🧾 Factura
+      </button>
+    </div>
+    <div class="col-6 col-md-3">
+      <button
+        class="btn btn-success w-100 rounded-pill fw-bold fs-5"
+        style="background-color: #25d366; border: none"
+      >
+        📲 WhatsApp
+      </button>
+    </div>
+    <div class="col-6 col-md-3">
+      <button
+        class="btn btn-secondary w-100 rounded-pill fw-bold fs-5"
+        (click)="irAProductos()"
+      >
+        🛒 Agregar más productos
+      </button>
+    </div>
+  </div>
+</div>

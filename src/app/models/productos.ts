@@ -1,42 +1,7 @@
-export interface UsuarioForestal {
-  id: number;
-  nombre: string;
-  ci: string;
-  comunidad: string;
-  telefono: string;
-}
+import { Sucursal, Usuario } from './models';
 
-export interface Transporte {
+export interface ProductoMadera {
   id: number;
-  placa: string;
-  nombre_conductor: string;
-  ci_conductor: string;
-  licencia: string;
-}
-
-export interface Romaneo {
-  id: number;
-  fecha: Date;
-  usuario_forestal: UsuarioForestal;
-  transporte: Transporte;
-  observacion: string; // Opcional
-}
-
-export interface Inventario {
-  id: number;
-  especie: string;
-  ancho: number;
-  espesor: number;
-  largo: number;
-  cantidad_total: number;
-  volumen_total: number; // corregido: estaba con "V" mayúscula
-  precio_compra: number;
-  precio_venta: number;
-}
-
-export interface DetalleRomaneo {
-  id: number;
-  romaneo: Romaneo;
   especie: string;
   ancho: number;
   espesor: number;
@@ -44,37 +9,37 @@ export interface DetalleRomaneo {
   cantidad: number;
   volumen: number;
   precio_compra: number;
-}
-
-export interface Usuario {
-  id: number;
-  nombre: string;
-  apellido: string;
-  fecha_nacimiento: Date;
-  telefono: string;
-  correo: string;
-  password: string;
-  ci: string;
-  fecha_creacion: Date;
-  fecha_actualizacion: Date;
+  precio_barraca: number;
+  precio_venta: number;
+  sucursal: Sucursal; // Asocia con la sucursal
+  fecha_registro: string;
+  fecha_modificacion: string;
   estado: boolean;
-  imagen_url: string;
 }
 
 export interface Venta {
   id: number;
-  fecha: Date;
-  cliente: string;
-  observacion: string;
-  usuario: Usuario;
+  fecha: string;
+  vendedor: Usuario; // No "cliente"
+  sucursal: Sucursal;
+  detalles: DetalleVentaMadera[]; // relación related_name
 }
 
-export interface DetalleVenta {
+export interface DetalleVentaMadera {
   id: number;
   venta: Venta;
-  inventario: Inventario;
-  cantidad: number;
-  volumen: number;
-  precio_venta_unitario: number;
+  producto: ProductoMadera;
+  cantidad_vendida: number;
+  precio_unitario: number;
   subtotal: number;
+}
+
+export interface FacturaRecibo {
+  id: number;
+  tipo: 'factura' | 'recibo';
+  nombre_cliente: string;
+  ci_nit: string;
+  fecha_emision: string;
+  total: number;
+  venta: Venta;
 }

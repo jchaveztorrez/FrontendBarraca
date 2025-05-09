@@ -1,0 +1,140 @@
+<div class="container py-4">
+  <div class="card shadow rounded-4 mx-auto" style="max-width: 700px">
+    <div class="card-body">
+      <h3 class="card-title mb-4 text-center text-warning">
+        Editar Producto de Madera
+      </h3>
+
+      <form [formGroup]="form" (ngSubmit)="editar()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Especie</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="especie"
+              placeholder="Ingrese la especie"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Ancho</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ancho"
+              placeholder="Ancho en cm"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Espesor</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="espesor"
+              placeholder="Espesor en cm"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Largo</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="largo"
+              placeholder="Largo en cm"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Cantidad</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidad"
+              placeholder="Cantidad en unidades"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Precio Compra</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="precio_compra"
+              placeholder="Bs"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Precio Barraca</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="precio_barraca"
+              placeholder="Bs"
+            />
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Precio Venta</label>
+            <input
+              type="number"
+              class="form-control"
+              formControlName="precio_venta"
+              placeholder="Bs"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Sucursal</label>
+            <select
+              id="sucursal"
+              class="form-select"
+              formControlName="sucursal"
+              [ngClass]="{
+                'is-invalid':
+                  form.get('sucursal')?.invalid &&
+                  form.get('sucursal')?.touched,
+              }"
+              required
+            >
+              <option value="">Seleccione una sucursal</option>
+              <option *ngFor="let s of sucursal" [value]="s.id">
+                {{ s.nombre }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div
+          class="d-flex flex-column flex-md-row justify-content-between gap-2 mt-4"
+        >
+          <button
+            class="btn btn-outline-secondary w-100"
+            type="button"
+            (click)="volver()"
+          >
+            <i class="bi bi-arrow-left-circle me-2"></i> Volver
+          </button>
+          <button
+            class="btn btn-warning w-100"
+            type="button"
+            (click)="limpiarFormulario()"
+          >
+            <i class="bi bi-arrow-clockwise me-2"></i> Restablecer
+          </button>
+
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            [disabled]="form.invalid"
+          >
+            <i class="bi bi-pencil-square me-2"></i> Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

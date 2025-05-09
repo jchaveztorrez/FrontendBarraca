@@ -1,0 +1,107 @@
+<div class="container mt-4">
+  <h3 class="text-center mb-4">Registrar Venta</h3>
+
+  <!-- Filtros -->
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Buscar producto por nombre o especie..."
+        [(ngModel)]="busqueda"
+        (input)="filtrar()"
+      />
+    </div>
+    <div class="col-md-6 mt-3">
+      <select
+        class="form-select"
+        [(ngModel)]="nombreSeleccionado"
+        (change)="filtrar()"
+      >
+        <option value="">Todos los Productos</option>
+        <option *ngFor="let producto of productos" [value]="producto.especie">
+          {{ producto.especie }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-md-6">
+      <select
+        id="sucursalSelect"
+        class="form-select"
+        [(ngModel)]="sucursalSeleccionada"
+        (change)="filtrar()"
+      >
+        <option value="">Todas las Sucursales</option>
+        <option *ngFor="let sucursal of sucursales" [value]="sucursal.nombre">
+          {{ sucursal.nombre }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tabla de productos  vender-->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover text-center align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th>Especie</th>
+          <th>Ancho (plg)</th>
+          <th>Espesor (plg)</th>
+          <th>Largo (ft)</th>
+          <th>Cantidad</th>
+          <th>Ingrese Cantidad</th>
+          <th>Precio Venta (Bs.)</th>
+          <th>Sucursal</th>
+          <th>Agregar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let producto of filtrados"
+          [ngClass]="{
+            'table-warning': estaEnCarrito(producto.id),
+          }"
+        >
+          <td>{{ producto.especie }}</td>
+          <td>{{ producto.ancho }}</td>
+          <td>{{ producto.espesor }}</td>
+          <td>{{ producto.largo }}</td>
+          <td>{{ producto.cantidad }}</td>
+          <td>
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              [(ngModel)]="cantidades[producto.id]"
+              [min]="1"
+              [value]="cantidades[producto.id] || 1"
+            />
+          </td>
+          <td>{{ producto.precio_venta }}</td>
+          <td>{{ producto.sucursal.nombre }}</td>
+          <td>
+            <button
+              class="btn btn-outline-success btn-sm"
+              (click)="agregarAlCarrito(producto)"
+            >
+              Agregar
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="filtrados.length === 0">
+          <td colspan="8" class="text-muted text-center py-3">
+            No hay productos disponibles.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Ver carrito -->
+  <div class="text-end mt-4">
+    <button class="btn btn-success" (click)="irACarrito()">
+      🛒 Ver Carrito
+    </button>
+  </div>
+</div>
