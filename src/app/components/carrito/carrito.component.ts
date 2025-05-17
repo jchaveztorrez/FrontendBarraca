@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { ServiceProductoService } from '../../services/service-producto.service';
 import { ServiceService } from '../../services/service.service';
 import { isPlatformBrowser } from '@angular/common';
+
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-carrito',
@@ -15,78 +16,128 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class CarritoComponent {
   carrito: any[] = [];
-  productos: any[] = [];
-  cantidades: { [key: number]: number } = {}; // Para almacenar las cantidades de los productos
-  sucursales: any[] = []; // Para almacenar las sucursales
-
+  nombreCliente: string = '';
+  ciNit: string = '';
+  tipoComprobante: string = 'factura';
+  sucursalSeleccionada: number | null = null;
+  sucursal: any[] = [];
+  usuarioVendedorId: number = 1; // Deberías obtener esto dinámicamente
   constructor(
     private router: Router,
-    private servicio: ServiceProductoService,
-    private sucursalService: ServiceService, // Agregado el servicio para obtener sucursales
-    @Inject(PLATFORM_ID) private platformId: Object, // Inyectamos el ID de la plataforma
-  ) {}
-
-  ngOnInit(): void {
-    // Verificar si se está ejecutando en el navegador (lado del cliente)
+    private services: ServiceService,
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object,
+  ) {
+    this.loadSucursal();
+    this.cargarCarrito();
+  }
+  ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+      this.cargarCarrito();
     }
-
-    // Cargar los productos
-    this.servicio.getProductoMaderas().subscribe((data) => {
-      this.productos = data;
-      this.filtrar(); // Llamar al método filtrar si es necesario
-
-      // Cargar las cantidades desde localStorage
-      if (isPlatformBrowser(this.platformId)) {
-        let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-        carrito.forEach((producto: any) => {
-          this.cantidades[producto.id] = producto.cantidad;
-        });
-      }
-    });
-
-    // Cargar las sucursales
-    this.sucursalService.getSucursales().subscribe((data) => {
-      this.sucursales = data;
+  }
+  loadSucursal() {
+    this.services.getSucursales().subscribe((data) => {
+      this.sucursal = data;
     });
   }
+  cargarCarrito() {
+    if (isPlatformBrowser(this.platformId)) {
+      const carritoGuardado = localStorage.getItem('carrito');
+      if (carritoGuardado) {
+        this.carrito = JSON.parse(carritoGuardado);
+      }
+    } else {
+      this.carrito = [];
+    }
+  }
 
-  irAProductos(): void {
+  actualizarCantidad(producto: any) {
+    if (producto.cantidad < 1) {
+      producto.cantidad = 1;
+    }
+    this.guardarCarrito();
+  }
+
+  eliminarDelCarrito(id: number) {
+    this.carrito = this.carrito.filter((p) => p.id !== id);
+    this.guardarCarrito();
+  }
+
+  vaciarCarrito() {
+    this.carrito = [];
+    localStorage.removeItem('carrito');
+  }
+
+  irAProductos() {
     this.router.navigate(['app-panel-control/vender']);
   }
 
-  eliminarDelCarrito(productoId: number): void {
-    // Eliminar producto del carrito
-    this.carrito = this.carrito.filter((item) => item.id !== productoId);
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('carrito', JSON.stringify(this.carrito));
-    }
-  }
-
-  actualizarCantidad(producto: any): void {
-    if (isPlatformBrowser(this.platformId)) {
-      let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-      const productoExistente = carrito.find(
-        (item: any) => item.id === producto.id,
-      );
-
-      if (productoExistente) {
-        productoExistente.cantidad = producto.cantidad; // Actualiza la cantidad
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-      }
-    }
+  guardarCarrito() {
+    localStorage.setItem('carrito', JSON.stringify(this.carrito));
   }
 
   calcularTotal(): number {
     return this.carrito.reduce(
-      (total, producto) => total + producto.precio_venta * producto.cantidad,
+      (total, p) => total + p.precio_venta * p.cantidad,
       0,
     );
   }
+  vender() {
+    // Validate input fields
+    if (
+      !this.nombreCliente.trim() ||
+      !this.ciNit.trim() ||
+      !this.tipoComprobante ||
+      !this.sucursalSeleccionada
+    ) {
+      alert(
+        'Por favor, complete todos los campos del cliente y seleccione una sucursal.',
+      );
+      return;
+    }
 
-  // Asegúrate de que este método `filtrar()` esté implementado si es necesario.
-  filtrar(): void {
-    // Implementa el filtro de productos si es necesario
+    if (this.carrito.length === 0) {
+      alert('El carrito está vacío.');
+      return;
+    }
+
+    // Prepare the sale details
+    const detalles = this.carrito.map((producto) => ({
+      producto: producto.id,
+      cantidad_vendida: producto.cantidad,
+      precio_unitario: producto.precio_venta,
+    }));
+
+    const ventaData = {
+      factura: {
+        tipo: this.tipoComprobante,
+        nombre_cliente: this.nombreCliente,
+        ci_nit: this.ciNit,
+        total: this.calcularTotal(),
+      },
+      venta: {
+        vendedor: this.usuarioVendedorId, // This should be dynamically set based on the logged-in user
+        sucursal: this.sucursalSeleccionada,
+      },
+      detalles: detalles,
+    };
+
+    console.log('Enviando venta:', ventaData);
+
+    // Send the sale data to the backend
+    this.http
+      .post('http://localhost:8000/api/registrar_venta/', ventaData)
+      .subscribe({
+        next: (res) => {
+          alert('Venta registrada exitosamente.');
+          this.vaciarCarrito(); // Clear the cart after successful sale
+          this.router.navigate(['/productos']); // Redirect to products page
+        },
+        error: (err) => {
+          console.error('Error al registrar la venta:', err);
+          alert('Ocurrió un error al registrar la venta.');
+        },
+      });
   }
 }

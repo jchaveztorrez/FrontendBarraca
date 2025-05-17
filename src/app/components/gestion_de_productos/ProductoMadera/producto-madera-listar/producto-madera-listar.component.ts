@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ProductoMadera } from '../../../../models/productos';
-import { ServiceProductoService } from '../../../../services/service-producto.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ServiceService } from '../../../../services/service.service';
 
 @Component({
   selector: 'app-producto-madera-listar',
@@ -19,7 +19,7 @@ export class ProductoMaderaListarComponent {
   busqueda = '';
   limite = 20;
   constructor(
-    private servicio: ServiceProductoService,
+    private servicio: ServiceService,
     private router: Router,
   ) {}
   ngOnInit(): void {

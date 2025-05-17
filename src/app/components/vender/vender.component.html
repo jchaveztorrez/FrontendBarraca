@@ -1,33 +1,36 @@
 <div class="container mt-4">
-  <h3 class="text-center mb-4">Registrar Venta</h3>
+  <h3 class="text-center mb-4">Listado de Productos</h3>
 
-  <!-- Filtros -->
+  <!-- Filtros de búsqueda -->
   <div class="row mb-3">
-    <div class="col-md-6">
+    <!-- Filtro por nombre o especie -->
+    <div class="col-md-3 mt-3 border border-dark rounded">
       <input
         type="text"
         class="form-control"
-        placeholder="Buscar producto por nombre o especie..."
+        placeholder="Buscar por especie o descripción..."
         [(ngModel)]="busqueda"
         (input)="filtrar()"
       />
     </div>
-    <div class="col-md-6 mt-3">
+
+    <!-- Filtro por especie -->
+    <div class="col-md-3 mt-3">
       <select
         class="form-select"
         [(ngModel)]="nombreSeleccionado"
         (change)="filtrar()"
       >
-        <option value="">Todos los Productos</option>
-        <option *ngFor="let producto of productos" [value]="producto.especie">
-          {{ producto.especie }}
+        <option value="">Todas las Especies</option>
+        <option *ngFor="let especie of especiesUnicas" [value]="especie">
+          {{ especie }}
         </option>
       </select>
     </div>
 
-    <div class="col-md-6">
+    <!-- Filtro por sucursal -->
+    <div class="col-md-3 mt-3">
       <select
-        id="sucursalSelect"
         class="form-select"
         [(ngModel)]="sucursalSeleccionada"
         (change)="filtrar()"
@@ -38,9 +41,16 @@
         </option>
       </select>
     </div>
+
+    <!-- Contador del carrito -->
+    <div class="text-end col-md-3 mt-3">
+      <button class="btn btn-success" disabled>
+        🛒 Productos en Carrito: {{ cantidadTotal() }}
+      </button>
+    </div>
   </div>
 
-  <!-- Tabla de productos  vender-->
+  <!-- Tabla de productos -->
   <div class="table-responsive">
     <table class="table table-bordered table-hover text-center align-middle">
       <thead class="table-primary">
@@ -49,59 +59,189 @@
           <th>Ancho (plg)</th>
           <th>Espesor (plg)</th>
           <th>Largo (ft)</th>
-          <th>Cantidad</th>
-          <th>Ingrese Cantidad</th>
+          <th>Stock</th>
           <th>Precio Venta (Bs.)</th>
           <th>Sucursal</th>
-          <th>Agregar</th>
+          <th>Ingrese Cantidad</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr
           *ngFor="let producto of filtrados"
-          [ngClass]="{
-            'table-warning': estaEnCarrito(producto.id),
-          }"
+          [ngClass]="{ 'table-warning': estaEnCarrito(producto.id) }"
         >
-          <td>{{ producto.especie }}</td>
+          <td class="text-start">{{ producto.especie }}</td>
           <td>{{ producto.ancho }}</td>
           <td>{{ producto.espesor }}</td>
           <td>{{ producto.largo }}</td>
           <td>{{ producto.cantidad }}</td>
+          <td>{{ producto.precio_venta | number: "1.2-2" }}</td>
+          <td>{{ producto.sucursal.nombre }}</td>
           <td>
             <input
               type="number"
-              class="form-control form-control-sm"
+              class="form-control form-control-sm text-center"
               [(ngModel)]="cantidades[producto.id]"
               [min]="1"
-              [value]="cantidades[producto.id] || 1"
+              [max]="producto.cantidad"
+              placeholder="Cantidad"
             />
           </td>
-          <td>{{ producto.precio_venta }}</td>
-          <td>{{ producto.sucursal.nombre }}</td>
           <td>
             <button
               class="btn btn-outline-success btn-sm"
               (click)="agregarAlCarrito(producto)"
+              [disabled]="
+                !cantidades[producto.id] || cantidades[producto.id] < 1
+              "
             >
               Agregar
+            </button>
+            <button
+              *ngIf="estaEnCarrito(producto.id)"
+              class="btn btn-outline-danger btn-sm ms-1"
+              (click)="quitarDelCarrito(producto.id)"
+            >
+              Quitar
             </button>
           </td>
         </tr>
 
         <tr *ngIf="filtrados.length === 0">
-          <td colspan="8" class="text-muted text-center py-3">
-            No hay productos disponibles.
+          <td colspan="9" class="text-center text-muted py-3">
+            No hay productos disponibles para los filtros aplicados.
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Ver carrito -->
-  <div class="text-end mt-4">
-    <button class="btn btn-success" (click)="irACarrito()">
-      🛒 Ver Carrito
-    </button>
+  <!-- Sección Carrito -->
+  <div class="mt-5">
+    <h4>Carrito de Venta</h4>
+
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario (Bs.)</th>
+          <th>Subtotal (Bs.)</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of carrito">
+          <td>{{ producto.especie }}</td>
+          <td>
+            <input
+              type="number"
+              [(ngModel)]="producto.cantidad"
+              (change)="actualizarCantidad(producto)"
+              min="1"
+              class="form-control"
+            />
+          </td>
+          <td>{{ producto.precio_venta | number: "1.2-2" }}</td>
+          <td>
+            {{ producto.precio_venta * producto.cantidad | number: "1.2-2" }}
+          </td>
+          <td>
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="quitarDelCarrito(producto.id)"
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="carrito.length === 0">
+          <td colspan="5" class="text-center text-muted">
+            El carrito está vacío.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="mb-3 text-end">
+      <strong>Total: {{ calcularTotal() | number: "1.2-2" }} Bs.</strong>
+    </div>
+  </div>
+
+  <!-- Datos del cliente y venta -->
+  <div class="row g-3 mt-4">
+    <div class="col-md-6">
+      <label for="nombreCliente" class="form-label">Nombre del Cliente</label>
+      <input
+        id="nombreCliente"
+        type="text"
+        class="form-control"
+        [(ngModel)]="nombreCliente"
+        placeholder="Nombre del cliente"
+      />
+    </div>
+
+    <div class="col-md-6">
+      <label for="ciNit" class="form-label">CI / NIT</label>
+      <input
+        id="ciNit"
+        type="text"
+        class="form-control"
+        [(ngModel)]="ciNit"
+        placeholder="CI o NIT del cliente"
+      />
+    </div>
+
+    <div class="col-md-4">
+      <label for="tipoComprobante" class="form-label"
+        >Tipo de Comprobante</label
+      >
+      <select
+        id="tipoComprobante"
+        class="form-select"
+        [(ngModel)]="tipoComprobante"
+      >
+        <option value="factura">Factura</option>
+        <option value="recibo">Recibo</option>
+      </select>
+    </div>
+
+    <div class="col-md-4">
+      <label for="sucursalSeleccionada" class="form-label">Sucursal</label>
+      <select
+        id="sucursalSeleccionada"
+        class="form-select"
+        [(ngModel)]="sucursalSeleccionada"
+      >
+        <option value="">Seleccione una sucursal</option>
+        <option *ngFor="let sucursal of sucursales" [value]="sucursal.id">
+          {{ sucursal.nombre }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label for="usuarioVendedorId" class="form-label">Usuario</label>
+      <select
+        id="usuarioVendedorId"
+        class="form-select"
+        [(ngModel)]="usuarioVendedorId"
+      >
+        <option value="">Seleccione un Usuario</option>
+        <option *ngFor="let usuarios of usuarios" [value]="usuarios.id">
+          {{ usuarios.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+      <button
+        class="btn btn-success w-100"
+        (click)="vender()"
+        [disabled]="carrito.length === 0"
+      >
+        💰 Registrar Venta
+      </button>
+    </div>
   </div>
 </div>

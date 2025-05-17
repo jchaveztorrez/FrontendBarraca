@@ -1,3 +1,5 @@
+/*  E:\BarracaSantaCruz\FrontendBarraca\src\app\models\models.ts*/
+/*  */
 export interface Sucursal {
   id: number;
   nombre: string;

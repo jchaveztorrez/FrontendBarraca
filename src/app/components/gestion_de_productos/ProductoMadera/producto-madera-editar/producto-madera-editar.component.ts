@@ -8,7 +8,6 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceService } from '../../../../services/service.service';
-import { ServiceProductoService } from '../../../../services/service-producto.service';
 import { Sucursal } from '../../../../models/models';
 import { CommonModule } from '@angular/common';
 
@@ -26,8 +25,7 @@ export class ProductoMaderaEditarComponent {
 
   constructor(
     private fb: FormBuilder,
-    private service: ServiceProductoService,
-    private services: ServiceService,
+    private servisio: ServiceService,
     private route: ActivatedRoute,
     private router: Router,
   ) {
@@ -53,16 +51,16 @@ export class ProductoMaderaEditarComponent {
   }
 
   cargarProducto(): void {
-    this.service.getProductoMaderaID(this.id).subscribe((data) => {
+    this.servisio.getProductoMaderaID(this.id).subscribe((data) => {
       this.form.patchValue(data);
     });
   }
 
   loadSucursal() {
-    this.services.getSucursales().subscribe((data) => (this.sucursal = data));
+    this.servisio.getSucursales().subscribe((data) => (this.sucursal = data));
   }
   loadRelacion() {
-    this.service.getProductoMaderaID(this.id).subscribe((data) => {
+    this.servisio.getProductoMaderaID(this.id).subscribe((data) => {
       this.form.patchValue({
         id: data.id,
         sucursal: data.sucursal.id, // Asegúrate de que estamos asignando el ID de la sucursal correctamente
@@ -74,7 +72,7 @@ export class ProductoMaderaEditarComponent {
     if (this.form.valid) {
       const formData = this.form.value;
       console.log(formData); // Verifica que los datos se están enviando correctamente
-      this.service.updateProductoMadera(formData).subscribe({
+      this.servisio.updateProductoMadera(formData).subscribe({
         next: () => {
           alert('Producto de madera actualizado correctamente');
           this.router.navigate(['app-panel-control/listar-producto-madera']);
