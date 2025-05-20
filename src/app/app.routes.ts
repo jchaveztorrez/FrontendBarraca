@@ -49,6 +49,9 @@ import { FacturaReciboEditarComponent } from './components/gestion_de_productos/
 import { FacturaReciboListarComponent } from './components/gestion_de_productos/FacturaRecibo/factura-recibo-listar/factura-recibo-listar.component';
 import { VenderComponent } from './components/vender/vender.component';
 import { CarritoComponent } from './components/carrito/carrito.component';
+import { ListarCategoriaComponent } from './components/gestion_de_productos/categoria/listar-categoria/listar-categoria.component';
+import { RegistrarCategoriaComponent } from './components/gestion_de_productos/categoria/registrar-categoria/registrar-categoria.component';
+import { EditarCategoriaComponent } from './components/gestion_de_productos/categoria/editar-categoria/editar-categoria.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -103,6 +106,10 @@ export const routes: Routes = [
         component: EditarUsuarioRolSucursalComponent,
       },
       /* rutasde productos */
+      // Sucursal
+      { path: 'listar-categoria', component: ListarCategoriaComponent },
+      { path: 'registrar-categoria', component: RegistrarCategoriaComponent },
+      { path: 'editar-categoria/:id', component: EditarCategoriaComponent },
       // ProductoMadera
       {
         path: 'listar-producto-madera',

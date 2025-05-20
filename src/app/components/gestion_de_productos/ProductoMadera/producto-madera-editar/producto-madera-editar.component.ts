@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceService } from '../../../../services/service.service';
-import { Sucursal } from '../../../../models/models';
+import { Categoria, Sucursal } from '../../../../models/models';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,6 +21,7 @@ import { CommonModule } from '@angular/common';
 export class ProductoMaderaEditarComponent {
   form: FormGroup;
   sucursal: Sucursal[] = [];
+  categoria: Categoria[] = [];
   id!: number;
 
   constructor(
@@ -40,6 +41,7 @@ export class ProductoMaderaEditarComponent {
       precio_barraca: ['', Validators.required],
       precio_venta: ['', Validators.required],
       sucursal: ['', Validators.required],
+      categoria: ['', Validators.required],
     });
   }
 
@@ -48,6 +50,7 @@ export class ProductoMaderaEditarComponent {
     this.cargarProducto();
     this.loadSucursal();
     this.loadRelacion();
+    this.loadCategoria();
   }
 
   cargarProducto(): void {
@@ -58,6 +61,9 @@ export class ProductoMaderaEditarComponent {
 
   loadSucursal() {
     this.servisio.getSucursales().subscribe((data) => (this.sucursal = data));
+  }
+  loadCategoria() {
+    this.servisio.getCategorias().subscribe((data) => (this.categoria = data));
   }
   loadRelacion() {
     this.servisio.getProductoMaderaID(this.id).subscribe((data) => {

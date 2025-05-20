@@ -164,7 +164,8 @@
         style="cursor: pointer"
       >
         <div class="col-auto pe-2">
-          <i class="bi bi-box fs-2 text-dark"></i>
+          <i class="bi bi-box-seam fs-2 text-dark"></i>
+          <!-- Icono de caja con costuras -->
         </div>
         <div class="col text-start">
           <span class="text-dark">Productos</span>
@@ -181,10 +182,28 @@
       </li>
 
       <ul class="list-group ps-3" *ngIf="isActive('productos')">
-        <!-- Usuario Forestal -->
+        <!-- Categoria -->
         <li class="d-flex align-items-center">
           <div class="col-auto pe-2">
-            <i class="bi bi-people fs-2 text-dark"></i>
+            <i class="bi bi-tags fs-2 text-dark"></i>
+            <!-- Etiquetas para categorías -->
+          </div>
+          <div class="col text-start">
+            <a
+              routerLink="/app-panel-control/listar-categoria"
+              class="text-dark text-decoration-none"
+              (click)="closeSidebarOnMobile()"
+            >
+              Categoría
+            </a>
+          </div>
+        </li>
+
+        <!-- Producto Madera -->
+        <li class="d-flex align-items-center">
+          <div class="col-auto pe-2">
+            <i class="bi bi-tree fs-2 text-dark"></i>
+            <!-- Árbol para productos forestales -->
           </div>
           <div class="col text-start">
             <a
@@ -200,7 +219,8 @@
         <!-- Venta -->
         <li class="d-flex align-items-center">
           <div class="col-auto pe-2">
-            <i class="bi bi-cash-coin fs-2 text-dark"></i>
+            <i class="bi bi-cart-check fs-2 text-dark"></i>
+            <!-- Carrito con check -->
           </div>
           <div class="col text-start">
             <a
@@ -216,7 +236,8 @@
         <!-- Detalle Venta -->
         <li class="d-flex align-items-center">
           <div class="col-auto pe-2">
-            <i class="bi bi-receipt fs-2 text-dark"></i>
+            <i class="bi bi-file-text fs-2 text-dark"></i>
+            <!-- Documento para detalle -->
           </div>
           <div class="col text-start">
             <a
@@ -228,10 +249,12 @@
             </a>
           </div>
         </li>
-        <!-- Factura recivo -->
+
+        <!-- Factura Recibo -->
         <li class="d-flex align-items-center">
           <div class="col-auto pe-2">
-            <i class="bi bi-receipt fs-2 text-dark"></i>
+            <i class="bi bi-receipt-cutoff fs-2 text-dark"></i>
+            <!-- Icono de recibo cortado -->
           </div>
           <div class="col text-start">
             <a
@@ -239,11 +262,12 @@
               class="text-dark text-decoration-none"
               (click)="closeSidebarOnMobile()"
             >
-              Facturas Recivos
+              Facturas Recibos
             </a>
           </div>
         </li>
       </ul>
+
       <!-- Reportes -->
       <li
         class="d-flex align-items-center"

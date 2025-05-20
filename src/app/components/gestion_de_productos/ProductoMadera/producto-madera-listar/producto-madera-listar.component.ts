@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { ProductoMadera } from '../../../../models/productos';
+
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ServiceService } from '../../../../services/service.service';
+import { ProductoMadera } from '../../../../models/models';
 
 @Component({
   selector: 'app-producto-madera-listar',

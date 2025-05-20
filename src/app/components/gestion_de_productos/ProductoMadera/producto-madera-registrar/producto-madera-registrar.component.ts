@@ -7,8 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { from } from 'rxjs';
-import { ProductoMadera } from '../../../../models/productos';
-import { Sucursal } from '../../../../models/models';
+
+import { Categoria, ProductoMadera, Sucursal } from '../../../../models/models';
 import { Router } from '@angular/router';
 
 import { ServiceService } from '../../../../services/service.service';
@@ -26,6 +26,7 @@ export class ProductoMaderaRegistrarComponent {
 
   productomadera: ProductoMadera[] = [];
   sucursal: Sucursal[] = [];
+  categoria: Categoria[] = [];
   constructor(
     private fb: FormBuilder,
 
@@ -42,11 +43,13 @@ export class ProductoMaderaRegistrarComponent {
       precio_barraca: ['', Validators.required],
       precio_venta: ['', Validators.required],
       sucursal: ['', Validators.required], // Puedes enviar solo el ID
+      categoria: ['', Validators.required], // Puedes enviar solo el ID
     });
   }
   ngOnInit(): void {
     this.loadProductoMadera();
     this.loadSucursal();
+    this.loadCategoria();
   }
   loadProductoMadera() {
     this.servisio.getProductoMaderas().subscribe((data) => {
@@ -57,6 +60,11 @@ export class ProductoMaderaRegistrarComponent {
   loadSucursal() {
     this.servisio.getSucursales().subscribe((data) => {
       this.sucursal = data; // Aquí deberías tener un array de objetos Sucursal
+    });
+  }
+  loadCategoria() {
+    this.servisio.getCategorias().subscribe((data) => {
+      this.categoria = data; // Aquí deberías tener un array de objetos categoria
     });
   }
   registrar(): void {

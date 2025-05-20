@@ -1,3 +1,4 @@
+/*  E:\BarracaSantaCruz\FrontendBarraca\src\app\services\service.service.ts*/
 import { Injectable } from '@angular/core';
 import {
   Sucursal,
@@ -6,16 +7,15 @@ import {
   Usuario,
   UsuarioRolSucursal,
   RolPermiso,
-} from '../models/models';
-import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import {
   DetalleVentaMadera,
   FacturaRecibo,
   ProductoMadera,
   Venta,
-} from '../models/productos';
+  Categoria,
+} from '../models/models';
+import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -142,6 +142,31 @@ export class ServiceService {
       rolPermiso,
     );
   }
+
+  getCategorias(): Observable<Categoria[]> {
+    return this.http.get<Categoria[]>(`${this.apiUrl}categorias/`);
+  }
+  getCategoriaById(id: number): Observable<Categoria> {
+    return this.http.get<Categoria>(`${this.apiUrl}categorias/${id}/`);
+  }
+  crearCategoria(categoria: Categoria): Observable<Categoria> {
+    return this.http.post<Categoria>(`${this.apiUrl}categorias/`, categoria);
+  }
+  actualizarCategoria(id: number, categoria: Categoria): Observable<Categoria> {
+    return this.http.put<Categoria>(
+      `${this.apiUrl}categorias/${id}/`,
+      categoria,
+    );
+  }
+  actualizarEstadoCategoria(
+    id: number,
+    estado_categoria: boolean,
+  ): Observable<any> {
+    return this.http.put(`${this.apiUrl}categorias/${id}/`, {
+      estado_categoria: estado_categoria ? 'true' : 'false',
+    });
+  }
+
   /* seccion de servicio de productos y detalle de la venta */
   /* servicios de productos */
   getProductoMaderas(): Observable<ProductoMadera[]> {
@@ -173,12 +198,19 @@ export class ServiceService {
   getVentaID(id: number): Observable<Venta> {
     return this.http.get<Venta>(`${this.apiUrl}venta/${id}/`);
   }
-  createVenta(Venta: Venta): Observable<Venta> {
-    return this.http.post<Venta>(`${this.apiUrl}venta/`, Venta);
+
+  createVenta(data: {
+    vendedor_id: number;
+    sucursal_id: number;
+    total: number;
+  }): Observable<Venta> {
+    return this.http.post<Venta>(`${this.apiUrl}venta/`, data);
   }
+
   updateVenta(Venta: Venta): Observable<Venta> {
     return this.http.put<Venta>(`${this.apiUrl}venta/${Venta.id}/`, Venta);
   }
+
   /* servicio de DetalleVentaMadera*/
   getDetalleVentaMadera(): Observable<DetalleVentaMadera[]> {
     return this.http.get<DetalleVentaMadera[]>(
@@ -190,14 +222,21 @@ export class ServiceService {
       `${this.apiUrl}detalleventamadera/${id}/`,
     );
   }
-  createDetalleVentaMadera(
-    DetalleVentaMadera: DetalleVentaMadera,
-  ): Observable<DetalleVentaMadera> {
+
+  createDetalleVentaMadera(data: {
+    venta: number;
+    producto: number;
+    cantidad_vendida: number;
+    precio_unitario: number;
+  }): Observable<DetalleVentaMadera> {
     return this.http.post<DetalleVentaMadera>(
       `${this.apiUrl}detalleventamadera/`,
-      DetalleVentaMadera,
+      data,
     );
   }
+
+  /* servicio de DetalleVentaMadera*/
+
   updateDetalleVentaMadera(
     DetalleVentaMadera: DetalleVentaMadera,
   ): Observable<DetalleVentaMadera> {

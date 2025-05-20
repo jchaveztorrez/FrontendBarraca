@@ -106,6 +106,25 @@
               </option>
             </select>
           </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">categoria</label>
+            <select
+              id="categoria"
+              class="form-select"
+              formControlName="categoria"
+              [ngClass]="{
+                'is-invalid':
+                  form.get('categoria')?.invalid &&
+                  form.get('categoria')?.touched,
+              }"
+              required
+            >
+              <option value="">Seleccione una categoria</option>
+              <option *ngFor="let s of categoria" [value]="s.id">
+                {{ s.nombre }}
+              </option>
+            </select>
+          </div>
         </div>
 
         <div

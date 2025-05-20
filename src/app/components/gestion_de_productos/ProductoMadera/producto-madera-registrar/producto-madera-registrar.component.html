@@ -7,6 +7,7 @@
 
       <form [formGroup]="form" (ngSubmit)="registrar()">
         <div class="row g-3">
+          <!-- Especie -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Especie</label>
             <input
@@ -17,36 +18,7 @@
             />
           </div>
 
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Ancho</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="ancho"
-              placeholder="Ancho en cm"
-            />
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Espesorr</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="espesor"
-              placeholder="Espesor en cm"
-            />
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Largo</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="largo"
-              placeholder="Largo en cm"
-            />
-          </div>
-
+          <!-- Cantidad -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Cantidad</label>
             <input
@@ -56,48 +28,100 @@
               placeholder="Cantidad en unidades"
             />
           </div>
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Precio Compra</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="precio_compra"
-              placeholder="Bs"
-            />
+
+          <!-- Ancho, Espesor, Largo en una sola fila -->
+          <div class="col-12">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Ancho</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="ancho"
+                  placeholder="Pulgadas"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Espesor</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="espesor"
+                  placeholder="Pulgadas"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Largo</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="largo"
+                  placeholder="Pies"
+                />
+              </div>
+            </div>
           </div>
 
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Precio Barraca</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="precio_barraca"
-              placeholder="Bs"
-            />
+          <!-- Precio Compra, Barraca, Venta en una sola fila -->
+          <div class="col-12">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Precio Compra</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="precio_compra"
+                  placeholder="Bs"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Precio Barraca</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="precio_barraca"
+                  placeholder="Bs"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Precio Venta</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="precio_venta"
+                  placeholder="Bs"
+                />
+              </div>
+            </div>
           </div>
 
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Precio Venta</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="precio_venta"
-              placeholder="Bs"
-            />
-          </div>
-
+          <!-- Sucursal -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Sucursal</label>
             <select class="form-select" formControlName="sucursal">
               <option value="">Seleccione una sucursal</option>
-
               <option *ngFor="let sucursal of sucursal" [value]="sucursal.id">
                 {{ sucursal.nombre }}
               </option>
             </select>
           </div>
+
+          <!-- Categoria -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Categoria</label>
+            <select class="form-select" formControlName="categoria">
+              <option value="">Seleccione una sucursal</option>
+              <option
+                *ngFor="let categoria of categoria"
+                [value]="categoria.id"
+              >
+                {{ categoria.nombre }}
+              </option>
+            </select>
+          </div>
         </div>
 
+        <!-- Botones -->
         <div
           class="d-flex flex-column flex-md-row justify-content-between gap-2 mt-4"
         >

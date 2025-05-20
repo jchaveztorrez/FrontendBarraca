@@ -29,15 +29,16 @@
     <thead class="table-primary">
       <tr>
         <th scope="col">Especie</th>
+        <th scope="col">Cantidad</th>
         <th scope="col">Ancho (plg)</th>
         <th scope="col">Espesor (plg)</th>
         <th scope="col">Largo (ft)</th>
-        <th scope="col">Cantidad</th>
         <th scope="col">Volumen</th>
         <th scope="col">Precio Compra</th>
         <th scope="col">Precio Barraca</th>
         <th scope="col">Precio Venta</th>
         <th scope="col">Sucursal</th>
+        <th scope="col">Categoria</th>
         <th scope="col">Fecha Registro</th>
         <th scope="col">Fecha Modificación</th>
         <th scope="col">Estado</th>
@@ -47,16 +48,16 @@
     <tbody>
       <tr *ngFor="let producto of mostrados">
         <td>{{ producto.especie }}</td>
+        <td>{{ producto.cantidad }}</td>
         <td>{{ producto.ancho }}</td>
         <td>{{ producto.espesor }}</td>
         <td>{{ producto.largo }}</td>
-        <td>{{ producto.cantidad }}</td>
-
         <td>{{ producto.volumen }}</td>
         <td>{{ producto.precio_compra }}</td>
         <td>{{ producto.precio_barraca }}</td>
         <td>{{ producto.precio_venta }}</td>
         <td>{{ producto.sucursal.nombre }}</td>
+        <td>{{ producto.categoria.nombre }}</td>
         <td>{{ producto.fecha_registro | date: "dd/MM/yyyy" }}</td>
         <td>{{ producto.fecha_modificacion | date: "dd/MM/yyyy" }}</td>
         <td>{{ producto.estado }}</td>

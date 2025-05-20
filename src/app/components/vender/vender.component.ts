@@ -1,212 +1,338 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { ProductoMadera } from '../../models/productos';
-
+import { Component, OnInit } from '@angular/core';
+import {
+  Usuario,
+  DetalleVentaMadera,
+  ProductoMadera,
+  Sucursal,
+  Venta,
+  Categoria,
+} from '../../models/models';
 import { ServiceService } from '../../services/service.service';
-import { Sucursal, Usuario } from '../../models/models';
-import { isPlatformBrowser } from '@angular/common';
-import { Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-vender',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './vender.component.html',
   styleUrls: ['./vender.component.css'],
 })
-export class VenderComponent {
-  productos: ProductoMadera[] = [];
-  filtrados: ProductoMadera[] = [];
-  cantidades: { [id: number]: number } = {};
-  busqueda = '';
-  nombreSeleccionado = '';
-  sucursalSeleccionada = '';
+export class VenderComponent implements OnInit {
+  usuarios: Usuario[] = [];
+  usuarioSeleccionado: Usuario | null = null;
+
   sucursales: Sucursal[] = [];
-  usuarios: Usuario[] = []; // Lista de usuarios
-  carrito: any[] = [];
-  nombreCliente: string = '';
-  ciNit: string = '';
-  tipoComprobante: string = 'factura';
-  usuarioVendedorId: number | null = null; // ID del usuario vendedor seleccionado
+  sucursal: Sucursal | null = null;
+
+  categoria: Categoria[] = [];
+  categoriaFiltrada: Categoria | null = null;
+
+  productos: ProductoMadera[] = [];
+  productosOriginales: ProductoMadera[] = [];
+
+  producto: ProductoMadera | null = null;
+  productoSeleccionado: ProductoMadera | null = null;
+
+  sucursalFiltrada: Sucursal | null = null;
+
+  cantidadPorProducto: { [key: number]: number } = {};
+  cantidadUltimaAgregada: { [key: number]: number } = {};
+  cantidad: number = 1;
+
+  detalleVentas: DetalleVentaMadera[] = [];
+  totalVenta: number = 0;
+
+  venta: Venta = {} as Venta;
+  ventaId: number = 0;
+
+  busqueda: string = '';
+  categoriaBusqueda: string = '';
 
   constructor(
-    private servicio: ServiceService,
-    private router: Router,
-    private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    private service: ServiceService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.loadProductos();
-    this.loadSucursales();
-    this.loadUsuarios(); // Cargar usuarios
-    this.loadCarrito();
+    this.obtenerUsuarios();
+    this.obtenerProductos();
+    this.obtenerSucursales();
+    this.obtenerCategorias();
   }
-  loadProductos(): void {
-    this.servicio.getProductoMaderas().subscribe((data) => {
-      this.productos = data;
-      this.filtrar();
+
+  obtenerUsuarios(): void {
+    this.service.getUsuarios().subscribe((data) => {
+      this.usuarios = data;
     });
   }
-  loadSucursales(): void {
-    this.servicio.getSucursales().subscribe((data) => {
+
+  obtenerProductos(): void {
+    this.service.getProductoMaderas().subscribe((data) => {
+      this.productosOriginales = data;
+      this.productos = [...data]; // Copia para mostrar
+    });
+  }
+
+  obtenerSucursales(): void {
+    this.service.getSucursales().subscribe((data) => {
       this.sucursales = data;
     });
   }
-  loadUsuarios(): void {
-    this.servicio.getUsuarios().subscribe((data) => {
-      this.usuarios = data; // Cargar la lista de usuarios
+  obtenerCategorias(): void {
+    this.service.getCategorias().subscribe((data) => {
+      this.categoria = data;
     });
-  }
-  loadCarrito(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-      this.carrito = carrito;
-      carrito.forEach((producto: any) => {
-        this.cantidades[producto.id] = producto.cantidad;
-      });
-    }
-  }
-
-  get especiesUnicas(): string[] {
-    return [...new Set(this.productos.map((p) => p.especie))];
   }
 
   filtrar(): void {
-    const texto = this.busqueda.trim().toLowerCase();
-    this.filtrados = this.productos.filter((prod) => {
-      const coincideTexto = prod.especie.toLowerCase().includes(texto);
-      const coincideSucursal =
-        !this.sucursalSeleccionada ||
-        prod.sucursal.nombre.toLowerCase() ===
-          this.sucursalSeleccionada.toLowerCase();
-      const coincideNombreProducto =
-        !this.nombreSeleccionado ||
-        prod.especie.toLowerCase() === this.nombreSeleccionado.toLowerCase();
-      return coincideTexto && coincideSucursal && coincideNombreProducto;
-    });
-  }
+    let filtrados = [...this.productosOriginales];
 
-  agregarAlCarrito(producto: ProductoMadera): void {
-    const cantidad = this.cantidades[producto.id] || 1;
-    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-    const productoExistente = carrito.find(
-      (item: any) => item.id === producto.id,
-    );
-
-    if (productoExistente) {
-      productoExistente.cantidad = cantidad; // Actualizar cantidad
-    } else {
-      carrito.push({ ...producto, cantidad });
+    // Filtro por texto (especie)
+    if (this.categoriaBusqueda.trim()) {
+      const filtro = this.categoriaBusqueda.toLowerCase();
+      filtrados = filtrados.filter((p) =>
+        p.especie.toLowerCase().includes(filtro),
+      );
     }
 
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    this.cantidades[producto.id] = cantidad;
-    this.carrito = carrito; // Sincronizar el carrito
+    // Filtro por producto seleccionado
+    if (this.productoSeleccionado) {
+      filtrados = filtrados.filter(
+        (p) => p.id === this.productoSeleccionado?.id,
+      );
+    }
+
+    // Filtro por sucursal
+    if (this.sucursalFiltrada) {
+      filtrados = filtrados.filter(
+        (p) => p.sucursal?.id === this.sucursalFiltrada?.id,
+      );
+    }
+
+    // Filtro por categoría
+    if (this.categoriaFiltrada) {
+      filtrados = filtrados.filter(
+        (p) => p.categoria?.id === this.categoriaFiltrada?.id,
+      );
+    }
+
+    this.productos = filtrados;
+  }
+
+  agregarAlCarrito(producto: ProductoMadera, cantidad: number): void {
+    if (!producto || !cantidad || cantidad <= 0 || cantidad > producto.cantidad)
+      return;
+
+    // Comprobar si la cantidad es igual a la última cantidad agregada para este producto
+    if (this.cantidadUltimaAgregada[producto.id] === cantidad) {
+      // No hacer nada si la cantidad no cambió
+      return;
+    }
+
+    const precio_unitario = producto.precio_venta;
+    const subtotal = precio_unitario * cantidad;
+
+    const detalleExistente = this.detalleVentas.find(
+      (d) => d.producto.id === producto.id,
+    );
+
+    if (detalleExistente) {
+      // Actualizar la cantidad al nuevo valor (no sumar)
+      detalleExistente.cantidad_vendida = cantidad;
+
+      // Validar que no supere la cantidad disponible
+      if (detalleExistente.cantidad_vendida > producto.cantidad) {
+        detalleExistente.cantidad_vendida = producto.cantidad;
+      }
+
+      detalleExistente.subtotal =
+        detalleExistente.cantidad_vendida * detalleExistente.precio_unitario;
+    } else {
+      // Crear nuevo detalle si no existe
+      const detalle: DetalleVentaMadera = {
+        id: 0,
+        venta: {} as Venta,
+        producto,
+        cantidad_vendida: cantidad,
+        precio_unitario,
+        subtotal,
+      };
+      this.detalleVentas.push(detalle);
+    }
+
+    // Guardar la cantidad actual como la última agregada para este producto
+    this.cantidadUltimaAgregada[producto.id] = cantidad;
+
+    // Sincronizar el campo de cantidadPorProducto con la cantidad del carrito
+    this.cantidadPorProducto[producto.id] = cantidad;
+
+    this.actualizarTotalVenta();
   }
 
   quitarDelCarrito(productoId: number): void {
-    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-    const updatedCarrito = carrito.filter(
-      (item: any) => item.id !== productoId,
+    this.detalleVentas = this.detalleVentas.filter(
+      (detalle) => detalle.producto.id !== productoId,
     );
-    localStorage.setItem('carrito', JSON.stringify(updatedCarrito));
-    delete this.cantidades[productoId];
-    this.carrito = updatedCarrito; // Sincroniza el carrito actualizado
+    this.actualizarTotalVenta();
   }
 
-  vaciarCarrito(): void {
-    localStorage.removeItem('carrito');
-    this.cantidades = {};
-    this.carrito = [];
-  }
-
-  calcularTotal(): number {
-    return this.carrito.reduce(
-      (total, p) => total + p.precio_venta * p.cantidad,
+  actualizarTotalVenta(): void {
+    this.totalVenta = this.detalleVentas.reduce(
+      (acc, detalle) =>
+        acc + detalle.precio_unitario * detalle.cantidad_vendida,
       0,
     );
   }
-
-  actualizarCantidad(producto: any): void {
-    if (producto.cantidad < 1) {
-      producto.cantidad = 1;
+  actualizarSubtotal(detalle: DetalleVentaMadera): void {
+    if (detalle.cantidad_vendida < 1) {
+      detalle.cantidad_vendida = 1;
     }
-    this.guardarCarrito();
+
+    if (detalle.cantidad_vendida > detalle.producto.cantidad) {
+      detalle.cantidad_vendida = detalle.producto.cantidad;
+    }
+
+    detalle.subtotal = detalle.cantidad_vendida * detalle.precio_unitario;
+    this.actualizarTotalVenta();
+  }
+  actualizarCantidadDesdeProducto(producto: ProductoMadera): void {
+    const cantidad = this.cantidadPorProducto[producto.id];
+    if (!producto || cantidad < 1) return;
+
+    const detalle = this.detalleVentas.find(
+      (d) => d.producto.id === producto.id,
+    );
+
+    if (detalle) {
+      detalle.cantidad_vendida = cantidad;
+
+      if (detalle.cantidad_vendida > producto.cantidad) {
+        detalle.cantidad_vendida = producto.cantidad;
+        this.cantidadPorProducto[producto.id] = producto.cantidad;
+      }
+
+      detalle.subtotal = detalle.cantidad_vendida * detalle.precio_unitario;
+
+      // Actualizar la última cantidad agregada para evitar añadir más si no cambia
+      this.cantidadUltimaAgregada[producto.id] = detalle.cantidad_vendida;
+
+      this.actualizarTotalVenta();
+    }
   }
 
-  guardarCarrito(): void {
-    localStorage.setItem('carrito', JSON.stringify(this.carrito));
+  actualizarCantidadDesdeCarrito(detalle: DetalleVentaMadera): void {
+    let cantidad = detalle.cantidad_vendida;
+
+    if (cantidad < 1) {
+      cantidad = 1;
+      detalle.cantidad_vendida = 1;
+    }
+
+    if (cantidad > detalle.producto.cantidad) {
+      cantidad = detalle.producto.cantidad;
+      detalle.cantidad_vendida = cantidad;
+    }
+
+    detalle.subtotal = cantidad * detalle.precio_unitario;
+
+    // Actualizar en la lista de productos
+    this.cantidadPorProducto[detalle.producto.id] = cantidad;
+
+    // Actualizar la última cantidad agregada para mantener sincronización
+    this.cantidadUltimaAgregada[detalle.producto.id] = cantidad;
+
+    this.actualizarTotalVenta();
   }
 
-  estaEnCarrito(productoId: number): boolean {
-    return this.carrito.some((item) => item.id === productoId);
-  }
-
-  cantidadTotal(): number {
-    return this.carrito.reduce((total, item) => total + item.cantidad, 0);
-  }
-
-  irAProductos(): void {
-    this.router.navigate(['app-panel-control/vender']);
-  }
-
-  vender(): void {
-    // Validaciones
+  registrarVenta(): void {
     if (
-      !this.nombreCliente.trim() ||
-      !this.ciNit.trim() ||
-      !this.tipoComprobante ||
-      !this.sucursalSeleccionada ||
-      this.usuarioVendedorId === null
+      !this.usuarioSeleccionado ||
+      !this.sucursal ||
+      this.detalleVentas.length === 0
     ) {
-      alert(
-        'Por favor, complete todos los campos del cliente, seleccione una sucursal y un vendedor.',
-      );
-      return;
-    }
-    if (this.carrito.length === 0) {
-      alert('El carrito está vacío.');
+      alert('Faltan datos para registrar la venta.');
       return;
     }
 
-    const detalles = this.carrito.map((producto) => ({
-      producto: producto.id,
-      cantidad_vendida: producto.cantidad,
-      precio_unitario: producto.precio_venta,
-      subtotal: producto.precio_venta * producto.cantidad,
-    }));
+    // Creamos la venta con los datos requeridos por el backend
 
-    const ventaData = {
-      factura: {
-        tipo: this.tipoComprobante,
-        nombre_cliente: this.nombreCliente,
-        ci_nit: this.ciNit,
-        total: this.calcularTotal(),
-      },
-      venta: {
-        vendedor: this.usuarioVendedorId,
-        sucursal: this.sucursalSeleccionada,
-        fecha: new Date().toISOString(),
-      },
-      detalles: detalles,
+    const nuevaVenta = {
+      vendedor_id: this.usuarioSeleccionado.id,
+      sucursal_id: this.sucursal.id,
+      total: this.totalVenta,
     };
 
-    this.http
-      .post('http://localhost:8000/api/registrar_venta/', ventaData)
-      .subscribe({
-        next: () => {
-          alert('Venta registrada exitosamente.');
-          this.vaciarCarrito();
-          this.router.navigate(['/productos']);
+    this.service.createVenta(nuevaVenta).subscribe(
+      (ventaGuardada) => {
+        this.venta = ventaGuardada;
+        this.ventaId = ventaGuardada.id;
+        this.registrarDetallesVenta();
+      },
+      (error) => {
+        console.error('Error al registrar la venta:', error);
+        alert('Error al registrar la venta.');
+      },
+    );
+  }
+
+  registrarDetallesVenta(): void {
+    this.detalleVentas.forEach((detalle) => {
+      const nuevoDetalle = {
+        venta: this.venta.id,
+        producto: detalle.producto.id,
+        cantidad_vendida: detalle.cantidad_vendida,
+        precio_unitario: detalle.precio_unitario,
+      };
+
+      this.service.createDetalleVentaMadera(nuevoDetalle).subscribe(
+        (detalleCreado) => {
+          console.log('Detalle registrado:', detalleCreado);
+
+          const productoId = detalle.producto.id;
+          const cantidadVendida = detalle.cantidad_vendida;
+
+          // ✅ Solo actualizamos en productos visibles (para no duplicar descuento)
+          const productoEnLista = this.productos.find(
+            (p) => p.id === productoId,
+          );
+          if (productoEnLista) {
+            productoEnLista.cantidad -= cantidadVendida;
+
+            // Evitamos cantidades negativas
+            if (productoEnLista.cantidad < 0) {
+              productoEnLista.cantidad = 0;
+            }
+          }
         },
-        error: (err) => {
-          console.error('Error al registrar la venta:', err);
-          alert('Ocurrió un error al registrar la venta.');
+        (error) => {
+          console.error('Error al registrar detalle de venta:', error);
         },
-      });
+      );
+    });
+
+    alert('Venta registrada con éxito');
+    this.reiniciarFormulario();
+    this.limpiarCantidades();
+  }
+
+  reiniciarFormulario(): void {
+    this.usuarioSeleccionado = null;
+    this.sucursal = null;
+    this.detalleVentas = [];
+    this.totalVenta = 0;
+    this.ventaId = 0;
+  }
+  limpiarCantidades(): void {
+    // Limpiar los campos de cantidad por producto
+    this.cantidadPorProducto = {};
+    this.cantidadUltimaAgregada = {};
+
+    // Limpiar los productos del carrito
+    this.detalleVentas = [];
+
+    // Reiniciar el total de la venta
+    this.totalVenta = 0;
   }
 }
