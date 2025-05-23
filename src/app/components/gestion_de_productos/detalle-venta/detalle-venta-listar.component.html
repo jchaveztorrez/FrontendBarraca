@@ -1,0 +1,57 @@
+<h2 class="mb-4 text-primary">Lista de Detalles de Venta</h2>
+
+<!-- Filtros -->
+<div
+  class="mb-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2"
+>
+  <div class="d-flex flex-row gap-2 w-100">
+    <input
+      type="text"
+      [(ngModel)]="busqueda"
+      (input)="filtrar()"
+      class="form-control"
+      placeholder="Buscar por especie del producto..."
+    />
+  </div>
+</div>
+
+<!-- Tabla -->
+<div
+  class="table-responsive rounded border"
+  style="max-height: 400px; overflow-y: auto"
+>
+  <table class="table table-bordered table-hover align-middle text-center mb-0">
+    <thead class="table-primary">
+      <tr>
+        <th>Numero de Venta</th>
+        <th>Cantidad Vendida</th>
+        <th>Producto</th>
+        <th>Precio Unitario (Bs)</th>
+        <th>Subtotal (Bs)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let detalle of mostradas">
+        <td>{{ detalle.venta.id }}</td>
+        <td>{{ detalle.cantidad_vendida }}</td>
+        <td>
+          <strong>{{ detalle.producto.especie }}</strong> -
+          {{ detalle.producto.categoria.nombre }}
+          <span>
+            ({{ detalle.producto.ancho }} pulgadas de ancho ×
+            {{ detalle.producto.espesor }} pulgadas de espesor ×
+            {{ detalle.producto.largo }} pies de largo)
+          </span>
+        </td>
+
+        <td>{{ detalle.precio_unitario | number: "1.2-2" }}</td>
+        <td>{{ detalle.subtotal | number: "1.2-2" }}</td>
+      </tr>
+      <tr *ngIf="mostradas.length === 0">
+        <td colspan="6" class="text-center text-muted py-4">
+          No se encontraron detalles de venta.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

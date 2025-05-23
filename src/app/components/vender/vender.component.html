@@ -199,7 +199,7 @@
                     </td>
 
                     <td>Bs {{ detalle.precio_unitario }}</td>
-                    <td>Bs {{ detalle.subtotal }}</td>
+                    <td>Bs {{ detalle.subtotal | number: "1.2-2" }}</td>
                     <td>
                       <button
                         class="btn btn-outline-danger btn-sm"
@@ -216,7 +216,7 @@
             <!-- Total -->
             <div class="text-end mt-2">
               <h5>
-                Total: <strong>Bs {{ totalVenta }}</strong>
+                <span>Total: {{ totalVenta | number: "1.2-2" }} Bs</span>
               </h5>
             </div>
           </div>

@@ -35,12 +35,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 // Productos
 
-import { VentaListarComponent } from './components/gestion_de_productos/venta/venta-listar/venta-listar.component';
-import { VentaRegistrarComponent } from './components/gestion_de_productos/venta/venta-registrar/venta-registrar.component';
-import { VentaEditarComponent } from './components/gestion_de_productos/venta/venta-editar/venta-editar.component';
-import { DetalleVentaListarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-listar/detalle-venta-listar.component';
-import { DetalleVentaRegistrarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-registrar/detalle-venta-registrar.component';
-import { DetalleVentaEditarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-editar/detalle-venta-editar.component';
+import { DetalleVentaListarComponent } from './components/gestion_de_productos/detalle-venta/detalle-venta-listar.component';
+
 import { ProductoMaderaListarComponent } from './components/gestion_de_productos/ProductoMadera/producto-madera-listar/producto-madera-listar.component';
 import { ProductoMaderaRegistrarComponent } from './components/gestion_de_productos/ProductoMadera/producto-madera-registrar/producto-madera-registrar.component';
 import { ProductoMaderaEditarComponent } from './components/gestion_de_productos/ProductoMadera/producto-madera-editar/producto-madera-editar.component';
@@ -48,10 +44,11 @@ import { FacturaReciboRegistrarComponent } from './components/gestion_de_product
 import { FacturaReciboEditarComponent } from './components/gestion_de_productos/FacturaRecibo/factura-recibo-editar/factura-recibo-editar.component';
 import { FacturaReciboListarComponent } from './components/gestion_de_productos/FacturaRecibo/factura-recibo-listar/factura-recibo-listar.component';
 import { VenderComponent } from './components/vender/vender.component';
-import { CarritoComponent } from './components/carrito/carrito.component';
+
 import { ListarCategoriaComponent } from './components/gestion_de_productos/categoria/listar-categoria/listar-categoria.component';
 import { RegistrarCategoriaComponent } from './components/gestion_de_productos/categoria/registrar-categoria/registrar-categoria.component';
 import { EditarCategoriaComponent } from './components/gestion_de_productos/categoria/editar-categoria/editar-categoria.component';
+import { VentaListarComponent } from './components/gestion_de_productos/venta/venta-listar.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -126,19 +123,9 @@ export const routes: Routes = [
 
       // Venta
       { path: 'listar-venta', component: VentaListarComponent },
-      { path: 'registrar-venta', component: VentaRegistrarComponent },
-      { path: 'editar-venta/:id', component: VentaEditarComponent },
 
       // Detalle Venta
       { path: 'listar-detalle-venta', component: DetalleVentaListarComponent },
-      {
-        path: 'registrar-detalle-venta',
-        component: DetalleVentaRegistrarComponent,
-      },
-      {
-        path: 'editar-detalle-venta/:id',
-        component: DetalleVentaEditarComponent,
-      },
       //facturarecibo
       // FacturaRecibo
       {
@@ -153,11 +140,7 @@ export const routes: Routes = [
         path: 'editar-factura-recibo/:id',
         component: FacturaReciboEditarComponent,
       },
-      //carrito
-      {
-        path: 'carrito',
-        component: CarritoComponent,
-      },
+
       // dashbhoard
       {
         path: 'dashboard',

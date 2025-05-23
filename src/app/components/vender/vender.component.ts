@@ -125,32 +125,52 @@ export class VenderComponent implements OnInit {
     if (!producto || !cantidad || cantidad <= 0 || cantidad > producto.cantidad)
       return;
 
-    // Comprobar si la cantidad es igual a la última cantidad agregada para este producto
-    if (this.cantidadUltimaAgregada[producto.id] === cantidad) {
-      // No hacer nada si la cantidad no cambió
-      return;
-    }
+    if (this.cantidadUltimaAgregada[producto.id] === cantidad) return;
 
     const precio_unitario = producto.precio_venta;
-    const subtotal = precio_unitario * cantidad;
+    const categoria = producto.categoria?.nombre.toLowerCase();
+
+    let subtotal = 0;
+
+    if (categoria === 'tabla') {
+      const volumen = (producto.ancho * producto.espesor * producto.largo) / 12;
+      subtotal = Math.round(volumen * precio_unitario * cantidad * 100) / 100;
+    } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+      subtotal = Math.round(precio_unitario * cantidad * 100) / 100;
+    } else {
+      alert(`Categoría no válida para cálculo: ${producto.categoria?.nombre}`);
+      return;
+    }
 
     const detalleExistente = this.detalleVentas.find(
       (d) => d.producto.id === producto.id,
     );
 
     if (detalleExistente) {
-      // Actualizar la cantidad al nuevo valor (no sumar)
       detalleExistente.cantidad_vendida = cantidad;
-
-      // Validar que no supere la cantidad disponible
       if (detalleExistente.cantidad_vendida > producto.cantidad) {
         detalleExistente.cantidad_vendida = producto.cantidad;
       }
 
-      detalleExistente.subtotal =
-        detalleExistente.cantidad_vendida * detalleExistente.precio_unitario;
+      if (categoria === 'tabla') {
+        const volumen =
+          (producto.ancho * producto.espesor * producto.largo) / 12;
+        detalleExistente.subtotal =
+          Math.round(
+            volumen *
+              detalleExistente.precio_unitario *
+              detalleExistente.cantidad_vendida *
+              100,
+          ) / 100;
+      } else {
+        detalleExistente.subtotal =
+          Math.round(
+            detalleExistente.precio_unitario *
+              detalleExistente.cantidad_vendida *
+              100,
+          ) / 100;
+      }
     } else {
-      // Crear nuevo detalle si no existe
       const detalle: DetalleVentaMadera = {
         id: 0,
         venta: {} as Venta,
@@ -162,12 +182,8 @@ export class VenderComponent implements OnInit {
       this.detalleVentas.push(detalle);
     }
 
-    // Guardar la cantidad actual como la última agregada para este producto
     this.cantidadUltimaAgregada[producto.id] = cantidad;
-
-    // Sincronizar el campo de cantidadPorProducto con la cantidad del carrito
     this.cantidadPorProducto[producto.id] = cantidad;
-
     this.actualizarTotalVenta();
   }
 
@@ -175,28 +191,55 @@ export class VenderComponent implements OnInit {
     this.detalleVentas = this.detalleVentas.filter(
       (detalle) => detalle.producto.id !== productoId,
     );
+
+    // Limpiar la cantidad del producto eliminado
+    delete this.cantidadPorProducto[productoId];
+    delete this.cantidadUltimaAgregada[productoId];
+
     this.actualizarTotalVenta();
   }
 
   actualizarTotalVenta(): void {
-    this.totalVenta = this.detalleVentas.reduce(
-      (acc, detalle) =>
-        acc + detalle.precio_unitario * detalle.cantidad_vendida,
-      0,
-    );
+    this.totalVenta =
+      Math.round(
+        this.detalleVentas.reduce((acc, detalle) => acc + detalle.subtotal, 0) *
+          100,
+      ) / 100;
   }
+
   actualizarSubtotal(detalle: DetalleVentaMadera): void {
     if (detalle.cantidad_vendida < 1) {
       detalle.cantidad_vendida = 1;
     }
-
     if (detalle.cantidad_vendida > detalle.producto.cantidad) {
       detalle.cantidad_vendida = detalle.producto.cantidad;
     }
 
-    detalle.subtotal = detalle.cantidad_vendida * detalle.precio_unitario;
+    const categoria = detalle.producto.categoria?.nombre.toLowerCase();
+
+    if (categoria === 'tabla') {
+      const volumen =
+        (detalle.producto.ancho *
+          detalle.producto.espesor *
+          detalle.producto.largo) /
+        12;
+      detalle.subtotal =
+        Math.round(
+          volumen * detalle.precio_unitario * detalle.cantidad_vendida * 100,
+        ) / 100;
+    } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+      detalle.subtotal =
+        Math.round(detalle.precio_unitario * detalle.cantidad_vendida * 100) /
+        100;
+    } else {
+      alert(
+        `Categoría no válida para cálculo: ${detalle.producto.categoria?.nombre}`,
+      );
+    }
+
     this.actualizarTotalVenta();
   }
+
   actualizarCantidadDesdeProducto(producto: ProductoMadera): void {
     const cantidad = this.cantidadPorProducto[producto.id];
     if (!producto || cantidad < 1) return;
@@ -213,11 +256,26 @@ export class VenderComponent implements OnInit {
         this.cantidadPorProducto[producto.id] = producto.cantidad;
       }
 
-      detalle.subtotal = detalle.cantidad_vendida * detalle.precio_unitario;
+      const categoria = producto.categoria?.nombre.toLowerCase();
 
-      // Actualizar la última cantidad agregada para evitar añadir más si no cambia
+      if (categoria === 'tabla') {
+        const volumen =
+          (producto.ancho * producto.espesor * producto.largo) / 12;
+        detalle.subtotal =
+          Math.round(
+            volumen * detalle.precio_unitario * detalle.cantidad_vendida * 100,
+          ) / 100;
+      } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+        detalle.subtotal =
+          Math.round(detalle.precio_unitario * detalle.cantidad_vendida * 100) /
+          100;
+      } else {
+        alert(
+          `Categoría no válida para cálculo: ${producto.categoria?.nombre}`,
+        );
+      }
+
       this.cantidadUltimaAgregada[producto.id] = detalle.cantidad_vendida;
-
       this.actualizarTotalVenta();
     }
   }
@@ -229,18 +287,31 @@ export class VenderComponent implements OnInit {
       cantidad = 1;
       detalle.cantidad_vendida = 1;
     }
-
     if (cantidad > detalle.producto.cantidad) {
       cantidad = detalle.producto.cantidad;
       detalle.cantidad_vendida = cantidad;
     }
 
-    detalle.subtotal = cantidad * detalle.precio_unitario;
+    const categoria = detalle.producto.categoria?.nombre.toLowerCase();
 
-    // Actualizar en la lista de productos
+    if (categoria === 'tabla') {
+      const volumen =
+        (detalle.producto.ancho *
+          detalle.producto.espesor *
+          detalle.producto.largo) /
+        12;
+      detalle.subtotal =
+        Math.round(volumen * detalle.precio_unitario * cantidad * 100) / 100;
+    } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+      detalle.subtotal =
+        Math.round(detalle.precio_unitario * cantidad * 100) / 100;
+    } else {
+      alert(
+        `Categoría no válida para cálculo: ${detalle.producto.categoria?.nombre}`,
+      );
+    }
+
     this.cantidadPorProducto[detalle.producto.id] = cantidad;
-
-    // Actualizar la última cantidad agregada para mantener sincronización
     this.cantidadUltimaAgregada[detalle.producto.id] = cantidad;
 
     this.actualizarTotalVenta();
@@ -278,6 +349,10 @@ export class VenderComponent implements OnInit {
   }
 
   registrarDetallesVenta(): void {
+    if (this.detalleVentas.length === 0) {
+      alert('No hay detalles de venta para registrar.');
+      return;
+    }
     this.detalleVentas.forEach((detalle) => {
       const nuevoDetalle = {
         venta: this.venta.id,
@@ -285,34 +360,33 @@ export class VenderComponent implements OnInit {
         cantidad_vendida: detalle.cantidad_vendida,
         precio_unitario: detalle.precio_unitario,
       };
-
+      console.log('Nuevo detalle a registrar:', nuevoDetalle);
       this.service.createDetalleVentaMadera(nuevoDetalle).subscribe(
         (detalleCreado) => {
           console.log('Detalle registrado:', detalleCreado);
-
           const productoId = detalle.producto.id;
           const cantidadVendida = detalle.cantidad_vendida;
-
-          // ✅ Solo actualizamos en productos visibles (para no duplicar descuento)
           const productoEnLista = this.productos.find(
             (p) => p.id === productoId,
           );
           if (productoEnLista) {
             productoEnLista.cantidad -= cantidadVendida;
-
-            // Evitamos cantidades negativas
             if (productoEnLista.cantidad < 0) {
               productoEnLista.cantidad = 0;
             }
           }
         },
         (error) => {
+          // Mostrar error detallado para diagnósitco
           console.error('Error al registrar detalle de venta:', error);
+          const errorMsg = error.error
+            ? JSON.stringify(error.error)
+            : error.message || 'Error desconocido';
+          alert(`Error al registrar el detalle de venta: ${errorMsg}`);
         },
       );
     });
-
-    alert('Venta registrada con éxito');
+    alert('Intentando registrar todos los detalles...');
     this.reiniciarFormulario();
     this.limpiarCantidades();
   }
