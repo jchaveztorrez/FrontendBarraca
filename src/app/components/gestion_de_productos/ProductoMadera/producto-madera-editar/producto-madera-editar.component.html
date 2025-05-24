@@ -7,6 +7,7 @@
 
       <form [formGroup]="form" (ngSubmit)="editar()">
         <div class="row g-3">
+          <!-- Especie -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Especie</label>
             <input
@@ -17,36 +18,7 @@
             />
           </div>
 
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Ancho</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="ancho"
-              placeholder="Ancho en cm"
-            />
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Espesor</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="espesor"
-              placeholder="Espesor en cm"
-            />
-          </div>
-
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Largo</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="largo"
-              placeholder="Largo en cm"
-            />
-          </div>
-
+          <!-- Cantidad -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Cantidad</label>
             <input
@@ -57,76 +29,96 @@
             />
           </div>
 
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Precio Compra</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="precio_compra"
-              placeholder="Bs"
-            />
+          <!-- Ancho, Espesor, Largo en una sola fila -->
+          <div class="col-12">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Ancho</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="ancho"
+                  placeholder="Pulgadas"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Espesor</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="espesor"
+                  placeholder="Pulgadas"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Largo</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="largo"
+                  placeholder="Pies"
+                />
+              </div>
+            </div>
           </div>
 
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Precio Barraca</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="precio_barraca"
-              placeholder="Bs"
-            />
+          <!-- Precio Compra, Barraca, Venta en una sola fila -->
+          <div class="col-12">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Precio Compra</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="precio_compra"
+                  placeholder="Bs"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Precio Barraca</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="precio_barraca"
+                  placeholder="Bs"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Precio Venta</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="precio_venta"
+                  placeholder="Bs"
+                />
+              </div>
+            </div>
           </div>
 
-          <div class="col-md-4">
-            <label class="form-label fw-semibold">Precio Venta</label>
-            <input
-              type="number"
-              class="form-control"
-              formControlName="precio_venta"
-              placeholder="Bs"
-            />
-          </div>
-
+          <!-- Sucursal -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Sucursal</label>
-            <select
-              id="sucursal"
-              class="form-select"
-              formControlName="sucursal"
-              [ngClass]="{
-                'is-invalid':
-                  form.get('sucursal')?.invalid &&
-                  form.get('sucursal')?.touched,
-              }"
-              required
-            >
+            <select class="form-select" formControlName="sucursal">
               <option value="">Seleccione una sucursal</option>
               <option *ngFor="let s of sucursal" [value]="s.id">
                 {{ s.nombre }}
               </option>
             </select>
           </div>
+
+          <!-- Categoría -->
           <div class="col-md-6">
-            <label class="form-label fw-semibold">categoria</label>
-            <select
-              id="categoria"
-              class="form-select"
-              formControlName="categoria"
-              [ngClass]="{
-                'is-invalid':
-                  form.get('categoria')?.invalid &&
-                  form.get('categoria')?.touched,
-              }"
-              required
-            >
-              <option value="">Seleccione una categoria</option>
-              <option *ngFor="let s of categoria" [value]="s.id">
-                {{ s.nombre }}
+            <label class="form-label fw-semibold">Categoría</label>
+            <select class="form-select" formControlName="categoria">
+              <option value="">Seleccione una categoría</option>
+              <option *ngFor="let c of categoria" [value]="c.id">
+                {{ c.nombre }}
               </option>
             </select>
           </div>
         </div>
 
+        <!-- Botones -->
         <div
           class="d-flex flex-column flex-md-row justify-content-between gap-2 mt-4"
         >
@@ -137,6 +129,7 @@
           >
             <i class="bi bi-arrow-left-circle me-2"></i> Volver
           </button>
+
           <button
             class="btn btn-warning w-100"
             type="button"

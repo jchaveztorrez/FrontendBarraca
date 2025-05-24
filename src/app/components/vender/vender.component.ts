@@ -8,9 +8,10 @@ import {
   Categoria,
 } from '../../models/models';
 import { ServiceService } from '../../services/service.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-vender',
@@ -52,7 +53,7 @@ export class VenderComponent implements OnInit {
 
   constructor(
     private service: ServiceService,
-    private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -339,6 +340,7 @@ export class VenderComponent implements OnInit {
       (ventaGuardada) => {
         this.venta = ventaGuardada;
         this.ventaId = ventaGuardada.id;
+
         this.registrarDetallesVenta();
       },
       (error) => {
@@ -353,7 +355,8 @@ export class VenderComponent implements OnInit {
       alert('No hay detalles de venta para registrar.');
       return;
     }
-    this.detalleVentas.forEach((detalle) => {
+
+    const observables = this.detalleVentas.map((detalle) => {
       const nuevoDetalle = {
         venta: this.venta.id,
         producto: detalle.producto.id,
@@ -361,9 +364,14 @@ export class VenderComponent implements OnInit {
         precio_unitario: detalle.precio_unitario,
       };
       console.log('Nuevo detalle a registrar:', nuevoDetalle);
-      this.service.createDetalleVentaMadera(nuevoDetalle).subscribe(
-        (detalleCreado) => {
-          console.log('Detalle registrado:', detalleCreado);
+      return this.service.createDetalleVentaMadera(nuevoDetalle);
+    });
+
+    forkJoin(observables).subscribe(
+      (detallesCreados) => {
+        // Actualizar cantidades en productos tras confirmación de todos los detalles
+        detallesCreados.forEach((detalleCreado, index) => {
+          const detalle = this.detalleVentas[index];
           const productoId = detalle.producto.id;
           const cantidadVendida = detalle.cantidad_vendida;
           const productoEnLista = this.productos.find(
@@ -375,20 +383,23 @@ export class VenderComponent implements OnInit {
               productoEnLista.cantidad = 0;
             }
           }
-        },
-        (error) => {
-          // Mostrar error detallado para diagnósitco
-          console.error('Error al registrar detalle de venta:', error);
-          const errorMsg = error.error
-            ? JSON.stringify(error.error)
-            : error.message || 'Error desconocido';
-          alert(`Error al registrar el detalle de venta: ${errorMsg}`);
-        },
-      );
-    });
-    alert('Intentando registrar todos los detalles...');
-    this.reiniciarFormulario();
-    this.limpiarCantidades();
+        });
+
+        alert('Venta y detalles registrados correctamente.');
+        this.reiniciarFormulario();
+        this.limpiarCantidades();
+
+        // Navegar a la ruta solicitada
+        this.router.navigate(['app-panel-control/registrar-factura-recibo']);
+      },
+      (error) => {
+        console.error('Error al registrar detalles de venta:', error);
+        const errorMsg = error.error
+          ? JSON.stringify(error.error)
+          : error.message || 'Error desconocido';
+        alert(`Error al registrar los detalles de venta: ${errorMsg}`);
+      },
+    );
   }
 
   reiniciarFormulario(): void {

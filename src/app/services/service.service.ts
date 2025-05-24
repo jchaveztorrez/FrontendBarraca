@@ -234,9 +234,7 @@ export class ServiceService {
       data,
     );
   }
-
   /* servicio de DetalleVentaMadera*/
-
   updateDetalleVentaMadera(
     DetalleVentaMadera: DetalleVentaMadera,
   ): Observable<DetalleVentaMadera> {
@@ -245,6 +243,7 @@ export class ServiceService {
       DetalleVentaMadera,
     );
   }
+
   /* servicio de FacturaRecibo*/
   getFacturaRecibo(): Observable<FacturaRecibo[]> {
     return this.http.get<FacturaRecibo[]>(`${this.apiUrl}facturarecibo/`);

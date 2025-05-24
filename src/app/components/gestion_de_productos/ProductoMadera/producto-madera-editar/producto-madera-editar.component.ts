@@ -70,6 +70,7 @@ export class ProductoMaderaEditarComponent {
       this.form.patchValue({
         id: data.id,
         sucursal: data.sucursal.id, // Asegúrate de que estamos asignando el ID de la sucursal correctamente
+        categoria: data.categoria.id, // Asegúrate de que estamos asignando el ID de la categoría correctamente
       });
     });
   }
