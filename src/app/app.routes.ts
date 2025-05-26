@@ -49,11 +49,13 @@ import { ListarCategoriaComponent } from './components/gestion_de_productos/cate
 import { RegistrarCategoriaComponent } from './components/gestion_de_productos/categoria/registrar-categoria/registrar-categoria.component';
 import { EditarCategoriaComponent } from './components/gestion_de_productos/categoria/editar-categoria/editar-categoria.component';
 import { VentaListarComponent } from './components/gestion_de_productos/venta/venta-listar.component';
+import { LoginComponent } from './components/login/login.component';
 
 export const routes: Routes = [
   // Ruta principal
   { path: '', redirectTo: 'index', pathMatch: 'full' },
   { path: 'index', component: IndexComponent },
+  { path: 'app-login', component: LoginComponent },
   {
     path: 'app-panel-control',
     component: PanelControlComponent,

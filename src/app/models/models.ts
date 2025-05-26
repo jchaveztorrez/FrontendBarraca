@@ -32,9 +32,9 @@ export interface Usuario {
 }
 export interface UsuarioRolSucursal {
   id: number;
-  usuario: Usuario;
   rol: Rol;
   sucursal: Sucursal;
+  usuario: Usuario;
 }
 export interface RolPermiso {
   id: number;

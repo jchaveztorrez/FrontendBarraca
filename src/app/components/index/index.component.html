@@ -11,8 +11,7 @@
           style="max-width: 80px; margin-right: 10px"
         />
         <div class="text-center">
-          <span class="h5 mb-0 fst-italic">Barraca Carpintería</span><br />
-          <span class="small fst-italic">Torrez</span>
+          <span class="h5 mb-0 fst-italic">Barraca Torrez</span>
         </div>
       </div>
 
@@ -22,11 +21,7 @@
         <a href="#" class="nav-link">Productos</a>
         <a href="#" class="nav-link">Servicios</a>
         <a href="#" class="nav-link">Sobre Nosotros</a>
-        <a href="#" class="nav-link">Iniciar Sesión</a>
-
-        <a routerLink="/app-panel-control" class="nav-link"
-          >Ir al Panel de Control</a
-        >
+        <a routerLink="/app-login" class="nav-link">Iniciar Sesión</a>
       </nav>
 
       <!-- Menú hamburguesa para móviles -->
@@ -68,15 +63,16 @@
       <!-- Texto -->
       <div class="col-md-6">
         <p
-          class="display-2 fw-bold"
+          class="display-4 fw-bold"
           style="
             font-family:
               &quot;Segoe UI&quot;, Tahoma, Geneva, Verdana, sans-serif;
           "
         >
-          <span class="text-dark">Ahorra, gana y </span>
-          <span class="text-info">cuida el planeta </span>
-          <span class="text-dark">fácilmente</span>
+          <span class="text-dark">Construimos con </span>
+          <span class="text-success">madera sostenible </span>
+          <span class="text-dark">y pasión por </span>
+          <span class="text-info">la carpintería</span>
         </p>
       </div>
 
@@ -84,125 +80,161 @@
       <div class="col-md-6">
         <div
           id="carouselExampleIndicators"
-          class="carousel slide"
+          class="carousel slide position-relative"
           data-bs-ride="carousel"
         >
-          <div class="carousel-inner">
+          <div class="carousel-inner" style="position: relative; height: 500px">
             <div
               *ngFor="let img of images; let i = index"
               class="carousel-item"
               [class.active]="i === 0"
             >
-              <img
-                [src]="img"
-                class="d-block w-100 rounded"
-                alt="Imagen Hero"
-                style="max-width: 100%; height: auto"
-              />
+              <div
+                class="d-flex justify-content-center align-items-center"
+                style="height: 500px"
+              >
+                <img
+                  [src]="img"
+                  class="d-block"
+                  alt="Imagen Hero"
+                  style="max-height: 100%; max-width: 100%; object-fit: contain"
+                />
+              </div>
             </div>
+
+            <!-- Botón Anterior (izquierda) -->
+            <button
+              class="carousel-control-prev border border-success rounded-circle bg-success"
+              type="button"
+              data-bs-target="#carouselExampleIndicators"
+              data-bs-slide="prev"
+              style="
+                width: 40px;
+                height: 40px;
+                position: absolute;
+                top: 50%;
+                left: 10px;
+                transform: translateY(-50%);
+              "
+            >
+              <span
+                class="carousel-control-prev-icon"
+                style="filter: invert(1)"
+              ></span>
+              <span class="visually-hidden">Anterior</span>
+            </button>
+
+            <!-- Botón Siguiente (derecha) -->
+            <button
+              class="carousel-control-next border border-success rounded-circle bg-success"
+              type="button"
+              data-bs-target="#carouselExampleIndicators"
+              data-bs-slide="next"
+              style="
+                width: 40px;
+                height: 40px;
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+              "
+            >
+              <span
+                class="carousel-control-next-icon"
+                style="filter: invert(1)"
+              ></span>
+              <span class="visually-hidden">Siguiente</span>
+            </button>
           </div>
-
-          <!-- Controles -->
-          <button
-            class="carousel-control-prev"
-            type="button"
-            data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="prev"
-          >
-            <span class="carousel-control-prev-icon"></span>
-            <span class="visually-hidden">Anterior</span>
-          </button>
-
-          <button
-            class="carousel-control-next"
-            type="button"
-            data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="next"
-          >
-            <span class="carousel-control-next-icon"></span>
-            <span class="visually-hidden">Siguiente</span>
-          </button>
         </div>
       </div>
     </div>
   </div>
 </section>
-
 <!-- Cuerpo principal -->
 <main class="container py-4">
   <section class="mb-5">
     <h2 class="text-center mb-5">¿Qué Ofrecemos?</h2>
 
     <div class="row g-4">
+      <!-- Transporte de madera -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm">
           <div class="card-body text-center p-4">
-            <i class="fas fa-exchange-alt fa-3x mb-3 text-primary"></i>
-            <h4 class="card-title">
-              Intercambiar productos, servicios y saberes
-            </h4>
+            <i class="fas fa-truck fa-3x mb-3 text-primary"></i>
+            <h4 class="card-title">Transporte de madera</h4>
             <p class="card-text text-muted">
-              Participa en nuestra comunidad de intercambio sostenible.
+              Servicio de traslado para cortas y largas distancias, puntual y
+              seguro.
             </p>
           </div>
         </div>
       </div>
 
+      <!-- Muebles de corte recto -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm">
           <div class="card-body text-center p-4">
-            <i class="fas fa-leaf fa-3x mb-3 text-success"></i>
-            <h4 class="card-title">Reducir las emisiones de CO₂</h4>
+            <i class="fas fa-couch fa-3x mb-3 text-success"></i>
+            <h4 class="card-title">Fabricación de muebles</h4>
             <p class="card-text text-muted">
-              Contribuye directamente a la reducción de la huella de carbono.
+              Realizamos mesas, sillas, bancos y más con cortes rectos y
+              acabados de calidad.
             </p>
           </div>
         </div>
       </div>
 
+      <!-- Venta de madera -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm">
           <div class="card-body text-center p-4">
-            <i class="fas fa-recycle fa-3x mb-3 text-info"></i>
-            <h4 class="card-title">Conectar con recicladores</h4>
+            <i class="fas fa-tree fa-3x mb-3 text-warning"></i>
+            <h4 class="card-title">Venta de madera</h4>
             <p class="card-text text-muted">
-              Encuentra profesionales que te ayuden a gestionar tus residuos.
+              Disponemos de listones, ripas, tablas y más en variedad de
+              especies.
             </p>
           </div>
         </div>
       </div>
 
+      <!-- Corte y dimensionado a medida -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm">
           <div class="card-body text-center p-4">
-            <i class="fas fa-store fa-3x mb-3 text-warning"></i>
-            <h4 class="card-title">Participar en las Ferias de trueque</h4>
+            <i class="fas fa-ruler-combined fa-3x mb-3 text-info"></i>
+            <h4 class="card-title">Corte y dimensionado</h4>
             <p class="card-text text-muted">
-              Eventos comunitarios para intercambiar sin usar dinero.
+              Cortes precisos de madera según tus necesidades y proyectos
+              personalizados.
             </p>
           </div>
         </div>
       </div>
 
+      <!-- Asesoramiento personalizado -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm">
           <div class="card-body text-center p-4">
-            <i class="fas fa-utensils fa-3x mb-3 text-danger"></i>
-            <h4 class="card-title">Rescatar alimentos excedentes</h4>
+            <i class="fas fa-user-cog fa-3x mb-3 text-danger"></i>
+            <h4 class="card-title">Asesoramiento técnico</h4>
             <p class="card-text text-muted">
-              Accede a productos que de otra forma se desperdiciarían.
+              Te ayudamos a elegir la mejor madera y diseño para tu proyecto.
             </p>
           </div>
         </div>
       </div>
 
+      <!-- Venta de accesorios para carpintería -->
       <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm">
           <div class="card-body text-center p-4">
-            <i class="fas fa-hands-helping fa-3x mb-3 text-secondary"></i>
-            <h4 class="card-title">Compartir bienes y habilidades</h4>
+            <i class="fas fa-tools fa-3x mb-3 text-secondary"></i>
+            <h4 class="card-title">Accesorios y herramientas</h4>
             <p class="card-text text-muted">
-              Pon en valor lo que tienes y lo que sabes hacer.
+              Venta de clavos, tornillos, bisagras y herramientas básicas para
+              carpintería.
             </p>
           </div>
         </div>
@@ -210,6 +242,7 @@
     </div>
   </section>
 </main>
+
 <!-- Pie de página -->
 <!-- lista de colores
    #6B3F2A
@@ -219,36 +252,56 @@
    #9E5B40
    #D36B00
    #D8B892-->
-<footer class="text-white py-5" style="background-color: #d8b892">
+<footer class="text-white py-5" style="background-color: #a47148">
   <div class="container">
     <div class="row">
-      <!-- Sección de la Carpintería -->
+      <!-- Información de la Carpintería -->
       <div class="col-md-4 mb-4 mb-md-0">
-        <h5>Khotu Carpintería</h5>
-        <p>Ahorra, gana y cuida el planeta fácilmente.</p>
-        <p>Especialistas en muebles de madera, con técnicas artesanales.</p>
+        <h5 class="fw-bold">Khotu Carpintería & Barraca</h5>
+        <p>Todo en madera: listones, tablas, muebles y transporte.</p>
+        <p>Comprometidos con la calidad, el ahorro y el cuidado del planeta.</p>
       </div>
 
-      <!-- Sección de contacto -->
+      <!-- Información de contacto -->
       <div class="col-md-4 mb-4 mb-md-0">
-        <h5>Contacto</h5>
-        <p>Correo: contacto&#64;gmail.com</p>
-        <p>Teléfono: +591 78787878</p>
-        <p>Dirección: Calle Madera 123, La Paz, Bolivia</p>
+        <h5 class="fw-bold">Contáctanos</h5>
+        <p>
+          <i class="fas fa-envelope me-2"></i>
+          <a
+            href="mailto:jchaveztorrez@gmail.com"
+            class="text-white text-decoration-none"
+          >
+            jchaveztorrez&#64;gmail.com
+          </a>
+        </p>
+        <p>
+          <i class="fas fa-phone me-2"></i>
+          <a href="tel:+59171516600" class="text-white text-decoration-none">
+            +591 71516600
+          </a>
+        </p>
+        <p>
+          <i class="fas fa-map-marker-alt me-2"></i>
+          Calle Madera 123, La Paz, Bolivia
+        </p>
       </div>
 
-      <!-- Sección de redes sociales -->
+      <!-- Redes sociales -->
       <div class="col-md-4">
-        <h5>Síguenos</h5>
-        <div>
-          <a href="#" class="text-white me-3"
+        <h5 class="fw-bold">Síguenos</h5>
+        <div class="d-flex align-items-center">
+          <a href="#" class="text-white fs-5 me-3"
             ><i class="fab fa-facebook-f"></i
           ></a>
-          <a href="#" class="text-white me-3"
+          <a href="#" class="text-white fs-5 me-3"
             ><i class="fab fa-whatsapp"></i
           ></a>
-          <a href="#" class="text-white me-3"><i class="fab fa-tiktok"></i></a>
-          <a href="#" class="text-white me-3"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="text-white fs-5 me-3"
+            ><i class="fab fa-tiktok"></i
+          ></a>
+          <a href="#" class="text-white fs-5 me-3"
+            ><i class="fab fa-youtube"></i
+          ></a>
         </div>
       </div>
     </div>

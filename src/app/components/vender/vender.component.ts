@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
 
 @Component({
   selector: 'app-vender',
@@ -51,16 +53,33 @@ export class VenderComponent implements OnInit {
   busqueda: string = '';
   categoriaBusqueda: string = '';
 
+  nombreUsuario: string = '';
+  sucursalAsignada: string = '';
+
   constructor(
     private service: ServiceService,
     private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit(): void {
+    this.obtenerUsuarioAutenticado(); // <-- Agregado
     this.obtenerUsuarios();
     this.obtenerProductos();
     this.obtenerSucursales();
     this.obtenerCategorias();
+  }
+
+  obtenerUsuarioAutenticado(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const usuarioString = localStorage.getItem('usuarioLogueado');
+
+      if (usuarioString) {
+        const usuario = JSON.parse(usuarioString);
+        this.nombreUsuario = usuario.nombre;
+        this.sucursalAsignada = usuario.sucursal;
+      }
+    }
   }
 
   obtenerUsuarios(): void {
@@ -79,8 +98,24 @@ export class VenderComponent implements OnInit {
   obtenerSucursales(): void {
     this.service.getSucursales().subscribe((data) => {
       this.sucursales = data;
+
+      // Asignar sucursalFiltrada por defecto según sucursalAsignada
+      if (this.sucursalAsignada) {
+        // Buscar sucursal en el listado por nombre o id (dependiendo cómo tengas)
+        const sucursalPorDefecto = this.sucursales.find(
+          (suc) =>
+            suc.nombre === this.sucursalAsignada ||
+            suc.id === Number(this.sucursalAsignada),
+        );
+        // Asignar la sucursal filtrada
+        if (sucursalPorDefecto) {
+          this.sucursalFiltrada = sucursalPorDefecto;
+        }
+      }
+      this.filtrar(); // Aplicar filtro al cargar sucursales
     });
   }
+
   obtenerCategorias(): void {
     this.service.getCategorias().subscribe((data) => {
       this.categoria = data;
@@ -105,7 +140,6 @@ export class VenderComponent implements OnInit {
       );
     }
 
-    // Filtro por sucursal
     if (this.sucursalFiltrada) {
       filtrados = filtrados.filter(
         (p) => p.sucursal?.id === this.sucursalFiltrada?.id,
@@ -136,7 +170,7 @@ export class VenderComponent implements OnInit {
     if (categoria === 'tabla') {
       const volumen = (producto.ancho * producto.espesor * producto.largo) / 12;
       subtotal = Math.round(volumen * precio_unitario * cantidad * 100) / 100;
-    } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+    } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
       subtotal = Math.round(precio_unitario * cantidad * 100) / 100;
     } else {
       alert(`Categoría no válida para cálculo: ${producto.categoria?.nombre}`);
@@ -228,7 +262,7 @@ export class VenderComponent implements OnInit {
         Math.round(
           volumen * detalle.precio_unitario * detalle.cantidad_vendida * 100,
         ) / 100;
-    } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+    } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
       detalle.subtotal =
         Math.round(detalle.precio_unitario * detalle.cantidad_vendida * 100) /
         100;
@@ -266,7 +300,7 @@ export class VenderComponent implements OnInit {
           Math.round(
             volumen * detalle.precio_unitario * detalle.cantidad_vendida * 100,
           ) / 100;
-      } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+      } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
         detalle.subtotal =
           Math.round(detalle.precio_unitario * detalle.cantidad_vendida * 100) /
           100;
@@ -303,7 +337,7 @@ export class VenderComponent implements OnInit {
         12;
       detalle.subtotal =
         Math.round(volumen * detalle.precio_unitario * cantidad * 100) / 100;
-    } else if (['listón', 'liston', 'ripa', 'muebles'].includes(categoria)) {
+    } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
       detalle.subtotal =
         Math.round(detalle.precio_unitario * cantidad * 100) / 100;
     } else {

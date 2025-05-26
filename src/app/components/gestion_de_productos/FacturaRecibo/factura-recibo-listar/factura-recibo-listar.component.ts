@@ -16,7 +16,10 @@ export class FacturaReciboListarComponent {
   recibosMostrados: FacturaRecibo[] = [];
   busquedaRecibos: string = '';
 
-  constructor(private service: ServiceService) {}
+  constructor(
+    private service: ServiceService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.cargarRecibos();
@@ -36,5 +39,9 @@ export class FacturaReciboListarComponent {
         r.id.toString().includes(texto) ||
         r.nombre_cliente.toLowerCase().includes(texto),
     );
+  }
+
+  irARegistrar(): void {
+    this.router.navigate(['app-panel-control/registrar-factura-recibo']);
   }
 }

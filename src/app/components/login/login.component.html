@@ -1,1 +1,166 @@
-<p>login works!</p>
+<div
+  class="container-fluid vh-100 d-flex align-items-center justify-content-center"
+>
+  <!-- Botón para volver al inicio -->
+  <a
+    class="btn btn-primary position-absolute top-0 end-0 m-4 btn-lg"
+    (click)="router.navigate(['/'])"
+    title="Volver a Inicio"
+  >
+    <span class="d-flex align-items-center">
+      <i class="bi bi-person-walking fs-5"></i>
+      <i class="bi bi-door-open fs-2 rotate-left"></i>
+    </span>
+  </a>
+
+  <div class="row w-100 justify-content-center g-0">
+    <!-- Formulario -->
+    <div class="col-md-1 col-lg-2 d-flex align-items-center">
+      <div class="card p-4 rounded w-100 d-flex flex-column">
+        <h2 class="text-center mb-4">Iniciar Sesión</h2>
+        <p class="text-center">¿Aún no tienes una cuenta?</p>
+
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="mt-4">
+          <!-- Campo Correo -->
+          <div class="mb-3">
+            <label for="correo" class="form-label">Correo Electrónico</label>
+            <input
+              type="email"
+              class="form-control form-control-lg"
+              id="correo"
+              name="correo"
+              placeholder="you@example.com"
+              required
+              [(ngModel)]="correo"
+              [ngClass]="{
+                'is-invalid':
+                  loginForm.controls['correo'] &&
+                  loginForm.controls['correo'].invalid &&
+                  loginForm.controls['correo'].touched,
+              }"
+            />
+            <div
+              *ngIf="
+                loginForm.controls['correo']?.invalid &&
+                loginForm.controls['correo']?.touched
+              "
+              class="invalid-feedback"
+            >
+              Por favor, ingrese su correo electrónico.
+            </div>
+          </div>
+
+          <!-- Campo Contraseña -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <div class="input-group">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-control form-control-lg"
+                id="password"
+                name="password"
+                placeholder="Ingrese su contraseña"
+                [(ngModel)]="password"
+                required
+                [ngClass]="{
+                  'is-invalid':
+                    loginForm.controls['password'] &&
+                    loginForm.controls['password'].invalid &&
+                    loginForm.controls['password'].touched,
+                }"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="togglePasswordVisibility()"
+              >
+                <i
+                  [ngClass]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"
+                ></i>
+              </button>
+            </div>
+            <div
+              *ngIf="
+                loginForm.controls['password']?.invalid &&
+                loginForm.controls['password']?.touched
+              "
+              class="invalid-feedback"
+            >
+              Por favor, ingrese su contraseña.
+            </div>
+          </div>
+
+          <!-- Botón Iniciar Sesión -->
+          <button
+            type="submit"
+            class="btn w-100 mt-3"
+            [ngClass]="{
+              'btn-danger': !isFormValid(),
+              'btn-success': isFormValid(),
+            }"
+            [disabled]="!isFormValid() || isLoading"
+          >
+            <span
+              *ngIf="isLoading"
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Iniciar Sesión
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Carrusel de imágenes lateral -->
+    <!-- Carrusel de imágenes lateral -->
+    <div class="col-md-3 d-none d-md-flex">
+      <div
+        id="carouselLateral"
+        class="carousel slide w-100"
+        data-bs-ride="carousel"
+        data-bs-interval="2000"
+      >
+        <div class="carousel-inner" style="height: 400px; position: relative">
+          <div
+            *ngFor="let img of lateralImages; let i = index"
+            class="carousel-item"
+            [class.active]="i === 0"
+          >
+            <div
+              class="d-flex justify-content-center align-items-center"
+              style="height: 400px"
+            >
+              <img
+                [src]="img"
+                class="d-block"
+                alt="Imagen lateral"
+                style="max-height: 100%; max-width: 100%; object-fit: contain"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de navegación -->
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselLateral"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon"></span>
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselLateral"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon"></span>
+          <span class="visually-hidden">Siguiente</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

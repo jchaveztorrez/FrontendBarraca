@@ -81,76 +81,140 @@
 
     <!-- Columna derecha: Formulario para registrar factura o recibo -->
     <div
-      class="col-md-6 mb-4"
+      class="col-md-6"
       *ngIf="modoFormulario === 'factura' || modoFormulario === 'recibo'"
     >
       <div class="card">
-        <div
-          class="card-header"
-          [ngClass]="{
-            'bg-info text-white': modoFormulario === 'factura',
-            'bg-success text-white': modoFormulario === 'recibo',
-          }"
-        >
+        <!-- Cabecera -->
+        <div class="card-header bg-success text-white">
           <h5 class="mb-0">
-            Registrar {{ modoFormulario === "factura" ? "Factura" : "Recibo" }}
+            Generar {{ tipoDocumentoSeleccionado | titlecase }}
           </h5>
         </div>
+
+        <!-- Cuerpo del formulario -->
         <div class="card-body">
-          <form (ngSubmit)="guardarDocumento()">
-            <div class="mb-3">
-              <label class="form-label">Venta ID</label>
-              <input
-                type="text"
-                class="form-control"
-                [value]="ventaSeleccionada?.id"
-                disabled
+          <!-- Encabezado con logo, título y fecha -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-6">
+              <img
+                src="https://www.shutterstock.com/image-vector/vector-logo-carpentry-workshop-woodwork-600nw-2554072869.jpg"
+                alt="Logo de la Empresa"
+                class="img-fluid"
+                style="max-width: 150px"
               />
             </div>
-
-            <div class="mb-3">
-              <label class="form-label">Total (Bs)</label>
-              <input
-                type="text"
-                class="form-control"
-                [value]="ventaSeleccionada?.total | number: '1.2-2'"
-                disabled
-              />
+            <div class="col-6 text-end">
+              <div style="display: inline-block; text-align: left">
+                <h3 class="fw-bold text-center">Proforma</h3>
+                <table
+                  class="table table-bordered table-sm text-center mb-0"
+                  style="width: 100%; font-size: 0.85rem"
+                >
+                  <thead class="table-primary">
+                    <tr>
+                      <th style="padding: 4px">Día</th>
+                      <th style="padding: 4px">Mes</th>
+                      <th style="padding: 4px">Año</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding: 4px">{{ fechaHoy | date: "dd" }}</td>
+                      <td style="padding: 4px">
+                        {{ fechaHoy | date: "MMMM" }}
+                      </td>
+                      <td style="padding: 4px">
+                        {{ fechaHoy | date: "yyyy" }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+          </div>
 
-            <div class="mb-3">
-              <label class="form-label">Nombre Cliente</label>
+          <!-- Contacto -->
+          <div class="mb-3 text-start">
+            <i class="bi bi-whatsapp text-success"></i>
+            <strong>CELL:</strong> +591 77777777 - 72937437
+            <div>SUCURSALES: Sucursal 1, Sucursal 2</div>
+          </div>
+
+          <!-- Formulario de datos del cliente -->
+          <form>
+            <div class="form-group mb-3 text-start">
+              <label for="nombre_cliente">Nombre del Cliente:</label>
               <input
                 type="text"
+                id="nombre_cliente"
                 class="form-control"
-                required
                 [(ngModel)]="nombre_cliente"
                 name="nombre_cliente"
+                required
               />
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">NIT / CI</label>
+            <div class="form-group mb-3 text-start">
+              <label for="ci_nit">CI/NIT:</label>
               <input
                 type="text"
+                id="ci_nit"
                 class="form-control"
-                required
                 [(ngModel)]="ci_nit"
                 name="ci_nit"
+                required
               />
             </div>
+          </form>
 
-            <button type="submit" class="btn btn-primary me-2">
-              Guardar {{ tipoDocumentoSeleccionado }}
+          <!-- Tabla de detalles -->
+          <table class="table table-bordered text-center mb-0">
+            <thead class="table-primary">
+              <tr>
+                <th style="width: 10%">CANT.</th>
+                <th style="width: 50%">DETALLE</th>
+                <th style="width: 20%">P/UNIT.</th>
+                <th style="width: 20%">TOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of detallesVenta">
+                <td>{{ item.cantidad_vendida }}</td>
+                <td>
+                  {{ item.producto.especie }} -
+                  {{ item.producto.categoria.nombre }} -
+                  {{ item.producto.ancho }}x{{ item.producto.espesor }}x{{
+                    item.producto.largo
+                  }}
+                </td>
+                <td>{{ item.precio_unitario }}</td>
+                <td>{{ item.subtotal }}</td>
+              </tr>
+            </tbody>
+
+            <!-- Total alineado a la columna de TOTAL -->
+            <tfoot *ngIf="ventaSeleccionada">
+              <tr>
+                <td colspan="3" class="text-end"><strong>TOTAL Bs.</strong></td>
+                <td>
+                  <strong
+                    >{{ ventaSeleccionada.total | number: "1.2-2" }} Bs</strong
+                  >
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Botones de acción -->
+          <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-primary" (click)="guardarDocumento()">
+              Guardar Documento
             </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="cancelarFormulario()"
-            >
+            <button class="btn btn-secondary" (click)="cancelarFormulario()">
               Cancelar
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>

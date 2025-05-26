@@ -38,6 +38,7 @@
             </div>
 
             <!-- Filtrar por sucursal -->
+            <!-- Filtrar por sucursal -->
             <div class="col-md-3 mb-3">
               <select
                 class="form-control"
@@ -146,26 +147,26 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <!-- Selección de Usuario -->
+            <!-- Mostrar Nombre del Usuario -->
             <div class="form-group col-md-6 mb-3">
-              <label for="usuario">Seleccionar Usuario:</label>
-              <select class="form-control" [(ngModel)]="usuarioSeleccionado">
-                <option [ngValue]="null">-- Seleccione un usuario --</option>
-                <option *ngFor="let usuario of usuarios" [ngValue]="usuario">
-                  {{ usuario.nombre }}
-                </option>
-              </select>
+              <label for="usuario">Usuario Autenticado:</label>
+              <input
+                type="text"
+                class="form-control"
+                [value]="nombreUsuario"
+                readonly
+              />
             </div>
 
-            <!-- Selección de Sucursal -->
+            <!-- Mostrar Nombre de la Sucursal -->
             <div class="form-group col-md-6 mb-3">
-              <label for="sucursal">Seleccionar Sucursal:</label>
-              <select class="form-control" [(ngModel)]="sucursal">
-                <option [ngValue]="null">-- Seleccione una sucursal --</option>
-                <option *ngFor="let suc of sucursales" [ngValue]="suc">
-                  {{ suc.nombre }}
-                </option>
-              </select>
+              <label for="sucursal">Sucursal Asignada:</label>
+              <input
+                type="text"
+                class="form-control"
+                [value]="sucursalAsignada"
+                readonly
+              />
             </div>
           </div>
 

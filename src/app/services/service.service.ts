@@ -251,16 +251,24 @@ export class ServiceService {
   getFacturaReciboID(id: number): Observable<FacturaRecibo> {
     return this.http.get<FacturaRecibo>(`${this.apiUrl}facturarecibo/${id}/`);
   }
-  createFacturaRecibo(FacturaRecibo: FacturaRecibo): Observable<FacturaRecibo> {
-    return this.http.post<FacturaRecibo>(
-      `${this.apiUrl}facturarecibo/`,
-      FacturaRecibo,
-    );
+
+  createFacturaRecibo(factura: FacturaRecibo): Observable<FacturaRecibo> {
+    return this.http.post<FacturaRecibo>(`${this.apiUrl}facturarecibo/`, {
+      ...factura,
+      venta: factura.venta.id, // Importante: se envía solo el ID
+    });
   }
+
   updateFacturaRecibo(FacturaRecibo: FacturaRecibo): Observable<FacturaRecibo> {
     return this.http.put<FacturaRecibo>(
       `${this.apiUrl}facturarecibo/${FacturaRecibo.id}/`,
       FacturaRecibo,
     );
+  }
+
+  /* servicio de login */
+  login(correo: string, password: string): Observable<any> {
+    const loginData = { correo: correo, password: password };
+    return this.http.post<any>(`${this.apiUrl}login/`, loginData);
   }
 }
