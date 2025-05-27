@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { IndexComponent } from './components/index/index.component';
 import { PanelControlComponent } from './components/panel-control/panel-control.component';
 
@@ -51,14 +51,19 @@ import { EditarCategoriaComponent } from './components/gestion_de_productos/cate
 import { VentaListarComponent } from './components/gestion_de_productos/venta/venta-listar.component';
 import { LoginComponent } from './components/login/login.component';
 
+// Al inicio del archivo de rutas
+import { authGuard } from './guards/auth.guard';
+
 export const routes: Routes = [
   // Ruta principal
-  { path: '', redirectTo: 'index', pathMatch: 'full' },
+  { path: '', component: IndexComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'index', component: IndexComponent },
-  { path: 'app-login', component: LoginComponent },
+
   {
     path: 'app-panel-control',
     component: PanelControlComponent,
+    canActivate: [authGuard], // ⬅️ Protección con el guard
     children: [
       //ruta para vender
       { path: 'vender', component: VenderComponent },

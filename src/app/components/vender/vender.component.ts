@@ -8,7 +8,7 @@ import {
   Categoria,
 } from '../../models/models';
 import { ServiceService } from '../../services/service.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -70,18 +70,6 @@ export class VenderComponent implements OnInit {
     this.obtenerCategorias();
   }
 
-  obtenerUsuarioAutenticado(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const usuarioString = localStorage.getItem('usuarioLogueado');
-
-      if (usuarioString) {
-        const usuario = JSON.parse(usuarioString);
-        this.nombreUsuario = usuario.nombre;
-        this.sucursalAsignada = usuario.sucursal;
-      }
-    }
-  }
-
   obtenerUsuarios(): void {
     this.service.getUsuarios().subscribe((data) => {
       this.usuarios = data;
@@ -94,25 +82,69 @@ export class VenderComponent implements OnInit {
       this.productos = [...data]; // Copia para mostrar
     });
   }
+  obtenerUsuarioAutenticado(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const usuarioString = localStorage.getItem('usuarioLogueado');
+
+      if (usuarioString) {
+        const usuario = JSON.parse(usuarioString);
+        this.nombreUsuario = usuario.nombre;
+        this.sucursalAsignada = usuario.sucursalNombre; // <- usar el nombre correctamente
+
+        console.log('Sucursal asignada guardada:', this.sucursalAsignada);
+
+        this.service.getUsuarios().subscribe((usuarios) => {
+          this.usuarios = usuarios;
+          this.usuarioSeleccionado =
+            this.usuarios.find((u) => u.nombre === this.nombreUsuario) || null;
+        });
+
+        this.service.getSucursales().subscribe((sucursales) => {
+          this.sucursales = sucursales;
+
+          console.log('Sucursales disponibles:', this.sucursales);
+
+          const sucursalPorDefecto = this.sucursales.find((s) => {
+            return (
+              s.nombre === this.sucursalAsignada ||
+              String(s.id) === String(usuario.sucursalId) // <-- comparar con ID
+            );
+          });
+
+          if (sucursalPorDefecto) {
+            this.sucursalFiltrada = sucursalPorDefecto;
+            this.sucursal = sucursalPorDefecto;
+            console.log('Sucursal filtrada asignada:', this.sucursalFiltrada);
+          } else {
+            console.warn(
+              'No se encontró una sucursal que coincida con la asignada:',
+              this.sucursalAsignada,
+            );
+          }
+
+          this.filtrar(); // Aplicar filtro
+        });
+      }
+    }
+  }
 
   obtenerSucursales(): void {
     this.service.getSucursales().subscribe((data) => {
       this.sucursales = data;
 
-      // Asignar sucursalFiltrada por defecto según sucursalAsignada
       if (this.sucursalAsignada) {
-        // Buscar sucursal en el listado por nombre o id (dependiendo cómo tengas)
         const sucursalPorDefecto = this.sucursales.find(
           (suc) =>
             suc.nombre === this.sucursalAsignada ||
             suc.id === Number(this.sucursalAsignada),
         );
-        // Asignar la sucursal filtrada
+
         if (sucursalPorDefecto) {
           this.sucursalFiltrada = sucursalPorDefecto;
+          this.sucursal = sucursalPorDefecto;
         }
       }
-      this.filtrar(); // Aplicar filtro al cargar sucursales
+      this.filtrar(); // Aplicar filtro después de obtener las sucursales
     });
   }
 

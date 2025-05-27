@@ -24,7 +24,7 @@ export class PanelControlComponent implements OnInit {
   timeoutInactivity: any;
 
   // Tiempo de inactividad permitido (2 minutos)
-  inactiveTime = 2 * 60 * 1000;
+  inactiveTime = 60 * 60 * 1000;
 
   constructor(
     private router: Router,

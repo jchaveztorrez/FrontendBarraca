@@ -19,7 +19,7 @@ export class LoginComponent {
   isLoading: boolean = false;
 
   constructor(
-    public router: Router, // ¡CAMBIO! antes era private
+    public router: Router,
     private service: ServiceService,
   ) {}
 
@@ -36,33 +36,28 @@ export class LoginComponent {
       this.errorMsg = 'Por favor complete todos los campos';
       return;
     }
-
     this.iniciarSesion();
   }
 
   iniciarSesion(): void {
     this.isLoading = true;
-
     this.service.login(this.correo, this.password).subscribe({
       next: (response) => {
-        console.log('Login exitoso:', response);
-
-        // Guardar token
         localStorage.setItem('access_token', response.access_token);
-
-        // Guardar información del usuario
         const usuario = {
+          id: response.id, // Suponiendo que viene en la respuesta
           nombre: response.nombre,
           apellido: response.apellido,
           imagen_url: response.imagen_url,
           usuario_id: response.usuario_id,
           roles: response.roles,
           permisos: response.permisos,
-          sucursal: response.sucursal.nombre,
+          sucursalId: response.sucursal.id,
+          sucursalNombre: response.sucursal.nombre,
         };
+
         localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));
 
-        // Redirigir
         this.router.navigate(['/app-panel-control']);
       },
       error: (error) => {
@@ -75,9 +70,7 @@ export class LoginComponent {
       },
     });
   }
-  lateralImages: string[] = [
-    'https://todoferreteria.com.mx/wp-content/uploads/2022/08/older-woodworker-e1659975826505.jpg',
-    'https://media.istockphoto.com/id/1458711335/es/foto/carpintero-de-muebles-de-madera-masculino-trabajo-en-taller-de-madera-diy-trabajador-de.jpg?s=612x612&w=0&k=20&c=_NX_F9nFNsjpBbnz6xEMGBGVXRPTkBm6pqG2MSBXGqM=',
-    'https://media.istockphoto.com/id/1358271889/es/foto/discutiendo-lo-que-es-mejor.jpg?s=612x612&w=0&k=20&c=I91WsZqX7E2M4TqGhbQan5g88KMpZEZvqTtN4ig2Ju4=',
-  ];
+  navigateToHome(): void {
+    this.router.navigate(['/index']); // Cambia la ruta según tu configuración
+  }
 }
