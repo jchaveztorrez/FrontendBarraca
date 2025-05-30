@@ -59,12 +59,24 @@
           </div>
 
           <div class="col-md-6">
-            <label class="form-label fw-semibold">Imagen (URL)</label>
+            <label class="form-label fw-semibold">Imagen</label>
             <input
-              type="text"
+              type="file"
               class="form-control"
-              formControlName="imagen_url"
+              (change)="onFileChange($event)"
+              required
             />
+            <div *ngIf="imagenPreview" class="mt-2">
+              <img
+                [src]="imagenPreview"
+                alt="Vista Previa"
+                class="img-fluid"
+                style="max-width: 200px; max-height: 200px"
+              />
+            </div>
+            <div class="invalid-feedback" *ngIf="errorMensaje">
+              {{ errorMensaje }}
+            </div>
           </div>
         </div>
 

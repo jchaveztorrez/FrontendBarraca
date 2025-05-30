@@ -3,6 +3,7 @@
     <div class="card-body">
       <h3 class="card-title mb-4 text-center text-primary">Editar Sucursal</h3>
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- Campo Nombre -->
         <div class="mb-3">
           <label class="form-label fw-semibold">Nombre</label>
           <input
@@ -10,9 +11,34 @@
             class="form-control"
             formControlName="nombre"
             placeholder="Ej. Sucursal Central"
+            [class.is-invalid]="
+              form.get('nombre')?.invalid &&
+              (form.get('nombre')?.dirty || form.get('nombre')?.touched)
+            "
           />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              form.get('nombre')?.invalid &&
+              (form.get('nombre')?.dirty || form.get('nombre')?.touched)
+            "
+          >
+            <div *ngIf="form.get('nombre')?.hasError('required')">
+              El nombre es requerido
+            </div>
+            <div *ngIf="form.get('nombre')?.hasError('minlength')">
+              Mínimo 3 caracteres
+            </div>
+            <div *ngIf="form.get('nombre')?.hasError('maxlength')">
+              Máximo 50 caracteres
+            </div>
+            <div *ngIf="form.get('nombre')?.hasError('soloTexto')">
+              Solo se permiten letras y espacios
+            </div>
+          </div>
         </div>
 
+        <!-- Campo Dirección (igual al del registrar) -->
         <div class="mb-3">
           <label class="form-label fw-semibold">Dirección</label>
           <input
@@ -20,9 +46,34 @@
             class="form-control"
             formControlName="direccion"
             placeholder="Ej. Calle Falsa 123"
+            [class.is-invalid]="
+              form.get('direccion')?.invalid &&
+              (form.get('direccion')?.dirty || form.get('direccion')?.touched)
+            "
           />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              form.get('direccion')?.invalid &&
+              (form.get('direccion')?.dirty || form.get('direccion')?.touched)
+            "
+          >
+            <div *ngIf="form.get('direccion')?.hasError('required')">
+              La dirección es requerida
+            </div>
+            <div *ngIf="form.get('direccion')?.hasError('minlength')">
+              Mínimo 5 caracteres
+            </div>
+            <div *ngIf="form.get('direccion')?.hasError('maxlength')">
+              Máximo 100 caracteres
+            </div>
+            <div *ngIf="form.get('direccion')?.hasError('direccionInvalida')">
+              Caracteres no permitidos (solo letras, números, espacios y .,#-)
+            </div>
+          </div>
         </div>
 
+        <!-- Campo Estado -->
         <div class="form-check form-switch mb-4">
           <input
             class="form-check-input"
@@ -36,6 +87,7 @@
           >
         </div>
 
+        <!-- Botones -->
         <div
           class="d-flex flex-column flex-md-row justify-content-between gap-2"
         >
@@ -67,3 +119,13 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de Éxito -->
+<app-ok *ngIf="okModal" [mensaje]="okModal" (close)="manejarOk()"></app-ok>
+
+<!-- Modal de Error -->
+<app-error
+  *ngIf="errorModal"
+  [mensaje]="errorModal"
+  (close)="manejarError()"
+></app-error>

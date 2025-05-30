@@ -8,15 +8,19 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ServiceService } from '../../../../services/service.service';
+
 @Component({
   selector: 'app-registrar-usuario',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './registrar-usuario.component.html',
-  styleUrl: './registrar-usuario.component.css',
+  styleUrls: ['./registrar-usuario.component.css'],
 })
 export class RegistrarUsuarioComponent implements OnInit {
   form!: FormGroup;
+
+  errorMensaje: string | null = null; // Mensaje de error
+  imagenPreview: string | ArrayBuffer | null = null; // Variable to hold the image preview
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +37,7 @@ export class RegistrarUsuarioComponent implements OnInit {
       ci: [null],
       fecha_nacimiento: [null],
       password: [null, Validators.required],
-      imagen_url: ['https://via.placeholder.com/40'], // valor por defecto si deseas
+      imagen_url: [null], // Set to null initially
       estado: [true],
     });
   }
@@ -53,7 +57,36 @@ export class RegistrarUsuarioComponent implements OnInit {
   limpiarFormulario(): void {
     this.form.reset({
       estado: true,
-      imagen_url: 'https://via.placeholder.com/40',
+      imagen_url: null, // Reset to null
     });
+    this.imagenPreview = null; // Clear the image preview
+  }
+
+  onFileChange(event: any): void {
+    const inputElement = event.target as HTMLInputElement;
+
+    // Check if files are not null and has at least one file
+    if (inputElement.files && inputElement.files.length > 0) {
+      const file = inputElement.files[0];
+
+      // Validate the file type
+      const validExtensions = ['image/png', 'image/jpeg'];
+      if (!validExtensions.includes(file.type)) {
+        this.errorMensaje =
+          'Formato de archivo incorrecto. Solo se permiten PNG y JPG.'; // Error message
+        this.imagenPreview = null; // Clear the preview
+        return;
+      }
+
+      // If valid, update the form and show the preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagenPreview = reader.result; // Set the image preview
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL
+    } else {
+      this.errorMensaje = 'Por favor, selecciona un archivo.'; // Error message if no file
+      this.imagenPreview = null; // Clear the preview
+    }
   }
 }
