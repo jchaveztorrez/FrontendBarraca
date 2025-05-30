@@ -1,58 +1,87 @@
+/* Layout general */
 .layout {
-  display: grid;
-  grid-template-areas:
-    "header header"
-    "leftSide body";
-  grid-template-columns: 220px 1fr;
-  grid-template-rows: auto 1fr;
-  height: 100vh;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+/* Navbar fijo en la parte superior */
 .header {
-  grid-area: header;
-  width: 100%;
+  position: sticky;
+  top: 0;
   z-index: 1030;
+  height: 56px; /* Altura estándar de navbar */
 }
 
+/* Sidebar debajo del navbar */
 .leftSide {
-  grid-area: leftSide;
-  overflow-y: auto;
+  position: fixed;
+  top: 56px; /* Debajo del navbar */
+  left: 0;
+  height: calc(100vh - 56px);
+  width: 250px;
   background-color: #f8f9fa;
-  min-width: 220px;
-}
-
-.body {
-  grid-area: body;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1020;
   overflow-y: auto;
 }
 
-/* ✅ Ajuste para móviles */
-@media (max-width: 768px) {
-  .layout {
-    grid-template-areas:
-      "header"
-      "body";
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-  }
+/* Estados del sidebar */
+.sidebar-open {
+  transform: translateX(0);
+}
 
+.sidebar-closed {
+  transform: translateX(-100%);
+}
+
+/* Contenido principal */
+.main-content {
+  margin-top: 56px; /* Compensa el navbar */
+  flex: 1;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.content-shifted {
+  margin-left: 250px;
+}
+
+/* Overlay para móvil */
+.overlay {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 56px);
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1019;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
+}
+
+.overlay-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive para desktop */
+@media (min-width: 768px) {
   .leftSide {
-    position: fixed;
-    top: 56px; /* altura del navbar */
-    left: 0;
-    width: auto;
-    height: calc(100% - 56px);
-    z-index: 1020;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .leftSide.show {
     transform: translateX(0);
   }
 
-  .body {
-    padding: 1rem;
+  .sidebar-closed {
+    transform: translateX(-250px);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .content-shifted {
+    margin-left: 250px;
   }
 }

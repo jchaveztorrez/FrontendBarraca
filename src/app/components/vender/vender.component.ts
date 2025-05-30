@@ -55,6 +55,18 @@ export class VenderComponent implements OnInit {
 
   nombreUsuario: string = '';
   sucursalAsignada: string = '';
+  porMetro: { [productoId: number]: boolean } = {};
+  metrosLineales: { [key: number]: number } = {};
+
+  // Filtros por dimensiones
+  unidadAncho: string = '';
+  valorAncho: number | null = null;
+
+  unidadEspesor: string = '';
+  valorEspesor: number | null = null;
+
+  unidadLargo: string = '';
+  valorLargo: number | null = null;
 
   constructor(
     private service: ServiceService,
@@ -153,11 +165,10 @@ export class VenderComponent implements OnInit {
       this.categoria = data;
     });
   }
-
   filtrar(): void {
     let filtrados = [...this.productosOriginales];
 
-    // Filtro por texto (especie)
+    // Filtro por especie (texto)
     if (this.categoriaBusqueda.trim()) {
       const filtro = this.categoriaBusqueda.toLowerCase();
       filtrados = filtrados.filter((p) =>
@@ -165,7 +176,7 @@ export class VenderComponent implements OnInit {
       );
     }
 
-    // Filtro por producto seleccionado
+    // Filtros por selección
     if (this.productoSeleccionado) {
       filtrados = filtrados.filter(
         (p) => p.id === this.productoSeleccionado?.id,
@@ -178,14 +189,173 @@ export class VenderComponent implements OnInit {
       );
     }
 
-    // Filtro por categoría
     if (this.categoriaFiltrada) {
       filtrados = filtrados.filter(
         (p) => p.categoria?.id === this.categoriaFiltrada?.id,
       );
     }
 
+    // Filtro por ancho dinámico
+    if (
+      this.valorAncho !== null &&
+      this.valorAncho !== undefined &&
+      this.unidadAncho &&
+      this.valorAncho > 0
+    ) {
+      const valorBuscadoEnPulgadas = this.convertirA_Pulgadas(
+        this.valorAncho,
+        this.unidadAncho,
+      );
+
+      const valorTexto = this.valorAncho.toString();
+
+      filtrados = filtrados.filter((p) => {
+        if (p.ancho === null || p.ancho === undefined || p.ancho === 0) {
+          return false;
+        }
+
+        if (this.unidadAncho === 'plg') {
+          // Filtrado para pulgadas (con margen de ±0.1)
+          const margen = 0.1;
+          const diferencia = Math.abs(p.ancho - valorBuscadoEnPulgadas);
+          return (
+            diferencia <= margen || p.ancho.toString().startsWith(valorTexto)
+          );
+        } else {
+          // Filtrado dinámico para centímetros y metros
+          const anchoEnUnidad = this.convertirDesdePulgadas(
+            p.ancho,
+            this.unidadAncho,
+          );
+          return anchoEnUnidad.toString().startsWith(valorTexto);
+        }
+      });
+    }
+
+    // Filtro por espesor dinámico
+    if (
+      this.valorEspesor !== null &&
+      this.valorEspesor !== undefined &&
+      this.unidadEspesor &&
+      this.valorEspesor > 0
+    ) {
+      const valorBuscadoEnPulgadas = this.convertirA_Pulgadas(
+        this.valorEspesor,
+        this.unidadEspesor,
+      );
+
+      const valorTexto = this.valorEspesor.toString();
+
+      filtrados = filtrados.filter((p) => {
+        if (p.espesor === null || p.espesor === undefined || p.espesor === 0) {
+          return false;
+        }
+
+        if (this.unidadEspesor === 'plg') {
+          // Filtrado para pulgadas (con margen de ±0.1)
+          const margen = 0.1;
+          const diferencia = Math.abs(p.espesor - valorBuscadoEnPulgadas);
+          return (
+            diferencia <= margen || p.espesor.toString().startsWith(valorTexto)
+          );
+        } else {
+          // Filtrado dinámico para centímetros y metros
+          const espesorEnUnidad = this.convertirDesdePulgadas(
+            p.espesor,
+            this.unidadEspesor,
+          );
+          return espesorEnUnidad.toString().startsWith(valorTexto);
+        }
+      });
+    }
+
+    // Filtro por largo dinámico
+    if (
+      this.valorLargo !== null &&
+      this.valorLargo !== undefined &&
+      this.unidadLargo &&
+      this.valorLargo > 0
+    ) {
+      const valorBuscadoEnPies = this.convertirA_Pies(
+        this.valorLargo,
+        this.unidadLargo,
+      );
+
+      const valorTexto = this.valorLargo.toString();
+
+      filtrados = filtrados.filter((p) => {
+        if (p.largo === null || p.largo === undefined || p.largo === 0) {
+          return false;
+        }
+
+        if (this.unidadLargo === 'pies') {
+          // Filtrado para pies (con margen de ±0.1)
+          const margen = 0.1;
+          const diferencia = Math.abs(p.largo - valorBuscadoEnPies);
+          return (
+            diferencia <= margen || p.largo.toString().startsWith(valorTexto)
+          );
+        } else {
+          // Filtrado dinámico para centímetros y metros
+          const largoEnUnidad = this.convertirDesdePies(
+            p.largo,
+            this.unidadLargo,
+          );
+          return largoEnUnidad.toString().startsWith(valorTexto);
+        }
+      });
+    }
+
     this.productos = filtrados;
+  }
+  // Funciones de conversión para ancho y espesor (pulgadas)
+  convertirA_Pulgadas(valor: number, unidad: string): number {
+    switch (unidad) {
+      case 'cm':
+        return valor / 2.54;
+      case 'm':
+        return valor / 0.0254;
+      case 'plg':
+      default:
+        return valor;
+    }
+  }
+
+  convertirDesdePulgadas(valor: number, unidad: string): number {
+    switch (unidad) {
+      case 'cm':
+        return valor * 2.54;
+      case 'm':
+        return valor * 0.0254;
+      case 'plg':
+      default:
+        return valor;
+    }
+  }
+
+  // Funciones de conversión para largo (pies)
+  convertirA_Pies(valor: number, unidad: string): number {
+    switch (unidad) {
+      case 'cm':
+        return valor / 30.48;
+      case 'm':
+        return valor / 0.3048;
+      case 'pies':
+      default:
+        return valor;
+    }
+  }
+
+  convertirDesdePies(valor: number, unidad: string): number {
+    switch (unidad) {
+      case 'cm':
+        return valor * 30.48;
+      case 'm':
+        return valor * 0.3048;
+      case 'pies':
+      default:
+        return valor;
+    }
   }
 
   agregarAlCarrito(producto: ProductoMadera, cantidad: number): void {
@@ -197,46 +367,27 @@ export class VenderComponent implements OnInit {
     const precio_unitario = producto.precio_venta;
     const categoria = producto.categoria?.nombre.toLowerCase();
 
-    let subtotal = 0;
+    const usarMetro = this.porMetro[producto.id] === true;
 
-    if (categoria === 'tabla') {
-      const volumen = (producto.ancho * producto.espesor * producto.largo) / 12;
-      subtotal = Math.round(volumen * precio_unitario * cantidad * 100) / 100;
-    } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
-      subtotal = Math.round(precio_unitario * cantidad * 100) / 100;
-    } else {
-      alert(`Categoría no válida para cálculo: ${producto.categoria?.nombre}`);
-      return;
-    }
+    let subtotal = this.calcularSubtotal(
+      producto,
+      cantidad,
+      precio_unitario,
+      usarMetro,
+    );
 
     const detalleExistente = this.detalleVentas.find(
       (d) => d.producto.id === producto.id,
     );
 
     if (detalleExistente) {
-      detalleExistente.cantidad_vendida = cantidad;
-      if (detalleExistente.cantidad_vendida > producto.cantidad) {
-        detalleExistente.cantidad_vendida = producto.cantidad;
-      }
-
-      if (categoria === 'tabla') {
-        const volumen =
-          (producto.ancho * producto.espesor * producto.largo) / 12;
-        detalleExistente.subtotal =
-          Math.round(
-            volumen *
-              detalleExistente.precio_unitario *
-              detalleExistente.cantidad_vendida *
-              100,
-          ) / 100;
-      } else {
-        detalleExistente.subtotal =
-          Math.round(
-            detalleExistente.precio_unitario *
-              detalleExistente.cantidad_vendida *
-              100,
-          ) / 100;
-      }
+      detalleExistente.cantidad_vendida = Math.min(cantidad, producto.cantidad);
+      detalleExistente.subtotal = this.calcularSubtotal(
+        producto,
+        detalleExistente.cantidad_vendida,
+        detalleExistente.precio_unitario,
+        usarMetro,
+      );
     } else {
       const detalle: DetalleVentaMadera = {
         id: 0,
@@ -275,34 +426,18 @@ export class VenderComponent implements OnInit {
   }
 
   actualizarSubtotal(detalle: DetalleVentaMadera): void {
-    if (detalle.cantidad_vendida < 1) {
-      detalle.cantidad_vendida = 1;
-    }
-    if (detalle.cantidad_vendida > detalle.producto.cantidad) {
-      detalle.cantidad_vendida = detalle.producto.cantidad;
-    }
+    detalle.cantidad_vendida = Math.max(
+      1,
+      Math.min(detalle.cantidad_vendida, detalle.producto.cantidad),
+    );
+    const usarMetro = this.porMetro[detalle.producto.id] === true;
 
-    const categoria = detalle.producto.categoria?.nombre.toLowerCase();
-
-    if (categoria === 'tabla') {
-      const volumen =
-        (detalle.producto.ancho *
-          detalle.producto.espesor *
-          detalle.producto.largo) /
-        12;
-      detalle.subtotal =
-        Math.round(
-          volumen * detalle.precio_unitario * detalle.cantidad_vendida * 100,
-        ) / 100;
-    } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
-      detalle.subtotal =
-        Math.round(detalle.precio_unitario * detalle.cantidad_vendida * 100) /
-        100;
-    } else {
-      alert(
-        `Categoría no válida para cálculo: ${detalle.producto.categoria?.nombre}`,
-      );
-    }
+    detalle.subtotal = this.calcularSubtotal(
+      detalle.producto,
+      detalle.cantidad_vendida,
+      detalle.precio_unitario,
+      usarMetro,
+    );
 
     this.actualizarTotalVenta();
   }
@@ -314,74 +449,112 @@ export class VenderComponent implements OnInit {
     const detalle = this.detalleVentas.find(
       (d) => d.producto.id === producto.id,
     );
+    if (!detalle) return;
 
-    if (detalle) {
-      detalle.cantidad_vendida = cantidad;
+    detalle.cantidad_vendida = Math.min(cantidad, producto.cantidad);
+    const usarMetro = this.porMetro[producto.id] === true;
 
-      if (detalle.cantidad_vendida > producto.cantidad) {
-        detalle.cantidad_vendida = producto.cantidad;
-        this.cantidadPorProducto[producto.id] = producto.cantidad;
-      }
+    detalle.subtotal = this.calcularSubtotal(
+      producto,
+      detalle.cantidad_vendida,
+      detalle.precio_unitario,
+      usarMetro,
+    );
 
-      const categoria = producto.categoria?.nombre.toLowerCase();
-
-      if (categoria === 'tabla') {
-        const volumen =
-          (producto.ancho * producto.espesor * producto.largo) / 12;
-        detalle.subtotal =
-          Math.round(
-            volumen * detalle.precio_unitario * detalle.cantidad_vendida * 100,
-          ) / 100;
-      } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
-        detalle.subtotal =
-          Math.round(detalle.precio_unitario * detalle.cantidad_vendida * 100) /
-          100;
-      } else {
-        alert(
-          `Categoría no válida para cálculo: ${producto.categoria?.nombre}`,
-        );
-      }
-
-      this.cantidadUltimaAgregada[producto.id] = detalle.cantidad_vendida;
-      this.actualizarTotalVenta();
-    }
+    this.cantidadUltimaAgregada[producto.id] = detalle.cantidad_vendida;
+    this.actualizarTotalVenta();
   }
 
   actualizarCantidadDesdeCarrito(detalle: DetalleVentaMadera): void {
-    let cantidad = detalle.cantidad_vendida;
+    let cantidad = Math.max(
+      1,
+      Math.min(detalle.cantidad_vendida, detalle.producto.cantidad),
+    );
+    detalle.cantidad_vendida = cantidad;
 
-    if (cantidad < 1) {
-      cantidad = 1;
-      detalle.cantidad_vendida = 1;
-    }
-    if (cantidad > detalle.producto.cantidad) {
-      cantidad = detalle.producto.cantidad;
-      detalle.cantidad_vendida = cantidad;
-    }
+    const usarMetro = this.porMetro[detalle.producto.id] === true;
 
-    const categoria = detalle.producto.categoria?.nombre.toLowerCase();
-
-    if (categoria === 'tabla') {
-      const volumen =
-        (detalle.producto.ancho *
-          detalle.producto.espesor *
-          detalle.producto.largo) /
-        12;
-      detalle.subtotal =
-        Math.round(volumen * detalle.precio_unitario * cantidad * 100) / 100;
-    } else if (['listón', 'liston', 'ripa', 'mueble'].includes(categoria)) {
-      detalle.subtotal =
-        Math.round(detalle.precio_unitario * cantidad * 100) / 100;
-    } else {
-      alert(
-        `Categoría no válida para cálculo: ${detalle.producto.categoria?.nombre}`,
-      );
-    }
+    detalle.subtotal = this.calcularSubtotal(
+      detalle.producto,
+      cantidad,
+      detalle.precio_unitario,
+      usarMetro,
+    );
 
     this.cantidadPorProducto[detalle.producto.id] = cantidad;
     this.cantidadUltimaAgregada[detalle.producto.id] = cantidad;
 
     this.actualizarTotalVenta();
+  }
+
+  private calcularSubtotal(
+    producto: ProductoMadera,
+    cantidad: number,
+    precio_unitario: number,
+    usarMetro: boolean = false,
+    usarPersonalizado: boolean = false,
+  ): number {
+    if (
+      !producto ||
+      !producto.categoria?.nombre ||
+      cantidad <= 0 ||
+      precio_unitario <= 0
+    ) {
+      return 0;
+    }
+
+    const categoria = producto.categoria.nombre.toLowerCase();
+
+    // Conversión a metros
+    const largoFt = producto.largo;
+    const anchoIn = producto.ancho;
+    const espesorIn = producto.espesor;
+
+    const largoM = largoFt * 0.3048;
+    const anchoM = anchoIn * 0.0254;
+    const espesorM = espesorIn * 0.0254;
+
+    const volumenPiesCubicos = (anchoIn * espesorIn * largoFt) / 12;
+
+    switch (categoria) {
+      case 'tabla':
+        if (usarMetro) {
+          const tablasNecesarias = cantidad / largoM;
+          const precioPorTabla = precio_unitario * volumenPiesCubicos;
+          return Math.round(precioPorTabla * tablasNecesarias * 100) / 100;
+        } else {
+          return (
+            Math.round(precio_unitario * volumenPiesCubicos * cantidad * 100) /
+            100
+          );
+        }
+
+      case 'listón':
+      case 'liston':
+      case 'ripa':
+        return Math.round(precio_unitario * largoFt * cantidad * 100) / 100;
+
+      case 'mueble':
+        return Math.round(precio_unitario * cantidad * 100) / 100;
+
+      case 'metro lineal':
+        const volumenML = (anchoIn * largoFt) / 12;
+        const precioUnidadML = precio_unitario * volumenML;
+        return Math.round(precioUnidadML * cantidad * 100) / 100;
+
+      default:
+        alert(`Categoría no válida para cálculo: ${producto.categoria.nombre}`);
+        return 0;
+    }
+  }
+
+  calcularUnidadesPorMetro(producto: ProductoMadera, metros: number): number {
+    if (!producto || producto.largo <= 0 || metros <= 0) {
+      return 0;
+    }
+
+    const largoEnMetros = producto.largo * 0.3048;
+    return Math.ceil(metros / largoEnMetros);
   }
 
   registrarVenta(): void {
@@ -479,11 +652,28 @@ export class VenderComponent implements OnInit {
     // Limpiar los campos de cantidad por producto
     this.cantidadPorProducto = {};
     this.cantidadUltimaAgregada = {};
-
     // Limpiar los productos del carrito
     this.detalleVentas = [];
-
     // Reiniciar el total de la venta
     this.totalVenta = 0;
+  }
+  limpiarFiltros(): void {
+    // Limpiar los filtros
+    this.categoriaBusqueda = '';
+    this.productoSeleccionado = null;
+    this.sucursalFiltrada = null;
+    this.categoriaFiltrada = null;
+    this.unidadAncho = '';
+    this.valorAncho = null;
+    this.unidadEspesor = '';
+    this.valorEspesor = null;
+    this.unidadLargo = '';
+    this.valorLargo = null;
+    // Reiniciar la lista de productos a los originales
+    this.productos = [...this.productosOriginales];
+  }
+  limpiarTodo(): void {
+    this.limpiarCantidades();
+    this.limpiarFiltros();
   }
 }

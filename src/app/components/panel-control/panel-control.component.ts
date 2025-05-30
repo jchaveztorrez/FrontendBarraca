@@ -25,7 +25,8 @@ export class PanelControlComponent implements OnInit {
 
   // Tiempo de inactividad permitido (2 minutos)
   inactiveTime = 60 * 60 * 1000;
-
+  isSidebarOpen = false;
+  windowWidth: number = 0;
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -42,29 +43,37 @@ export class PanelControlComponent implements OnInit {
     this.checkScreenSize();
   }
 
-  // 📋 Cierra el sidebar si se hace clic fuera de él (modo móvil)
+  // 🧠 Determina si estamos en vista móvil y ajusta visibilidad del sidebar
+  @HostListener('window:resize')
+  checkScreenSize() {
+    this.windowWidth = window.innerWidth;
+    // En desktop (>= 768px), el sidebar está abierto por defecto
+    if (this.windowWidth >= 768) {
+      this.isSidebarOpen = true;
+    } else {
+      this.isSidebarOpen = false;
+    }
+  }
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+  // Método para cerrar el sidebar en móvil cuando se hace clic fuera
   @HostListener('document:click', ['$event'])
   handleOutsideClick(event: MouseEvent) {
-    if (!this.isMobileView || !this.isSidebarVisibleOnSmallScreens) return;
+    if (this.windowWidth >= 768) return;
 
     const target = event.target as HTMLElement;
-    const clickedInsideAside = target.closest('aside');
-    const clickedInsideNav = target.closest('nav');
+    const clickedInsideSidebar = target.closest('.sidebar');
+    const clickedInsideToggleButton = target.closest('.toggle-button');
 
-    if (!clickedInsideAside && !clickedInsideNav) {
-      this.isSidebarVisibleOnSmallScreens = false;
+    if (
+      !clickedInsideSidebar &&
+      !clickedInsideToggleButton &&
+      this.isSidebarOpen
+    ) {
+      this.isSidebarOpen = false;
     }
   }
-
-  // 🧠 Determina si estamos en vista móvil y ajusta visibilidad del sidebar
-  checkScreenSize() {
-    if (isPlatformBrowser(this.platformId)) {
-      const width = window.innerWidth;
-      this.isMobileView = width <= 768;
-      this.isSidebarVisibleOnSmallScreens = !this.isMobileView;
-    }
-  }
-
   // 🔄 Alterna visibilidad de secciones
   toggleSection(section: string) {
     this.activeSection = this.activeSection === section ? null : section;
@@ -73,11 +82,6 @@ export class PanelControlComponent implements OnInit {
   // ✅ Verifica si una sección está activa
   isActive(section: string) {
     return this.activeSection === section;
-  }
-
-  // 🧭 Alterna el sidebar
-  toggleSidebar() {
-    this.isSidebarVisibleOnSmallScreens = !this.isSidebarVisibleOnSmallScreens;
   }
 
   // 🔐 Cierra la sesión y redirige

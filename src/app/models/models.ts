@@ -66,9 +66,7 @@ export interface ProductoMadera {
   fecha_modificacion: Date;
   estado: boolean;
 }
-
 // Venta
-
 export interface Venta {
   id: number;
   total: number;

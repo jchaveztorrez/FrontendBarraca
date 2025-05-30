@@ -1,9 +1,9 @@
 <section class="layout">
   <!-- Navbar (header) -->
-  <nav class="navbar navbar-expand-md header bg-light" style="z-index: 1030">
+  <nav class="navbar navbar-expand-md header bg-light">
     <div class="container-fluid mx-2">
-      <button class="btn d-md-none me-2" (click)="toggleSidebar()" title="Menú">
-        <i class="bi bi-list fs-2 text-dark"></i>
+      <button class="toggle-button btn me-2" (click)="toggleSidebar()">
+        <i [ngClass]="isSidebarOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
       </button>
       <div class="ms-auto d-flex align-items-center gap-2">
         <button
@@ -20,7 +20,8 @@
   <!-- Sidebar (leftSide) -->
   <aside
     class="leftSide bg-light p-3"
-    [class.show]="isSidebarVisibleOnSmallScreens"
+    [class.sidebar-open]="isSidebarOpen"
+    [class.sidebar-closed]="!isSidebarOpen"
   >
     <div class="mb-3">
       <div class="d-flex justify-content-center align-items-center">
@@ -156,7 +157,6 @@
           </div>
         </li>
       </ul>
-
       <!-- Productos -->
       <li
         class="d-flex align-items-center"
@@ -180,7 +180,6 @@
           ></i>
         </div>
       </li>
-
       <ul class="list-group ps-3" *ngIf="isActive('productos')">
         <!-- Categoria -->
         <li class="d-flex align-items-center">
@@ -325,10 +324,20 @@
       </ul>
     </ul>
   </aside>
-
+  <!-- Overlay para móvil (opcional) -->
+  <!-- Overlay para móvil -->
+  <div
+    class="overlay"
+    *ngIf="windowWidth < 768"
+    [class.overlay-visible]="isSidebarOpen"
+    (click)="toggleSidebar()"
+  ></div>
   <!-- Contenido principal (body) -->
-  <main class="body p-2">
-    <div class="text-center" style="margin-top: 10px; width: 100%">
+  <main
+    class="main-content"
+    [class.content-shifted]="isSidebarOpen && windowWidth >= 768"
+  >
+    <div class="p-2">
       <router-outlet></router-outlet>
     </div>
   </main>

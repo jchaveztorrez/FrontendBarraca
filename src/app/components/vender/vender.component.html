@@ -19,7 +19,6 @@
                 (input)="filtrar()"
               />
             </div>
-
             <!-- Filtrar por nombre de producto -->
             <div class="col-md-3 mb-3">
               <select
@@ -36,8 +35,6 @@
                 </option>
               </select>
             </div>
-
-            <!-- Filtrar por sucursal -->
             <!-- Filtrar por sucursal -->
             <div class="col-md-3 mb-3">
               <select
@@ -51,7 +48,6 @@
                 </option>
               </select>
             </div>
-
             <!-- Filtrar por categoría -->
             <div class="col-md-3 mb-3">
               <select
@@ -72,8 +68,88 @@
                 class="btn btn-warning w-100"
                 (click)="limpiarCantidades()"
               >
-                Limpiar
+                Limpiar Cantidades
               </button>
+            </div>
+            <!-- Botón limpiar -->
+            <div class="col-md-3 mb-3">
+              <button class="btn btn-warning w-100" (click)="limpiarTodo()">
+                Limpiar Todo
+              </button>
+            </div>
+          </div>
+          <!-- Filtros por medidas -->
+          <div class="row">
+            <!-- Filtro por Ancho -->
+            <div class="col-md-4 mb-3">
+              <label>Ancho</label>
+              <div class="input-group">
+                <select
+                  class="form-control"
+                  [(ngModel)]="unidadAncho"
+                  (change)="filtrar()"
+                >
+                  <option value="">Unidad</option>
+                  <option value="plg">Plg</option>
+                  <option value="cm">Cm</option>
+                  <option value="m">M</option>
+                </select>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Valor"
+                  [(ngModel)]="valorAncho"
+                  (input)="filtrar()"
+                />
+              </div>
+            </div>
+
+            <!-- Filtro por Espesor -->
+            <div class="col-md-4 mb-3">
+              <label>Espesor</label>
+              <div class="input-group">
+                <select
+                  class="form-control"
+                  [(ngModel)]="unidadEspesor"
+                  (change)="filtrar()"
+                >
+                  <option value="">Unidad</option>
+                  <option value="plg">Plg</option>
+                  <option value="cm">Cm</option>
+                  <option value="m">M</option>
+                </select>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Valor"
+                  [(ngModel)]="valorEspesor"
+                  (input)="filtrar()"
+                />
+              </div>
+            </div>
+
+            <!-- Filtro por Largo -->
+            <div class="col-md-4 mb-3">
+              <label>Largo</label>
+              <div class="input-group">
+                <select
+                  class="form-control"
+                  [(ngModel)]="unidadLargo"
+                  (change)="filtrar()"
+                >
+                  <option value="">Unidad</option>
+                  <option value="pies">Pies</option>
+                  <option value="cm">Cm</option>
+                  <option value="m">M</option>
+                </select>
+                <input
+                  type="number"
+                  class="form-control"
+                  placeholder="Valor"
+                  [(ngModel)]="valorLargo"
+                  (input)="filtrar()"
+                />
+              </div>
             </div>
           </div>
 
@@ -83,23 +159,32 @@
               <thead class="thead-dark">
                 <tr>
                   <th>Especie</th>
-                  <th>Ancho (plg)</th>
-                  <th>Espesor (plg)</th>
-                  <th>Largo (pies)</th>
+                  <th>Ancho (plg / cm)</th>
+                  <th>Espesor (plg )</th>
+                  <th>Largo (pies / m)</th>
                   <th>Cantidad</th>
                   <th>Precio Venta</th>
                   <th>Sucursal</th>
                   <th>Categoria</th>
                   <th>Cantidad</th>
+                  <th>¿Por metro?</th>
                   <th>Acción</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let producto of productos">
                   <td>{{ producto.especie }}</td>
-                  <td>{{ producto.ancho }}</td>
-                  <td>{{ producto.espesor }}</td>
-                  <td>{{ producto.largo }}</td>
+                  <td>
+                    {{ producto.ancho }} plg /
+                    {{ producto.ancho * 2.54 | number: "1.2-2" }} cm
+                  </td>
+                  <td>{{ producto.espesor }} plg</td>
+                  <td>
+                    {{ producto.largo }} pies /
+
+                    {{ producto.largo * 0.3048 | number: "1.3-3" }} m
+                  </td>
+
                   <td>{{ producto.cantidad }}</td>
                   <td>Bs {{ producto.precio_venta }}</td>
                   <td>{{ producto.sucursal.nombre }}</td>
@@ -117,6 +202,41 @@
                       placeholder="Cantidad"
                     />
                   </td>
+                  <!-- Reemplazamos la columna "¿Por metro?" con un input de número para metros lineales y debajo el texto con la cantidad en tablas -->
+                  <td class="text-center">
+                    <input
+                      type="number"
+                      class="form-control form-control-sm mx-auto"
+                      style="max-width: 100px"
+                      placeholder="Metros"
+                      [(ngModel)]="metrosLineales[producto.id]"
+                      (ngModelChange)="
+                        calcularUnidadesPorMetro(
+                          producto,
+                          metrosLineales[producto.id]
+                        )
+                      "
+                      [min]="0"
+                    />
+                    <div
+                      *ngIf="
+                        metrosLineales[producto.id] &&
+                        metrosLineales[producto.id] > 0
+                      "
+                      class="mt-1 text-muted"
+                      style="font-size: 0.85em"
+                    >
+                      ≈
+                      {{
+                        calcularUnidadesPorMetro(
+                          producto,
+                          metrosLineales[producto.id]
+                        )
+                      }}
+                      tabla(s)
+                    </div>
+                  </td>
+
                   <td>
                     <button
                       class="btn btn-outline-success btn-sm"
@@ -169,7 +289,6 @@
               />
             </div>
           </div>
-
           <!-- Carrito -->
           <div *ngIf="detalleVentas.length > 0">
             <div class="table-responsive">
