@@ -60,12 +60,14 @@
 
           <div class="col-md-6">
             <label class="form-label fw-semibold">Imagen</label>
+
             <input
               type="file"
-              class="form-control"
+              id="imagenInput"
               (change)="onFileChange($event)"
-              required
+              accept="image/png, image/jpeg"
             />
+
             <div *ngIf="imagenPreview" class="mt-2">
               <img
                 [src]="imagenPreview"
@@ -111,3 +113,16 @@
     </div>
   </div>
 </div>
+<!-- Modal de Éxito -->
+<app-ok
+  *ngIf="mensajeExito"
+  [mensaje]="mensajeExito"
+  (close)="manejarOk()"
+></app-ok>
+
+<!-- Modal de Error -->
+<app-error
+  *ngIf="mensajeError"
+  [mensaje]="mensajeError"
+  (close)="manejarError()"
+></app-error>

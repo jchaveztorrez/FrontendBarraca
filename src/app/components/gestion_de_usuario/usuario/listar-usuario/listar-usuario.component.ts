@@ -70,14 +70,32 @@ export class ListarUsuarioComponent implements OnInit {
     this.actualizarUsuariosMostrados();
   }
 
-  cambiarEstado(usuario: Usuario): void {
+  /*   cambiarEstado(usuario: Usuario): void {
     const actualizado = { ...usuario, estado: !usuario.estado };
-    this.usuarioService.updateUsuario(actualizado).subscribe({
+    this.usuarioService.editarUsuario(actualizado).subscribe({
       next: () => {
         usuario.estado = actualizado.estado;
         this.filtrar();
       },
       error: (err) => console.error('Error al cambiar el estado:', err),
+    });
+  } */
+  cambiarEstado(usuario: Usuario): void {
+    const actualizado = { ...usuario, estado: !usuario.estado };
+
+    const formData = new FormData();
+    formData.append('estado', String(actualizado.estado));
+
+    // Si tu backend necesita otros campos, añade aquí más:
+    // formData.append('nombre', actualizado.nombre);
+    // formData.append('correo', actualizado.correo);
+
+    this.usuarioService.editarUsuario(actualizado.id, formData).subscribe({
+      next: () => {
+        usuario.estado = actualizado.estado;
+        this.filtrar();
+      },
+      error: (err: any) => console.error('Error al cambiar el estado:', err),
     });
   }
 

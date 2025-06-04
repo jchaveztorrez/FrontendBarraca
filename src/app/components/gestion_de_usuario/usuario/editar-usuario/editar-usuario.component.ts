@@ -1,26 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  ReactiveFormsModule,
   FormBuilder,
-  Validators,
   FormGroup,
+  Validators,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ServiceService } from '../../../../services/service.service';
+import { OkComponent } from '../../../Mensajes/ok/ok.component';
+import { ErrorComponent } from '../../../Mensajes/error/error.component';
 
 @Component({
   selector: 'app-editar-usuario',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, OkComponent, ErrorComponent],
   templateUrl: './editar-usuario.component.html',
   styleUrls: ['./editar-usuario.component.css'],
 })
 export class EditarUsuarioComponent implements OnInit {
   form!: FormGroup;
   usuarioOriginal: any;
-  errorMensaje: string | null = null; // Error message for file upload
-  imagenPreview: string | ArrayBuffer | null = null; // Variable to hold the image preview
+  imagenPreview: string | ArrayBuffer | null = null;
+  errorMensaje: string | null = null;
+  mensajeExito: string = '';
+  mensajeError: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -32,14 +36,14 @@ export class EditarUsuarioComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       id: [null],
-      nombre: [null, Validators.required],
-      apellido: [null, Validators.required],
-      correo: [null, [Validators.required, Validators.email]],
-      telefono: [null],
-      ci: [null],
-      fecha_nacimiento: [null],
-      password: [null],
-      imagen_url: [null], // Set to null initially
+      nombre: ['', Validators.required],
+      apellido: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: [''],
+      ci: [''],
+      fecha_nacimiento: [''],
+      password: [''],
+      imagen_url: [''],
       estado: [true],
     });
 
@@ -47,16 +51,49 @@ export class EditarUsuarioComponent implements OnInit {
     this.usuarioService.getUsuarioID(id).subscribe((data) => {
       this.usuarioOriginal = data;
       this.form.patchValue(data);
-      this.imagenPreview = data.imagen_url; // Set the initial image preview
+      this.imagenPreview = data.imagen_url;
     });
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      this.usuarioService.updateUsuario(this.form.value).subscribe(() => {
-        this.router.navigate(['app-panel-control/listar-usuario']);
-      });
+  actualizarUsuario(): void {
+    const formData = new FormData();
+
+    // Recorremos los valores del formulario
+    Object.entries(this.form.value).forEach(([key, value]) => {
+      // Evitar null, undefined y objetos
+      if (value !== null && value !== undefined && typeof value !== 'object') {
+        formData.append(key, String(value));
+      }
+    });
+
+    // Adjuntamos el archivo si existe
+    const inputElement = document.getElementById(
+      'imagenInput',
+    ) as HTMLInputElement;
+
+    if (inputElement?.files?.length) {
+      const file = inputElement.files[0];
+      console.log('Archivo de imagen:', file); // Verifica que el archivo se esté adjuntando
+      formData.append('imagen_url', file);
     }
+
+    // Obtenemos el ID desde el formulario
+    const id = this.form.get('id')?.value;
+    if (!id) {
+      this.mensajeError = 'ID de usuario no disponible';
+      return;
+    }
+
+    // Llamamos al servicio con id y formData
+    this.usuarioService.editarUsuario(id, formData).subscribe({
+      next: () => {
+        this.mensajeExito = 'Usuario actualizado con éxito';
+      },
+      error: (err: any) => {
+        this.mensajeError = 'Error al actualizar el usuario';
+        console.error('Error al actualizar usuario:', err);
+      },
+    });
   }
 
   volver(): void {
@@ -66,35 +103,41 @@ export class EditarUsuarioComponent implements OnInit {
   restablecerFormulario(): void {
     if (this.usuarioOriginal) {
       this.form.patchValue(this.usuarioOriginal);
-      this.imagenPreview = this.usuarioOriginal.imagen_url; // Reset the image preview
+      this.imagenPreview = this.usuarioOriginal.imagen_url;
     }
   }
 
   onFileChange(event: any): void {
     const inputElement = event.target as HTMLInputElement;
 
-    // Check if files are not null and has at least one file
     if (inputElement.files && inputElement.files.length > 0) {
       const file = inputElement.files[0];
-
-      // Validate the file type
       const validExtensions = ['image/png', 'image/jpeg'];
+
       if (!validExtensions.includes(file.type)) {
         this.errorMensaje =
-          'Formato de archivo incorrecto. Solo se permiten PNG y JPG.'; // Error message
-        this.imagenPreview = null; // Clear the preview
+          'Formato no válido. Solo se permiten imágenes PNG y JPG.';
+        this.imagenPreview = null;
         return;
       }
 
-      // If valid, update the form and show the preview
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagenPreview = reader.result; // Set the image preview
+        this.imagenPreview = reader.result;
       };
-      reader.readAsDataURL(file); // Read the file as a data URL
+      reader.readAsDataURL(file);
     } else {
-      this.errorMensaje = 'Por favor, selecciona un archivo.'; // Error message if no file
-      this.imagenPreview = null; // Clear the preview
+      this.errorMensaje = 'Por favor, selecciona una imagen válida.';
+      this.imagenPreview = null;
     }
+  }
+
+  manejarOk() {
+    this.mensajeExito = '';
+    this.router.navigate(['app-panel-control/listar-usuario']);
+  }
+
+  manejarError() {
+    this.mensajeError = '';
   }
 }

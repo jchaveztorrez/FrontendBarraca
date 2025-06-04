@@ -88,11 +88,15 @@ export class ServiceService {
   createUsuario(usuario: Usuario): Observable<Usuario> {
     return this.http.post<Usuario>(`${this.apiUrl}usuario/`, usuario);
   }
-  updateUsuario(usuario: Usuario): Observable<Usuario> {
+
+  /*  updateUsuario(usuario: Usuario): Observable<Usuario> {
     return this.http.put<Usuario>(
       `${this.apiUrl}usuario/${usuario.id}/`,
       usuario,
     );
+  } */
+  editarUsuario(id: number, usuario: FormData): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.apiUrl}usuario/${id}/`, usuario);
   }
 
   /* realacion la interacion con UsuarioRolSucursal para (get, post y otros) */

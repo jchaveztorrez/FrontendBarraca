@@ -3,7 +3,7 @@
     <div class="card-body">
       <h3 class="card-title mb-4 text-center text-primary">Editar Usuario</h3>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" (ngSubmit)="actualizarUsuario()">
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label fw-semibold">Nombre</label>
@@ -58,12 +58,15 @@
 
           <div class="col-md-6">
             <label class="form-label fw-semibold">Imagen</label>
+
             <input
               type="file"
-              class="form-control"
+              id="imagenInput"
               (change)="onFileChange($event)"
+              class="form-control"
               required
             />
+
             <div *ngIf="imagenPreview" class="mt-2">
               <img
                 [src]="imagenPreview"
@@ -109,3 +112,16 @@
     </div>
   </div>
 </div>
+<!-- Modal de Éxito -->
+<app-ok
+  *ngIf="mensajeExito"
+  [mensaje]="mensajeExito"
+  (close)="manejarOk()"
+></app-ok>
+
+<!-- Modal de Error -->
+<app-error
+  *ngIf="mensajeError"
+  [mensaje]="mensajeError"
+  (close)="manejarError()"
+></app-error>

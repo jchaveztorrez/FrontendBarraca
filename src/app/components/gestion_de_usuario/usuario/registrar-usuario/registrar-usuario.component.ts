@@ -8,11 +8,14 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ServiceService } from '../../../../services/service.service';
+import { OkComponent } from '../../../Mensajes/ok/ok.component';
+import { ErrorComponent } from '../../../Mensajes/error/error.component';
+import { Usuario } from '../../../../models/models';
 
 @Component({
   selector: 'app-registrar-usuario',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, OkComponent, ErrorComponent],
   templateUrl: './registrar-usuario.component.html',
   styleUrls: ['./registrar-usuario.component.css'],
 })
@@ -22,6 +25,9 @@ export class RegistrarUsuarioComponent implements OnInit {
   errorMensaje: string | null = null; // Mensaje de error
   imagenPreview: string | ArrayBuffer | null = null; // Variable to hold the image preview
 
+  mensajeExito: string = '';
+  mensajeError: string = '';
+
   constructor(
     private fb: FormBuilder,
     private usuarioService: ServiceService,
@@ -30,23 +36,59 @@ export class RegistrarUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      nombre: [null, Validators.required],
-      apellido: [null, Validators.required],
-      correo: [null, [Validators.required, Validators.email]],
-      telefono: [null],
-      ci: [null],
-      fecha_nacimiento: [null],
-      password: [null, Validators.required],
-      imagen_url: [null], // Set to null initially
+      nombre: ['', [Validators.required]],
+      apellido: ['', [Validators.required]],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', [Validators.required]],
+      ci: ['', [Validators.required]],
+      fecha_nacimiento: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      imagen_url: [''], // Set to null initially
       estado: [true],
     });
   }
 
   onSubmit(): void {
     if (this.form.valid) {
-      this.usuarioService.createUsuario(this.form.value).subscribe(() => {
-        this.router.navigate(['app-panel-control/listar-usuario']);
-      });
+      const formData = new FormData();
+
+      // Agregamos cada campo manualmente
+      formData.append('nombre', this.form.get('nombre')?.value);
+      formData.append('apellido', this.form.get('apellido')?.value);
+      formData.append('correo', this.form.get('correo')?.value);
+      formData.append('telefono', this.form.get('telefono')?.value);
+      formData.append('ci', this.form.get('ci')?.value);
+      formData.append(
+        'fecha_nacimiento',
+        this.form.get('fecha_nacimiento')?.value,
+      );
+      formData.append('password', this.form.get('password')?.value);
+      formData.append('estado', this.form.get('estado')?.value);
+
+      // Adjuntamos la imagen si existe
+      const inputElement = document.getElementById(
+        'imagenInput',
+      ) as HTMLInputElement;
+      if (inputElement && inputElement.files && inputElement.files.length > 0) {
+        const file = inputElement.files[0];
+        formData.append('imagen_url', file); // este nombre debe coincidir con el nombre en el backend
+      }
+
+      console.log('FormData a enviar:', formData);
+
+      this.usuarioService
+        .createUsuario(formData as unknown as Usuario)
+        .subscribe({
+          next: () => {
+            this.mensajeExito = 'Usuario registrado con éxito';
+          },
+          error: (error) => {
+            this.mensajeError = 'Ocurrió un error al registrar el Usuario';
+            console.error('Error al registrar Usuario:', error);
+          },
+        });
+    } else {
+      this.form.markAllAsTouched();
     }
   }
 
@@ -88,5 +130,14 @@ export class RegistrarUsuarioComponent implements OnInit {
       this.errorMensaje = 'Por favor, selecciona un archivo.'; // Error message if no file
       this.imagenPreview = null; // Clear the preview
     }
+  }
+  manejarOk() {
+    this.mensajeExito = '';
+    // Moved the navigation here, after the modal is closed
+    this.router.navigate(['app-panel-control/listar-usuario']);
+  }
+
+  manejarError() {
+    this.mensajeError = '';
   }
 }
