@@ -10,11 +10,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ServiceService } from '../../../../services/service.service';
 import { Categoria, Sucursal } from '../../../../models/models';
 import { CommonModule } from '@angular/common';
+import { ErrorComponent } from '../../../Mensajes/error/error.component';
+import { OkComponent } from '../../../Mensajes/ok/ok.component';
+import { CustomValidatorsService } from '../../../../shared/validators/custom-validators.service';
 
 @Component({
   selector: 'app-producto-madera-editar',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ErrorComponent,
+    OkComponent,
+  ],
   templateUrl: './producto-madera-editar.component.html',
   styleUrl: './producto-madera-editar.component.css',
 })
@@ -23,23 +32,89 @@ export class ProductoMaderaEditarComponent {
   sucursal: Sucursal[] = [];
   categoria: Categoria[] = [];
   id!: number;
+  mensajeExito: string = '';
+  mensajeError: string = '';
 
   constructor(
     private fb: FormBuilder,
     private servisio: ServiceService,
     private route: ActivatedRoute,
     private router: Router,
+    private customValidators: CustomValidatorsService,
   ) {
     this.form = this.fb.group({
       id: [''], // se necesita para update
-      especie: ['', Validators.required],
-      ancho: ['', Validators.required],
-      espesor: ['', Validators.required],
-      largo: ['', Validators.required],
-      cantidad: ['', Validators.required],
-      precio_compra: ['', Validators.required],
-      precio_barraca: ['', Validators.required],
-      precio_venta: ['', Validators.required],
+      especie: [
+        '',
+        [
+          Validators.required,
+          this.customValidators.limpiarEspaciosValidator(),
+          this.customValidators.formatoEspecie(),
+        ],
+      ],
+      ancho: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(100),
+          this.customValidators.soloPositivosNumericos(),
+        ],
+      ],
+      espesor: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(100),
+          this.customValidators.soloPositivosNumericos(),
+        ],
+      ],
+      largo: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(100),
+          this.customValidators.soloPositivosNumericos(),
+        ],
+      ],
+      cantidad: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(100),
+          this.customValidators.soloPositivosNumericos(),
+        ],
+      ],
+      precio_compra: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(100),
+          this.customValidators.soloPositivosNumericos(),
+        ],
+      ],
+      precio_barraca: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(100),
+          this.customValidators.soloPositivosNumericos(),
+        ],
+      ],
+      precio_venta: [
+        '',
+        [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(100),
+          this.customValidators.soloPositivosNumericos(),
+        ],
+      ],
       sucursal: ['', Validators.required],
       categoria: ['', Validators.required],
     });
@@ -81,12 +156,11 @@ export class ProductoMaderaEditarComponent {
       console.log(formData); // Verifica que los datos se están enviando correctamente
       this.servisio.updateProductoMadera(formData).subscribe({
         next: () => {
-          alert('Producto de madera actualizado correctamente');
-          this.router.navigate(['app-panel-control/listar-producto-madera']);
+          this.mensajeExito = 'Producto de madera actualizado correctamente';
         },
         error: (err) => {
           console.error(err); // Imprime el error para depuración
-          alert('Error al actualizar el producto de madera');
+          this.mensajeError = 'Error al actualizar el producto de madera';
         },
       });
     }
@@ -97,5 +171,13 @@ export class ProductoMaderaEditarComponent {
   }
   limpiarFormulario(): void {
     this.loadRelacion(); // restablece el formulario a su estado original
+  }
+  manejarOk() {
+    this.mensajeExito = '';
+    this.router.navigate(['app-panel-control/listar-producto-madera']);
+  }
+
+  manejarError() {
+    this.mensajeError = '';
   }
 }

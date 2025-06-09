@@ -10,11 +10,19 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Rol, Sucursal, Usuario } from '../../../../models/models';
 import { ServiceService } from '../../../../services/service.service';
+import { OkComponent } from '../../../Mensajes/ok/ok.component';
+import { ErrorComponent } from '../../../Mensajes/error/error.component';
 
 @Component({
   selector: 'app-editar-usuario-rol-sucursal',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    OkComponent,
+    ErrorComponent,
+  ],
   templateUrl: './editar-usuario-rol-sucursal.component.html',
   styleUrl: './editar-usuario-rol-sucursal.component.css',
 })
@@ -25,6 +33,10 @@ export class EditarUsuarioRolSucursalComponent implements OnInit {
   sucursales: Sucursal[] = [];
 
   id!: number; // ID para obtener la relación a editar
+
+  mensajeExito: string = '';
+  mensajeError: string = '';
+  originalData: any = {};
 
   constructor(
     private fb: FormBuilder,
@@ -64,26 +76,65 @@ export class EditarUsuarioRolSucursalComponent implements OnInit {
     this.service.getUsuarioRolSucursalID(this.id).subscribe((data) => {
       this.form.patchValue({
         id: data.id,
-        usuario: data.usuario.id, // Solo el ID
-        rol: data.rol.id, // Solo el ID
-        sucursal: data.sucursal.id, // Solo el ID
+        usuario: data.usuario.id,
+        rol: data.rol.id,
+        sucursal: data.sucursal.id,
       });
+
+      // Guardamos los valores originales
+      this.originalData = {
+        usuario: data.usuario.id,
+        rol: data.rol.id,
+        sucursal: data.sucursal.id,
+      };
     });
   }
 
   actualizar() {
     if (this.form.valid) {
       const formData = this.form.value;
-      this.service.updateUsuarioRolSucursal(formData).subscribe({
-        next: () => {
-          alert('Actualizado correctamente');
-          this.router.navigate([
-            'app-panel-control/listar-usuario-rol-sucursal',
-          ]);
-        },
-        error: () => alert('Error al actualizar'),
-      });
+
+      // 1. Verificar si no cambió nada
+      const noCambio =
+        formData.usuario === this.originalData.usuario &&
+        formData.rol === this.originalData.rol &&
+        formData.sucursal === this.originalData.sucursal;
+
+      if (noCambio) {
+        // No cambió nada, actualizar normalmente
+        this.enviarActualizacion(formData);
+      } else {
+        // 2. Verificar si ya existe otro registro con los mismos datos
+        this.service.getUsuarioRolSucursal().subscribe((registros) => {
+          const existe = registros.some((r: any) => {
+            return (
+              r.id !== formData.id &&
+              r.usuario.id === formData.usuario &&
+              r.rol.id === formData.rol &&
+              r.sucursal.id === formData.sucursal
+            );
+          });
+
+          if (existe) {
+            this.mensajeError =
+              'Ya existe un registro con este Usuario, Rol y Sucursal.';
+          } else {
+            this.enviarActualizacion(formData);
+          }
+        });
+      }
     }
+  }
+  enviarActualizacion(formData: any) {
+    this.service.updateUsuarioRolSucursal(formData).subscribe({
+      next: () => {
+        this.mensajeExito = 'Usuario Rol Sucursal actualizado correctamente';
+      },
+      error: () => {
+        this.mensajeError =
+          'Error al actualizar el Usuario Rol Sucursal. Intente nuevamente.';
+      },
+    });
   }
 
   volver(): void {
@@ -92,5 +143,13 @@ export class EditarUsuarioRolSucursalComponent implements OnInit {
 
   limpiarFormulario(): void {
     this.loadRelacion(); // restablece el formulario a su estado original
+  }
+  manejarOk() {
+    this.mensajeExito = '';
+    this.router.navigate(['app-panel-control/listar-usuario-rol-sucursal']);
+  }
+
+  manejarError() {
+    this.mensajeError = '';
   }
 }

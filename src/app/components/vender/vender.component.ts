@@ -14,11 +14,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
+import { ErrorComponent } from '../Mensajes/error/error.component';
+import { OkComponent } from '../Mensajes/ok/ok.component';
 
 @Component({
   selector: 'app-vender',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ErrorComponent,
+    OkComponent,
+  ],
   templateUrl: './vender.component.html',
   styleUrls: ['./vender.component.css'],
 })
@@ -67,6 +75,9 @@ export class VenderComponent implements OnInit {
 
   unidadLargo: string = '';
   valorLargo: number | null = null;
+
+  mensajeExito: string = '';
+  mensajeError: string = '';
 
   constructor(
     private service: ServiceService,
@@ -528,6 +539,17 @@ export class VenderComponent implements OnInit {
             100
           );
         }
+      case 'tijera':
+        if (usarMetro) {
+          const tablasNecesarias = cantidad / largoM;
+          const precioPorTabla = precio_unitario * volumenPiesCubicos;
+          return Math.round(precioPorTabla * tablasNecesarias * 100) / 100;
+        } else {
+          return (
+            Math.round(precio_unitario * volumenPiesCubicos * cantidad * 100) /
+            100
+          );
+        }
 
       case 'listón':
       case 'liston':
@@ -563,38 +585,32 @@ export class VenderComponent implements OnInit {
       !this.sucursal ||
       this.detalleVentas.length === 0
     ) {
-      alert('Faltan datos para registrar la venta.');
+      this.mensajeError = 'Faltan datos para registrar la venta.';
       return;
     }
-
-    // Creamos la venta con los datos requeridos por el backend
-
     const nuevaVenta = {
       vendedor_id: this.usuarioSeleccionado.id,
       sucursal_id: this.sucursal.id,
       total: this.totalVenta,
     };
-
     this.service.createVenta(nuevaVenta).subscribe(
       (ventaGuardada) => {
         this.venta = ventaGuardada;
         this.ventaId = ventaGuardada.id;
-
         this.registrarDetallesVenta();
       },
       (error) => {
         console.error('Error al registrar la venta:', error);
-        alert('Error al registrar la venta.');
+        this.mensajeError = 'Error al registrar la venta.';
       },
     );
   }
 
   registrarDetallesVenta(): void {
     if (this.detalleVentas.length === 0) {
-      alert('No hay detalles de venta para registrar.');
+      this.mensajeError = 'No hay detalles de venta para registrar.';
       return;
     }
-
     const observables = this.detalleVentas.map((detalle) => {
       const nuevoDetalle = {
         venta: this.venta.id,
@@ -605,10 +621,8 @@ export class VenderComponent implements OnInit {
       console.log('Nuevo detalle a registrar:', nuevoDetalle);
       return this.service.createDetalleVentaMadera(nuevoDetalle);
     });
-
     forkJoin(observables).subscribe(
       (detallesCreados) => {
-        // Actualizar cantidades en productos tras confirmación de todos los detalles
         detallesCreados.forEach((detalleCreado, index) => {
           const detalle = this.detalleVentas[index];
           const productoId = detalle.producto.id;
@@ -623,20 +637,16 @@ export class VenderComponent implements OnInit {
             }
           }
         });
-
-        alert('Venta y detalles registrados correctamente.');
+        this.mensajeExito = 'Venta y detalles registrados correctamente.';
         this.reiniciarFormulario();
         this.limpiarCantidades();
-
-        // Navegar a la ruta solicitada
-        this.router.navigate(['app-panel-control/registrar-factura-recibo']);
       },
       (error) => {
         console.error('Error al registrar detalles de venta:', error);
         const errorMsg = error.error
           ? JSON.stringify(error.error)
           : error.message || 'Error desconocido';
-        alert(`Error al registrar los detalles de venta: ${errorMsg}`);
+        this.mensajeError = `Error al registrar los detalles de venta: ${errorMsg}`;
       },
     );
   }
@@ -675,5 +685,12 @@ export class VenderComponent implements OnInit {
   limpiarTodo(): void {
     this.limpiarCantidades();
     this.limpiarFiltros();
+  }
+  manejarOk() {
+    this.mensajeExito = '';
+    this.router.navigate(['app-panel-control/registrar-factura-recibo']);
+  }
+  manejarError() {
+    this.mensajeError = '';
   }
 }

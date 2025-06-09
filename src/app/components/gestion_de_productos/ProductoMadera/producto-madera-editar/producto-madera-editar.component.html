@@ -26,7 +26,34 @@
               class="form-control"
               formControlName="cantidad"
               placeholder="Cantidad en unidades"
+              [class.is-invalid]="
+                form.get('cantidad')?.invalid && form.get('cantidad')?.touched
+              "
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                form.get('cantidad')?.touched && form.get('cantidad')?.invalid
+              "
+            >
+              <div *ngIf="form.get('cantidad')?.hasError('required')">
+                La cantidad es requerida
+              </div>
+              <div *ngIf="form.get('cantidad')?.hasError('min')">
+                Mínimo 1 unidad
+              </div>
+              <div *ngIf="form.get('cantidad')?.hasError('max')">
+                Máximo 1000 unidades
+              </div>
+              <div
+                *ngIf="
+                  form.get('cantidad')?.errors?.['soloPositivosNumericos'] &&
+                  form.get('cantidad')?.touched
+                "
+              >
+                Solo se permiten números positivos (enteros o decimales)
+              </div>
+            </div>
           </div>
 
           <!-- Ancho, Espesor, Largo en una sola fila -->
@@ -39,7 +66,34 @@
                   class="form-control"
                   formControlName="ancho"
                   placeholder="Pulgadas"
+                  [class.is-invalid]="
+                    form.get('ancho')?.invalid && form.get('ancho')?.touched
+                  "
                 />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    form.get('ancho')?.touched && form.get('ancho')?.invalid
+                  "
+                >
+                  <div *ngIf="form.get('ancho')?.hasError('required')">
+                    El ancho es requerido
+                  </div>
+                  <div *ngIf="form.get('ancho')?.hasError('min')">
+                    Mínimo 1 pulgada
+                  </div>
+                  <div *ngIf="form.get('ancho')?.hasError('max')">
+                    Máximo 100 pulgadas
+                  </div>
+                  <div
+                    *ngIf="
+                      form.get('ancho')?.errors?.['soloPositivosNumericos'] &&
+                      form.get('ancho')?.touched
+                    "
+                  >
+                    Solo se permiten números positivos (enteros o decimales)
+                  </div>
+                </div>
               </div>
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Espesor</label>
@@ -48,7 +102,34 @@
                   class="form-control"
                   formControlName="espesor"
                   placeholder="Pulgadas"
+                  [class.is-invalid]="
+                    form.get('espesor')?.invalid && form.get('espesor')?.touched
+                  "
                 />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    form.get('espesor')?.touched && form.get('espesor')?.invalid
+                  "
+                >
+                  <div *ngIf="form.get('espesor')?.hasError('required')">
+                    El espesor es requerido
+                  </div>
+                  <div *ngIf="form.get('espesor')?.hasError('min')">
+                    Mínimo 1 pulgada
+                  </div>
+                  <div *ngIf="form.get('espesor')?.hasError('max')">
+                    Máximo 100 pulgadas
+                  </div>
+                  <div
+                    *ngIf="
+                      form.get('espesor')?.errors?.['soloPositivosNumericos'] &&
+                      form.get('espesor')?.touched
+                    "
+                  >
+                    Solo se permiten números positivos (enteros o decimales)
+                  </div>
+                </div>
               </div>
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Largo</label>
@@ -57,7 +138,34 @@
                   class="form-control"
                   formControlName="largo"
                   placeholder="Pies"
+                  [class.is-invalid]="
+                    form.get('largo')?.invalid && form.get('largo')?.touched
+                  "
                 />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    form.get('largo')?.touched && form.get('largo')?.invalid
+                  "
+                >
+                  <div *ngIf="form.get('largo')?.hasError('required')">
+                    El largo es requerido
+                  </div>
+                  <div *ngIf="form.get('largo')?.hasError('min')">
+                    Mínimo 1 pie
+                  </div>
+                  <div *ngIf="form.get('largo')?.hasError('max')">
+                    Máximo 100 pies
+                  </div>
+                  <div
+                    *ngIf="
+                      form.get('largo')?.errors?.['soloPositivosNumericos'] &&
+                      form.get('largo')?.touched
+                    "
+                  >
+                    Solo se permiten números positivos (enteros o decimales)
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -72,7 +180,37 @@
                   class="form-control"
                   formControlName="precio_compra"
                   placeholder="Bs"
+                  [class.is-invalid]="
+                    form.get('precio_compra')?.invalid &&
+                    form.get('precio_compra')?.touched
+                  "
                 />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    form.get('precio_compra')?.touched &&
+                    form.get('precio_compra')?.invalid
+                  "
+                >
+                  <div *ngIf="form.get('precio_compra')?.hasError('required')">
+                    El precio de compra es requerido
+                  </div>
+                  <div *ngIf="form.get('precio_compra')?.hasError('min')">
+                    Mínimo 0.01 Bs
+                  </div>
+                  <div *ngIf="form.get('precio_compra')?.hasError('max')">
+                    Máximo 100000 Bs
+                  </div>
+                  <div
+                    *ngIf="
+                      form.get('precio_compra')?.errors?.[
+                        'soloPositivosNumericos'
+                      ] && form.get('precio_compra')?.touched
+                    "
+                  >
+                    Solo se permiten números positivos (enteros o decimales)
+                  </div>
+                </div>
               </div>
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Precio Barraca</label>
@@ -81,7 +219,37 @@
                   class="form-control"
                   formControlName="precio_barraca"
                   placeholder="Bs"
+                  [class.is-invalid]="
+                    form.get('precio_barraca')?.invalid &&
+                    form.get('precio_barraca')?.touched
+                  "
                 />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    form.get('precio_barraca')?.touched &&
+                    form.get('precio_barraca')?.invalid
+                  "
+                >
+                  <div *ngIf="form.get('precio_barraca')?.hasError('required')">
+                    El precio de barraca es requerido
+                  </div>
+                  <div *ngIf="form.get('precio_barraca')?.hasError('min')">
+                    Mínimo 0.01 Bs
+                  </div>
+                  <div *ngIf="form.get('precio_barraca')?.hasError('max')">
+                    Máximo 100000 Bs
+                  </div>
+                  <div
+                    *ngIf="
+                      form.get('precio_barraca')?.errors?.[
+                        'soloPositivosNumericos'
+                      ] && form.get('precio_barraca')?.touched
+                    "
+                  >
+                    Solo se permiten números positivos (enteros o decimales)
+                  </div>
+                </div>
               </div>
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Precio Venta</label>
@@ -90,7 +258,37 @@
                   class="form-control"
                   formControlName="precio_venta"
                   placeholder="Bs"
+                  [class.is-invalid]="
+                    form.get('precio_venta')?.invalid &&
+                    form.get('precio_venta')?.touched
+                  "
                 />
+                <div
+                  class="invalid-feedback"
+                  *ngIf="
+                    form.get('precio_venta')?.touched &&
+                    form.get('precio_venta')?.invalid
+                  "
+                >
+                  <div *ngIf="form.get('precio_venta')?.hasError('required')">
+                    El precio de venta es requerido
+                  </div>
+                  <div *ngIf="form.get('precio_venta')?.hasError('min')">
+                    Mínimo 0.01 Bs
+                  </div>
+                  <div *ngIf="form.get('precio_venta')?.hasError('max')">
+                    Máximo 100000 Bs
+                  </div>
+                  <div
+                    *ngIf="
+                      form.get('precio_venta')?.errors?.[
+                        'soloPositivosNumericos'
+                      ] && form.get('precio_venta')?.touched
+                    "
+                  >
+                    Solo se permiten números positivos (enteros o decimales)
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -150,3 +348,16 @@
     </div>
   </div>
 </div>
+<!-- Modal de Éxito -->
+<app-ok
+  *ngIf="mensajeExito"
+  [mensaje]="mensajeExito"
+  (close)="manejarOk()"
+></app-ok>
+
+<!-- Modal de Error -->
+<app-error
+  *ngIf="mensajeError"
+  [mensaje]="mensajeError"
+  (close)="manejarError()"
+></app-error>

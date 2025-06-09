@@ -11,6 +11,7 @@ import { ServiceService } from '../../../../services/service.service';
 import { OkComponent } from '../../../Mensajes/ok/ok.component';
 import { ErrorComponent } from '../../../Mensajes/error/error.component';
 import { Usuario } from '../../../../models/models';
+import { CustomValidatorsService } from '../../../../shared/validators/custom-validators.service';
 
 @Component({
   selector: 'app-registrar-usuario',
@@ -32,18 +33,50 @@ export class RegistrarUsuarioComponent implements OnInit {
     private fb: FormBuilder,
     private usuarioService: ServiceService,
     private router: Router,
+    private customValidators: CustomValidatorsService,
   ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      nombre: ['', [Validators.required]],
-      apellido: ['', [Validators.required]],
-      correo: ['', [Validators.required, Validators.email]],
-      telefono: ['', [Validators.required]],
-      ci: ['', [Validators.required]],
-      fecha_nacimiento: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      imagen_url: [''], // Set to null initially
+      nombre: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(20),
+          this.customValidators.soloTexto(),
+        ],
+      ],
+      apellido: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(20),
+          this.customValidators.soloTexto(),
+        ],
+      ],
+      correo: [
+        '',
+        [Validators.required, Validators.email],
+        [this.customValidators.validateEmail()],
+      ],
+      telefono: [
+        '',
+        [Validators.required],
+        [this.customValidators.validatePhone()],
+      ],
+      ci: ['', [Validators.required], [this.customValidators.validateCI()]],
+      fecha_nacimiento: [
+        '',
+        [Validators.required, this.customValidators.validateDateOfBirth()],
+      ],
+      password: [
+        '',
+        [Validators.required, this.customValidators.validatePassword()],
+      ],
+
+      imagen_url: [''],
       estado: [true],
     });
   }

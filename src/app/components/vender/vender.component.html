@@ -61,21 +61,20 @@
                 </option>
               </select>
             </div>
-
-            <!-- Botón limpiar -->
-            <div class="col-md-3 mb-3">
-              <button
-                class="btn btn-warning w-100"
-                (click)="limpiarCantidades()"
-              >
-                Limpiar Cantidades
-              </button>
-            </div>
-            <!-- Botón limpiar -->
-            <div class="col-md-3 mb-3">
-              <button class="btn btn-warning w-100" (click)="limpiarTodo()">
-                Limpiar Todo
-              </button>
+            <div class="row justify-content-center my-3">
+              <div class="col-auto">
+                <button
+                  class="btn btn-warning w-100"
+                  (click)="limpiarCantidades()"
+                >
+                  Limpiar Cantidades
+                </button>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-warning w-100" (click)="limpiarTodo()">
+                  Limpiar Todo
+                </button>
+              </div>
             </div>
           </div>
           <!-- Filtros por medidas -->
@@ -358,3 +357,16 @@
     </div>
   </div>
 </div>
+<!-- Modal de Éxito -->
+<app-ok
+  *ngIf="mensajeExito"
+  [mensaje]="mensajeExito"
+  (close)="manejarOk()"
+></app-ok>
+
+<!-- Modal de Error -->
+<app-error
+  *ngIf="mensajeError"
+  [mensaje]="mensajeError"
+  (close)="manejarError()"
+></app-error>

@@ -5,11 +5,12 @@
 
       <form [formGroup]="form" (ngSubmit)="actualizarUsuario()">
         <div class="row g-3">
+          <!-- Andres -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Nombre</label>
             <input type="text" class="form-control" formControlName="nombre" />
           </div>
-
+          <!-- Apellidos -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Apellido</label>
             <input
@@ -18,12 +19,12 @@
               formControlName="apellido"
             />
           </div>
-
+          <!-- Correo -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Correo</label>
             <input type="email" class="form-control" formControlName="correo" />
           </div>
-
+          <!-- Teléfono -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Teléfono</label>
             <input
@@ -32,12 +33,12 @@
               formControlName="telefono"
             />
           </div>
-
+          <!-- CI -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">CI</label>
             <input type="text" class="form-control" formControlName="ci" />
           </div>
-
+          <!-- Fecha de Nacimiento -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Fecha de Nacimiento</label>
             <input
@@ -46,7 +47,7 @@
               formControlName="fecha_nacimiento"
             />
           </div>
-
+          <!-- Contraseña  -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Contraseña</label>
             <input

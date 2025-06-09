@@ -7,55 +7,207 @@
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="row g-3">
+          <!-- Nombre -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Nombre</label>
-            <input type="text" class="form-control" formControlName="nombre" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre"
+              placeholder="Ingrese sus nombres"
+              (input)="form.get('nombre')?.markAsTouched()"
+              [class.is-invalid]="
+                form.get('nombre')?.invalid && form.get('nombre')?.touched
+              "
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                form.get('nombre')?.invalid &&
+                (form.get('nombre')?.dirty || form.get('nombre')?.touched)
+              "
+            >
+              <div *ngIf="form.get('nombre')?.hasError('required')">
+                El nombre Usuario es requerido
+              </div>
+              <div *ngIf="form.get('nombre')?.hasError('minlength')">
+                Mínimo 3 caracteres
+              </div>
+              <div *ngIf="form.get('nombre')?.hasError('maxlength')">
+                Máximo 20 caracteres
+              </div>
+              <div *ngIf="form.get('nombre')?.hasError('soloTexto')">
+                Solo se permiten letras y espacios
+              </div>
+            </div>
           </div>
-
+          <!-- Apellido -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Apellido</label>
             <input
               type="text"
               class="form-control"
               formControlName="apellido"
+              placeholder="Ingrese sus apellidos"
+              (input)="form.get('apellido')?.markAsTouched()"
+              [class.is-invalid]="
+                form.get('apellido')?.invalid && form.get('apellido')?.touched
+              "
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="
+                form.get('apellido')?.invalid &&
+                (form.get('apellido')?.dirty || form.get('apellido')?.touched)
+              "
+            >
+              <div *ngIf="form.get('apellido')?.hasError('required')">
+                El apellido Usuario es requerido
+              </div>
+              <div *ngIf="form.get('apellido')?.hasError('minlength')">
+                Mínimo 3 caracteres
+              </div>
+              <div *ngIf="form.get('apellido')?.hasError('maxlength')">
+                Máximo 20 caracteres
+              </div>
+              <div *ngIf="form.get('apellido')?.hasError('soloTexto')">
+                Solo se permiten letras y espacios
+              </div>
+            </div>
           </div>
-
+          <!--Correo  -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Correo</label>
-            <input type="email" class="form-control" formControlName="correo" />
+            <input
+              type="email"
+              class="form-control"
+              formControlName="correo"
+              placeholder="ejemplo@gmail.com"
+              [class.is-invalid]="
+                form.get('correo')?.invalid && form.get('correo')?.touched
+              "
+            />
+            <div class="invalid-feedback" *ngIf="form.get('correo')?.touched">
+              <div *ngIf="form.get('correo')?.hasError('required')">
+                El correo es obligatorio
+              </div>
+              <div *ngIf="form.get('correo')?.hasError('email')">
+                Debe ser un correo válido
+              </div>
+              <div *ngIf="form.get('correo')?.hasError('invalidEmail')">
+                Solo se permiten correos de Gmail, Hotmail u Outlook
+              </div>
+              <div *ngIf="form.get('correo')?.hasError('emailExists')">
+                Este correo ya está registrado
+              </div>
+              <div *ngIf="form.get('correo')?.hasError('userFetchError')">
+                No se pudo verificar el correo en la base de datos
+              </div>
+            </div>
           </div>
-
+          <!-- Telefono -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Teléfono</label>
             <input
               type="text"
               class="form-control"
               formControlName="telefono"
+              placeholder="Ej: 71234567"
+              inputmode="numeric"
+              maxlength="8"
+              [class.is-invalid]="
+                form.get('telefono')?.invalid && form.get('telefono')?.touched
+              "
             />
-          </div>
 
+            <div class="invalid-feedback" *ngIf="form.get('telefono')?.touched">
+              <div *ngIf="form.get('telefono')?.hasError('required')">
+                El teléfono es obligatorio
+              </div>
+              <div *ngIf="form.get('telefono')?.hasError('invalidPhone')">
+                Debe comenzar con 6 o 7 y tener 8 dígitos
+              </div>
+              <div *ngIf="form.get('telefono')?.hasError('phoneExists')">
+                Este número ya está registrado
+              </div>
+              <div *ngIf="form.get('telefono')?.hasError('userFetchError')">
+                No se pudo verificar el teléfono en la base de datos
+              </div>
+            </div>
+          </div>
+          <!-- CI -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">CI</label>
-            <input type="text" class="form-control" formControlName="ci" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ci"
+              placeholder="Ej: 12345678"
+              maxlength="8"
+              [class.is-invalid]="
+                form.get('ci')?.invalid && form.get('ci')?.touched
+              "
+            />
+            <div class="invalid-feedback" *ngIf="form.get('ci')?.touched">
+              <div *ngIf="form.get('ci')?.hasError('required')">
+                El CI es obligatorio
+              </div>
+              <div *ngIf="form.get('ci')?.hasError('invalidCI')">
+                El CI debe tener entre 7 y 8 dígitos
+              </div>
+              <div *ngIf="form.get('ci')?.hasError('ciExists')">
+                Este CI ya está registrado
+              </div>
+              <div *ngIf="form.get('ci')?.hasError('userFetchError')">
+                No se pudo verificar el CI en la base de datos
+              </div>
+            </div>
           </div>
-
+          <!-- Fecha de Nacimiento -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Fecha de Nacimiento</label>
             <input
               type="date"
               class="form-control"
               formControlName="fecha_nacimiento"
+              [class.is-invalid]="
+                form.get('fecha_nacimiento')?.invalid &&
+                form.get('fecha_nacimiento')?.touched
+              "
             />
+            <div
+              class="invalid-feedback"
+              *ngIf="form.get('fecha_nacimiento')?.touched"
+            >
+              <div *ngIf="form.get('fecha_nacimiento')?.hasError('required')">
+                La fecha de nacimiento es obligatoria
+              </div>
+              <div *ngIf="form.get('fecha_nacimiento')?.hasError('underage')">
+                Debe tener al menos 18 años
+              </div>
+            </div>
           </div>
 
+          <!-- Contraseña -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Contraseña</label>
             <input
               type="password"
               class="form-control"
               formControlName="password"
+              [class.is-invalid]="
+                form.get('password')?.invalid && form.get('password')?.touched
+              "
             />
+            <div class="invalid-feedback" *ngIf="form.get('password')?.touched">
+              <div *ngIf="form.get('password')?.hasError('required')">
+                La contraseña es obligatoria
+              </div>
+              <div *ngIf="form.get('password')?.hasError('invalidPassword')">
+                La contraseña debe tener al menos 8 caracteres, incluyendo una
+                mayúscula, una minúscula, un número y un carácter especial
+              </div>
+            </div>
           </div>
 
           <div class="col-md-6">

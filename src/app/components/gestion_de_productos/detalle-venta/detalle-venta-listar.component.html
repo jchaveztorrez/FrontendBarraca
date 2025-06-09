@@ -34,7 +34,7 @@
       <tr *ngFor="let detalle of mostradas">
         <td>{{ detalle.venta.id }}</td>
         <td>{{ detalle.cantidad_vendida }}</td>
-        <td>
+        <td class="text-start">
           <strong>{{ detalle.producto.especie }}</strong> -
           {{ detalle.producto.categoria.nombre }}
           <span>
@@ -43,7 +43,6 @@
             {{ detalle.producto.largo }} pies de largo)
           </span>
         </td>
-
         <td>{{ detalle.precio_unitario | number: "1.2-2" }}</td>
         <td>{{ detalle.subtotal | number: "1.2-2" }}</td>
       </tr>

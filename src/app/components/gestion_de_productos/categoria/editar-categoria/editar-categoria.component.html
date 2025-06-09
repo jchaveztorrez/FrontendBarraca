@@ -10,7 +10,31 @@
             class="form-control"
             formControlName="nombre"
             placeholder="Ej. Categoría A"
+            (input)="form.get('nombre')?.markAsTouched()"
+            [class.is-invalid]="
+              form.get('nombre')?.invalid && form.get('nombre')?.touched
+            "
           />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              form.get('nombre')?.invalid &&
+              (form.get('nombre')?.dirty || form.get('nombre')?.touched)
+            "
+          >
+            <div *ngIf="form.get('nombre')?.hasError('required')">
+              El nombre de la categoría es requerido
+            </div>
+            <div *ngIf="form.get('nombre')?.hasError('minlength')">
+              Mínimo 3 caracteres
+            </div>
+            <div *ngIf="form.get('nombre')?.hasError('maxlength')">
+              Máximo 20 caracteres
+            </div>
+            <div *ngIf="form.get('nombre')?.hasError('soloTexto')">
+              Solo se permiten letras y espacios
+            </div>
+          </div>
         </div>
 
         <div class="mb-3">
@@ -20,7 +44,33 @@
             class="form-control"
             formControlName="descripcion"
             placeholder="Ej. Productos de limpieza"
+            (input)="form.get('descripcion')?.markAsTouched()"
+            [class.is-invalid]="
+              form.get('descripcion')?.invalid &&
+              form.get('descripcion')?.touched
+            "
           />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              form.get('descripcion')?.invalid &&
+              (form.get('descripcion')?.dirty ||
+                form.get('descripcion')?.touched)
+            "
+          >
+            <div *ngIf="form.get('descripcion')?.hasError('required')">
+              La descripción es requerida
+            </div>
+            <div *ngIf="form.get('descripcion')?.hasError('minlength')">
+              Mínimo 3 caracteres
+            </div>
+            <div *ngIf="form.get('descripcion')?.hasError('maxlength')">
+              Máximo 100 caracteres
+            </div>
+            <div *ngIf="form.get('descripcion')?.hasError('soloTexto')">
+              Solo se permiten letras y espacios
+            </div>
+          </div>
         </div>
 
         <div class="form-check form-switch mb-4">
@@ -67,3 +117,17 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de Éxito -->
+<app-ok
+  *ngIf="mensajeExito"
+  [mensaje]="mensajeExito"
+  (close)="manejarOk()"
+></app-ok>
+
+<!-- Modal de Error -->
+<app-error
+  *ngIf="mensajeError"
+  [mensaje]="mensajeError"
+  (close)="manejarError()"
+></app-error>

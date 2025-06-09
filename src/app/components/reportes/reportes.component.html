@@ -1,0 +1,78 @@
+<h2 class="mb-4 text-primary text-center">Reporte de Ventas</h2>
+<!-- Filtro de Fechas -->
+<div class="row mb-3 justify-content-center">
+  <div class="col-md-4">
+    <select
+      [(ngModel)]="filtroVentas"
+      class="form-select"
+      (change)="generarReporteVentas()"
+    >
+      <option value="dia">Por Día</option>
+      <option value="semana">Por Semana</option>
+      <option value="mes">Por Mes</option>
+      <option value="anio">Por Año</option>
+      <option value="rango">Por Rango de Fechas</option>
+    </select>
+  </div>
+</div>
+
+<!-- Mostrar campos de fecha y hora cuando se selecciona "rango" -->
+<div class="row mb-3 justify-content-center" *ngIf="filtroVentas === 'rango'">
+  <div class="col-md-3">
+    <label>Desde:</label>
+    <input
+      type="datetime-local"
+      [(ngModel)]="fechaInicio"
+      class="form-control"
+      (change)="generarReporteVentas()"
+    />
+  </div>
+  <div class="col-md-3">
+    <label>Hasta:</label>
+    <input
+      type="datetime-local"
+      [(ngModel)]="fechaFin"
+      class="form-control"
+      (change)="generarReporteVentas()"
+    />
+  </div>
+</div>
+
+<!-- TABLA -->
+<div
+  id="reporteVentas"
+  class="table-responsive rounded border p-3 mb-4 bg-white"
+>
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-primary">
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Total (Bs)</th>
+        <th>Vendedor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let venta of ventasFiltradas">
+        <td>{{ venta.id }}</td>
+        <td>{{ venta.fecha | date: "dd/MM/yyyy HH:mm" }}</td>
+        <td>{{ venta.total | number: "1.2-2" }}</td>
+        <td>{{ venta.vendedor.nombre }} {{ venta.vendedor.apellido }}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="2"><strong>Total General:</strong></td>
+        <td colspan="2">
+          <strong>{{ totalVentas | number: "1.2-2" }} Bs</strong>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<div class="text-center mb-5">
+  <button class="btn btn-success" (click)="descargarPDF('reporteVentas')">
+    Descargar PDF
+  </button>
+</div>

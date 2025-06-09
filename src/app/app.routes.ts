@@ -53,6 +53,7 @@ import { LoginComponent } from './components/login/login.component';
 
 // Al inicio del archivo de rutas
 import { authGuard } from './guards/auth.guard';
+import { ReportesComponent } from './components/reportes/reportes.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -147,7 +148,12 @@ export const routes: Routes = [
         path: 'editar-factura-recibo/:id',
         component: FacturaReciboEditarComponent,
       },
+      /* reportes */
 
+      {
+        path: 'reportes',
+        component: ReportesComponent,
+      },
       // dashbhoard
       {
         path: 'dashboard',

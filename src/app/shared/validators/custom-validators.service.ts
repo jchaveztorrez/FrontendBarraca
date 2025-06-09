@@ -1,6 +1,11 @@
 // src/app/shared/validators/custom-validators.service.ts
 import { Injectable } from '@angular/core';
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 import { ServiceService } from '../../services/service.service'; // Adjust the import path as necessary
 
 @Injectable({
@@ -27,144 +32,225 @@ export class CustomValidatorsService {
     };
   }
 
-  // Validador personalizado para nombres (solo letras y espacios, obligatorio)
-  validateName(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const name = control.value?.trim(); // Elimina espacios en blanco
-      const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
-      if (!name) {
-        return { required: true }; // Si está vacío, es requerido
+  validateEmail(): AsyncValidatorFn {
+    return async (
+      control: AbstractControl,
+    ): Promise<ValidationErrors | null> => {
+      const email = control.value?.trim();
+      const regex = /^[a-zA-Z0-9._-]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
+      if (!email) return { required: true };
+      if (!regex.test(email)) return { invalidEmail: true };
+
+      try {
+        const users = await this.userService.getUsuarios().toPromise();
+        const emailExists = users?.some((user) => user.correo === email);
+        return emailExists ? { emailExists: true } : null;
+      } catch {
+        return { userFetchError: true };
       }
-      return regex.test(name) ? null : { invalidName: true }; // Devuelve error si el nombre no es válido
     };
   }
 
-  // Validador personalizado para apellidos (permite letras, números y algunos símbolos, obligatorio)
-  validateSurname(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const surname = control.value?.trim();
-      const regex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\.,#-]+$/;
-      if (!surname) {
-        return { required: true }; // Campo obligatorio
+  // Validador asincrónico para número de teléfono (formato y unicidad)
+  // ✅ Validador sin necesidad de usar (keypress) en HTML
+  validatePhone(): AsyncValidatorFn {
+    return async (
+      control: AbstractControl,
+    ): Promise<ValidationErrors | null> => {
+      const phone = control.value?.trim();
+
+      if (!phone) return { required: true };
+
+      // Validar que solo contenga números y tenga 8 dígitos comenzando con 6 o 7
+      const regex = /^[67]\d{7}$/;
+      if (!regex.test(phone)) return { invalidPhone: true };
+
+      try {
+        const users = await this.userService.getUsuarios().toPromise();
+        const phoneExists = users?.some((user) => user.telefono === phone);
+        return phoneExists ? { phoneExists: true } : null;
+      } catch {
+        return { userFetchError: true };
       }
-      return regex.test(surname) ? null : { invalidSurname: true }; // Error si no coincide con el patrón
+    };
+  }
+  // Validador asincrónico para Cédula de Identidad (longitud válida y unicidad)
+  validateCI(): AsyncValidatorFn {
+    return async (
+      control: AbstractControl,
+    ): Promise<ValidationErrors | null> => {
+      const ci = control.value?.trim();
+
+      if (!ci) return { required: true };
+
+      // Validar longitud del CI
+      if (ci.length < 7 || ci.length > 8) {
+        return { invalidCI: true };
+      }
+
+      try {
+        const users = await this.userService.getUsuarios().toPromise();
+        const ciExists = users?.some((user) => user.ci === ci);
+        return ciExists ? { ciExists: true } : null;
+      } catch {
+        return { userFetchError: true };
+      }
     };
   }
 
   // Validador para verificar que el usuario tenga al menos 18 años
   validateDateOfBirth(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const dateOfBirth = new Date(control.value);
-      const today = new Date();
-      const age = today.getFullYear() - dateOfBirth.getFullYear();
-      const monthDiff = today.getMonth() - dateOfBirth.getMonth();
-      const dayDiff = today.getDate() - dateOfBirth.getDate();
       if (!control.value) {
         return { required: true }; // Campo obligatorio
       }
-      // Comprueba si el usuario tiene menos de 18 años
-      if (
-        age < 18 ||
-        (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
-      ) {
-        return { underage: true }; // Error si es menor de edad
+
+      const dateOfBirth = new Date(control.value);
+      const today = new Date();
+
+      let age = today.getFullYear() - dateOfBirth.getFullYear();
+      const monthDiff = today.getMonth() - dateOfBirth.getMonth();
+      const dayDiff = today.getDate() - dateOfBirth.getDate();
+
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
       }
-      return null; // Válido si tiene 18 años o más
+
+      return age >= 18 ? null : { underage: true };
     };
   }
 
-  // Validador asincrónico para número de teléfono (formato y unicidad)
-  async validatePhone(): Promise<ValidatorFn> {
-    return async (
-      control: AbstractControl,
-    ): Promise<{ [key: string]: any } | null> => {
-      const phone = control.value?.trim();
-      const regex = /^[67][0-9]{7}$/; // Comienza con 6 o 7 y tiene 8 dígitos
-      if (!phone) {
-        return { required: true }; // Campo obligatorio
-      }
-      if (!regex.test(phone)) {
-        return { invalidPhone: true }; // Error de formato
-      }
-      const users = await this.userService.getUsuarios().toPromise();
-      if (users) {
-        const phoneExists = users.some((user) => user.telefono === phone);
-        return phoneExists ? { phoneExists: true } : null; // Error si ya existe
-      } else {
-        return { userFetchError: true }; // Error al obtener usuarios
-      }
-    };
-  }
-
-  // Validador asincrónico para correo electrónico (formato y unicidad)
-  async validateEmail(): Promise<ValidatorFn> {
-    return async (
-      control: AbstractControl,
-    ): Promise<{ [key: string]: any } | null> => {
-      const email = control.value?.trim();
-      const regex = /^[a-zA-Z0-9._-]+@(gmail\.com|hotmail\.com|outlook\.com)$/; // Solo acepta estos dominios
-      if (!email) {
-        return { required: true }; // Campo obligatorio
-      }
-      if (!regex.test(email)) {
-        return { invalidEmail: true }; // Error de formato
-      }
-      const users = await this.userService.getUsuarios().toPromise();
-      if (users) {
-        const emailExists = users.some((user) => user.correo === email);
-        return emailExists ? { emailExists: true } : null; // Error si ya existe
-      } else {
-        return { userFetchError: true }; // Error al obtener usuarios
-      }
-    };
-  }
-
-  // Validador para contraseña segura (mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial)
+  // Validador para contraseña segura
   validatePassword(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const password = control.value;
-      const errors: string[] = [];
-      if (!password) {
-        errors.push('El campo de contraseña no puede estar vacío');
+
+      if (!password || password.trim() === '') {
+        return { required: true };
       }
-      if (password.length < 8) {
-        errors.push('Debe tener al menos 8 caracteres');
-      }
-      if (!/[A-Z]/.test(password)) {
-        errors.push('Debe contener al menos una letra mayúscula');
-      }
-      if (!/[a-z]/.test(password)) {
-        errors.push('Debe contener al menos una letra minúscula');
-      }
-      if (!/\d/.test(password)) {
-        errors.push('Debe contener al menos un número');
-      }
-      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-        errors.push('Debe contener al menos un carácter especial');
-      }
-      return errors.length > 0 ? { passwordErrors: errors } : null; // Retorna los errores si hay
+
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+      return regex.test(password) ? null : { invalidPassword: true };
     };
   }
 
-  // Validador asincrónico para Cédula de Identidad (longitud válida y unicidad)
-  async validateCI(): Promise<ValidatorFn> {
+  /* este es es la seccion de productos de madera  */
+  limpiarEspaciosValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+      const valor = control.value.trim().replace(/\s+/g, ' ');
+      if (valor !== control.value) {
+        control.setValue(valor, { emitEvent: false }); // Limpia los espacios
+      }
+      return null;
+    };
+  }
+  validateProductoMaderaDuplicado(): AsyncValidatorFn {
     return async (
       control: AbstractControl,
-    ): Promise<{ [key: string]: any } | null> => {
-      const ci = control.value?.trim();
-      if (!ci) {
-        return { required: true }; // Campo obligatorio
+    ): Promise<ValidationErrors | null> => {
+      const formGroup = control.parent;
+      if (!formGroup) return null;
+
+      const especie = formGroup.get('especie')?.value?.trim().toLowerCase();
+      const ancho = formGroup.get('ancho')?.value;
+      const espesor = formGroup.get('espesor')?.value;
+      const largo = formGroup.get('largo')?.value;
+      const sucursal = formGroup.get('sucursal')?.value;
+
+      if (!especie || !ancho || !espesor || !largo || !sucursal) return null;
+
+      try {
+        const productos = await this.userService
+          .getProductoMaderas()
+          .toPromise();
+        if (!productos) return null;
+
+        const existe = productos.some(
+          (p) =>
+            p.especie?.trim().toLowerCase() === especie &&
+            +p.ancho === +ancho &&
+            +p.espesor === +espesor &&
+            +p.largo === +largo &&
+            +p.sucursal?.id === +sucursal,
+        );
+
+        return existe ? { productoDuplicado: true } : null;
+      } catch (err) {
+        return { errorConsulta: true };
       }
-      if (ci.length < 7 || ci.length > 8) {
-        return { invalidCI: true }; // Longitud inválida
+    };
+  }
+  formatoEspecie(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const valor = control.value;
+      if (!valor) return null;
+
+      // Limpia espacios extremos
+      const texto = valor.trim();
+
+      // Verifica que solo tenga letras y espacios
+      const soloLetrasYEspacios = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(texto);
+      if (!soloLetrasYEspacios) {
+        return { soloTexto: true };
       }
-      const users = await this.userService.getUsuarios().toPromise();
-      if (users) {
-        const ciExists = users.some((user) => user.ci === ci);
-        return ciExists ? { ciExists: true } : null; // Error si ya existe
-      } else {
-        return { userFetchError: true }; // Error al obtener usuarios
+
+      // Verifica el formato tipo: Una sola palabra con primera letra mayúscula y el resto minúsculas
+      const palabras = texto.split(' ');
+
+      const formatoValido = palabras.every((palabra: string) =>
+        /^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{1,49}$/.test(palabra),
+      );
+
+      if (!formatoValido) {
+        return { formatoInvalido: true };
       }
+
+      return null;
+    };
+  }
+
+  NoNegativo(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+
+      if (value === null || value === undefined || value === '') {
+        return null; // No validamos si está vacío; eso lo hace Validators.required
+      }
+
+      // Validar que sea un número positivo (entero o decimal)
+      const regex = /^\d+(\.\d+)?$/;
+
+      return regex.test(value) ? null : { invalido: true };
+    };
+  }
+  soloNumeros(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value === null || value === undefined || value === '') {
+        return null;
+      }
+
+      const regex = /^[0-9]+$/; // solo dígitos enteros
+      return regex.test(value.toString()) ? null : { soloNumeros: true };
+    };
+  }
+
+  soloPositivosNumericos(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+
+      if (value === null || value === undefined || value === '') {
+        return null; // deja que Validators.required se encargue
+      }
+
+      // Acepta números enteros o decimales positivos
+      const regex = /^\d+(\.\d{1,2})?$/; // opcionalmente 1 o 2 decimales
+
+      return regex.test(value.toString())
+        ? null
+        : { soloPositivosNumericos: true };
     };
   }
 }
