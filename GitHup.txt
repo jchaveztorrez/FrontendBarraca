@@ -22,3 +22,31 @@ git push -u origin main
 
 
 ⚡ ¡Y listo, tu proyecto estará en GitHub! ⚡
+
+
+
+
+✅ PASOS PARA CORREGIR EL REMOTO Y SUBIR TU PROYECTO
+Verifica el remoto actual:
+
+
+git remote -v
+Probablemente verás algo como:
+
+
+origin  https://github.com/Andres035/BackendBarraca.git (fetch)
+origin  https://github.com/Andres035/BackendBarraca.git (push)
+Elimina el remoto incorrecto:
+
+
+git remote remove origin
+Agrega tu remoto (el correcto):
+
+
+git remote add origin https://github.com/jchaveztorrez/BackendBarraca.git
+Asegúrate de estar en la rama principal (main) y súbela:
+
+
+git branch -M main
+git push -u origin main
+💡 Si te pide autenticación, asegúrate de estar logueado en GitHub con tu cuenta jchaveztorrez y, si es necesario, usar un token de acceso personal (PAT) en lugar de tu contraseña.
