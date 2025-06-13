@@ -22,7 +22,8 @@ import { Router } from '@angular/router';
 })
 export class ServiceService {
   /* realizamos laconexion con el serviciode backen URL */
-  private apiUrl = 'http://localhost:8000/api/';
+  /* private apiUrl = 'http://localhost:8000/api/'; */
+  private apiUrl = 'https://backendbarraca.onrender.com/api/';
   constructor(
     private http: HttpClient,
     private router: Router,
