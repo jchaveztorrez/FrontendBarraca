@@ -27,14 +27,40 @@ export class PanelControlComponent implements OnInit {
   inactiveTime = 60 * 60 * 1000;
   isSidebarOpen = false;
   windowWidth: number = 0;
+
+  userRole: string = '';
+  userName: string = '';
+  userPermissions: string[] = [];
+
+  nombre_usuario: string = '';
+  apellido: string | null = '';
+  imagenUrl: string | null = '';
+  usuario_id: number = 0;
+
+  idParaEditar: number = 0;
+
+  permisos: string[] = [];
+  roles: string[] = [];
+
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit(): void {
+    const usuario = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
+
+    this.userRole = usuario.roles || '';
+    this.userName = `${usuario.nombre || ''} ${usuario.apellido || ''}`.trim();
+    this.userPermissions = usuario.permisos || [];
+    this.imagenUrl = usuario.imagen_url;
+
     this.checkScreenSize();
     this.resetInactivityTimer();
+  }
+
+  puedeVer(permiso: string): boolean {
+    return this.userPermissions.includes(permiso);
   }
 
   // 📏 Revisa el tamaño de la pantalla para ajustar la vista
@@ -84,12 +110,6 @@ export class PanelControlComponent implements OnInit {
     return this.activeSection === section;
   }
 
-  // 🔐 Cierra la sesión y redirige
-  logout() {
-    localStorage.clear();
-    this.router.navigate(['/index']);
-  }
-
   // 📱 Cierra el sidebar en móviles después de una acción
   closeSidebarOnMobile() {
     if (this.isMobileView) {
@@ -120,6 +140,49 @@ export class PanelControlComponent implements OnInit {
   handleSessionTimeout() {
     alert('Sesión cerrada por inactividad');
     localStorage.clear();
+    this.router.navigate(['/index']);
+  }
+  verPerfil(): void {
+    this.router.navigate(['app-panel-control/perfil']);
+  }
+  private getUsuarioLocalStorage() {
+    if (typeof window !== 'undefined') {
+      // Verifica si localStorage está disponible
+      try {
+        const usuario = localStorage.getItem('usuario');
+        return usuario ? JSON.parse(usuario) : null;
+      } catch (error) {
+        console.error('Error al recuperar usuario de localStorage', error);
+        return null;
+      }
+    }
+    return null; // Devuelve null si localStorage no está disponible
+  }
+
+  // Método para manejar el evento de selección
+  onSelectChange(action: string) {
+    if (action === 'cerrarSesion') {
+      this.confirmarCerrarSesion(); // Maneja el cierre de sesión
+    }
+  }
+
+  confirmarCerrarSesion() {
+    console.log('Intentando cerrar sesión...');
+    const confirmar = window.confirm(
+      '¿Está seguro de que desea cerrar sesión?',
+    );
+    if (confirmar) {
+      this.logout(); // Si el usuario acepta, se cierra sesión
+    } else {
+      console.log('Cierre de sesión cancelado.');
+    }
+  }
+
+  // 🔐 Cierra la sesión y redirige
+  logout() {
+    // Limpia todo el localStorage
+    localStorage.clear();
+    // Redirige al usuario a la página de inicio
     this.router.navigate(['/index']);
   }
 }

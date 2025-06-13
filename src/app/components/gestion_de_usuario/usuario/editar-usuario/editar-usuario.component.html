@@ -47,14 +47,27 @@
               formControlName="fecha_nacimiento"
             />
           </div>
-          <!-- Contraseña  -->
+          <!-- Contraseña -->
           <div class="col-md-6">
             <label class="form-label fw-semibold">Contraseña</label>
-            <input
-              type="password"
-              class="form-control"
-              formControlName="password"
-            />
+            <div class="input-group">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-control rounded-start-3"
+                formControlName="password"
+                placeholder="Ingrese la nueva contraseña"
+              />
+              <button
+                type="button"
+                class="btn rounded-end-3"
+                [ngClass]="showPassword ? 'btn-success' : 'btn-danger'"
+                (click)="togglePasswordVisibility()"
+              >
+                <i
+                  [ngClass]="showPassword ? 'bi bi-eye' : 'bi bi-eye-slash'"
+                ></i>
+              </button>
+            </div>
           </div>
 
           <div class="col-md-6">

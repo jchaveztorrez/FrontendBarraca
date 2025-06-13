@@ -16,6 +16,10 @@ export class FacturaReciboListarComponent {
   recibosMostrados: FacturaRecibo[] = [];
   busquedaRecibos: string = '';
 
+  filtroNombreCliente: string = '';
+  filtroCiNit: string = '';
+  filtroFecha: string = '';
+
   constructor(
     private service: ServiceService,
     private router: Router,
@@ -33,15 +37,39 @@ export class FacturaReciboListarComponent {
   }
 
   filtrarRecibos(): void {
-    const texto = this.busquedaRecibos.toLowerCase();
-    this.recibosMostrados = this.recibos.filter(
-      (r) =>
-        r.id.toString().includes(texto) ||
-        r.nombre_cliente.toLowerCase().includes(texto),
-    );
+    const nombre = this.filtroNombreCliente.toLowerCase();
+    const ciNit = this.filtroCiNit.toLowerCase();
+    const fecha = this.filtroFecha;
+
+    this.recibosMostrados = this.recibos.filter((r) => {
+      const coincideNombre = r.nombre_cliente.toLowerCase().includes(nombre);
+      const coincideCiNit = r.ci_nit.toLowerCase().includes(ciNit);
+
+      const coincideFecha = fecha
+        ? new Date(r.fecha_emision).toISOString().slice(0, 10) === fecha
+        : true;
+
+      return coincideNombre && coincideCiNit && coincideFecha;
+    });
   }
 
   irARegistrar(): void {
     this.router.navigate(['app-panel-control/registrar-factura-recibo']);
+  }
+
+  irARegistrarConDatos(
+    idRecibo: number,
+    idVenta: number,
+    nombre_cliente: string,
+    ci_nit: string,
+  ) {
+    this.router.navigate(['app-panel-control/registrar-factura-recibo'], {
+      queryParams: {
+        reciboId: idRecibo,
+        ventaId: idVenta,
+        nombre_cliente: nombre_cliente,
+        ci_nit: ci_nit,
+      },
+    });
   }
 }

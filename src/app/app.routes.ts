@@ -54,6 +54,8 @@ import { LoginComponent } from './components/login/login.component';
 // Al inicio del archivo de rutas
 import { authGuard } from './guards/auth.guard';
 import { ReportesComponent } from './components/reportes/reportes.component';
+import { GraficaReportesComponent } from './components/grafica-reportes/grafica-reportes.component';
+import { PerfilComponent } from './components/perfil/perfil.component';
 
 export const routes: Routes = [
   // Ruta principal
@@ -153,6 +155,14 @@ export const routes: Routes = [
       {
         path: 'reportes',
         component: ReportesComponent,
+      },
+      {
+        path: 'reportesgrafica',
+        component: GraficaReportesComponent,
+      },
+      {
+        path: 'perfil',
+        component: PerfilComponent,
       },
       // dashbhoard
       {

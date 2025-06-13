@@ -6,14 +6,41 @@
           <h5 class="mb-0">Lista de Recibos y Facturas</h5>
         </div>
         <div class="card-body">
-          <!-- Buscador para recibos/facturas -->
-          <input
-            type="text"
-            class="form-control mb-3"
-            placeholder="Buscar por número o cliente..."
-            [(ngModel)]="busquedaRecibos"
-            (input)="filtrarRecibos()"
-          />
+          <!-- Botón para registrar una nueva factura o recibo -->
+          <div class="text-end mb-3">
+            <button class="btn btn-success" (click)="irARegistrar()">
+              <i class="bi bi-plus-circle me-1"></i> Registrar
+            </button>
+          </div>
+          <!-- Filtros por campo -->
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Filtrar por cliente..."
+                [(ngModel)]="filtroNombreCliente"
+                (input)="filtrarRecibos()"
+              />
+            </div>
+            <div class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Filtrar por CI/NIT..."
+                [(ngModel)]="filtroCiNit"
+                (input)="filtrarRecibos()"
+              />
+            </div>
+            <div class="col-md-4">
+              <input
+                type="date"
+                class="form-control"
+                [(ngModel)]="filtroFecha"
+                (change)="filtrarRecibos()"
+              />
+            </div>
+          </div>
 
           <div
             class="table-responsive"
@@ -29,6 +56,8 @@
                   <th>NIT/CI</th>
                   <th>Fecha</th>
                   <th>Total (Bs)</th>
+                  <th>Acciones</th>
+                  <!-- Nueva columna -->
                 </tr>
               </thead>
               <tbody>
@@ -38,8 +67,36 @@
                   <td>{{ rec.venta.id }}</td>
                   <td>{{ rec.nombre_cliente }}</td>
                   <td>{{ rec.ci_nit }}</td>
-                  <td>{{ rec.fecha_emision | date: "dd/MM/yyyy" }}</td>
+                  <td>{{ rec.fecha_emision | date: "dd/MM/yyyy HH:mm" }}</td>
                   <td>{{ rec.total | number: "1.2-2" }}</td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary me-1"
+                      (click)="
+                        irARegistrarConDatos(
+                          rec.id,
+                          rec.venta.id,
+                          rec.nombre_cliente,
+                          rec.ci_nit
+                        )
+                      "
+                    >
+                      Factura
+                    </button>
+                    <button
+                      class="btn btn-sm btn-info"
+                      (click)="
+                        irARegistrarConDatos(
+                          rec.id,
+                          rec.venta.id,
+                          rec.nombre_cliente,
+                          rec.ci_nit
+                        )
+                      "
+                    >
+                      Recibo
+                    </button>
+                  </td>
                 </tr>
                 <tr *ngIf="recibosMostrados.length === 0">
                   <td colspan="7" class="text-muted text-center">
@@ -54,6 +111,3 @@
     </div>
   </div>
 </div>
-<button class="btn btn-success" (click)="irARegistrar()">
-  <i class="bi bi-plus-circle me-1"></i> Registrar
-</button>

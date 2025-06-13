@@ -3,20 +3,23 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ServiceService } from '../../services/service.service';
+import { OkComponent } from '../Mensajes/ok/ok.component';
+import { ErrorComponent } from '../Mensajes/error/error.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, OkComponent, ErrorComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
   correo: string = '';
   password: string = '';
-  errorMsg: string = '';
   showPassword: boolean = false;
   isLoading: boolean = false;
+  mensajeExito: string = '';
+  mensajeError: string = '';
 
   constructor(
     public router: Router,
@@ -30,10 +33,10 @@ export class LoginComponent {
   isFormValid(): boolean {
     return this.correo.trim() !== '' && this.password.trim() !== '';
   }
-
   onSubmit(): void {
     if (!this.isFormValid()) {
-      this.errorMsg = 'Por favor complete todos los campos';
+      this.mensajeError =
+        'Por favor, complete todos los campos antes de continuar.';
       return;
     }
     this.iniciarSesion();
@@ -45,7 +48,7 @@ export class LoginComponent {
       next: (response) => {
         localStorage.setItem('access_token', response.access_token);
         const usuario = {
-          id: response.id, // Suponiendo que viene en la respuesta
+          id: response.id,
           nombre: response.nombre,
           apellido: response.apellido,
           imagen_url: response.imagen_url,
@@ -57,12 +60,12 @@ export class LoginComponent {
         };
 
         localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));
-
-        this.router.navigate(['/app-panel-control']);
+        this.mensajeExito = 'Autenticación exitosa. Bienvenido al sistema.';
       },
       error: (error) => {
         console.error('Error al iniciar sesión', error);
-        this.errorMsg = 'Correo o contraseña incorrectos';
+        this.mensajeError =
+          'Correo electrónico o contraseña incorrectos. Por favor, inténtelo nuevamente.';
         this.isLoading = false;
       },
       complete: () => {
@@ -70,7 +73,16 @@ export class LoginComponent {
       },
     });
   }
+
   navigateToHome(): void {
     this.router.navigate(['/index']); // Cambia la ruta según tu configuración
+  }
+  manejarOk() {
+    this.mensajeExito = '';
+    this.router.navigate(['/app-panel-control']);
+  }
+
+  manejarError() {
+    this.mensajeError = '';
   }
 }

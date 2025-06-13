@@ -1,4 +1,6 @@
-<h2 class="mb-4 text-primary">Lista de Detalles de Venta</h2>
+<h2 class="mb-4 text-primary text-center text-uppercase">
+  Lista de Detalles de Venta
+</h2>
 
 <!-- Filtros -->
 <div
@@ -12,6 +14,26 @@
       class="form-control"
       placeholder="Buscar por especie del producto..."
     />
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar por número de venta..."
+      [(ngModel)]="numeroVentaBusqueda"
+      (input)="filtrar()"
+      style="min-width: 200px"
+    />
+
+    <select
+      class="form-select"
+      [(ngModel)]="productoSeleccionado"
+      (change)="filtrar()"
+      style="min-width: 200px"
+    >
+      <option value="">Todos los productos</option>
+      <option *ngFor="let especie of especiesDisponibles" [value]="especie">
+        {{ especie }}
+      </option>
+    </select>
   </div>
 </div>
 

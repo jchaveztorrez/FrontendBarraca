@@ -19,6 +19,11 @@ export class ProductoMaderaListarComponent {
   mostrados: ProductoMadera[] = [];
   busqueda = '';
   limite = 20;
+
+  sucursales: string[] = [];
+  categorias: string[] = [];
+  sucursalSeleccionada: string = '';
+  categoriaSeleccionada: string = '';
   constructor(
     private servicio: ServiceService,
     private router: Router,
@@ -26,9 +31,15 @@ export class ProductoMaderaListarComponent {
   ngOnInit(): void {
     this.servicio.getProductoMaderas().subscribe((data) => {
       this.producto = data;
+
+      // Extraer sucursales y categorías únicas
+      this.sucursales = [...new Set(data.map((p) => p.sucursal.nombre))];
+      this.categorias = [...new Set(data.map((p) => p.categoria.nombre))];
+
       this.filtrar();
     });
   }
+
   actualizarMostrados(): void {
     this.mostrados = this.filtrados.slice(0, this.limite);
   }
@@ -40,11 +51,21 @@ export class ProductoMaderaListarComponent {
       this.actualizarMostrados();
     }
   }
+
   filtrar(): void {
     const texto = this.busqueda.trim().toLowerCase();
-    this.filtrados = this.producto.filter((prod) =>
-      prod.especie.toLowerCase().includes(texto),
-    );
+
+    this.filtrados = this.producto.filter((prod) => {
+      const coincideTexto = prod.especie.toLowerCase().includes(texto);
+      const coincideSucursal =
+        !this.sucursalSeleccionada ||
+        prod.sucursal.nombre === this.sucursalSeleccionada;
+      const coincideCategoria =
+        !this.categoriaSeleccionada ||
+        prod.categoria.nombre === this.categoriaSeleccionada;
+      return coincideTexto && coincideSucursal && coincideCategoria;
+    });
+
     this.limite = 10;
     this.actualizarMostrados();
   }

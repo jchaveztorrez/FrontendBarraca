@@ -20,6 +20,12 @@ export class ListarUsuarioRolSucursalComponent implements OnInit {
   busqueda = '';
   limite = 20;
 
+  rolesDisponibles: string[] = [];
+  sucursalesDisponibles: string[] = [];
+
+  rolSeleccionado = '';
+  sucursalSeleccionada = '';
+
   constructor(
     private servicio: ServiceService,
     private router: Router,
@@ -28,6 +34,10 @@ export class ListarUsuarioRolSucursalComponent implements OnInit {
   ngOnInit(): void {
     this.servicio.getUsuarioRolSucursal().subscribe((data) => {
       this.usuarioRolSucursales = data;
+      this.rolesDisponibles = [...new Set(data.map((urs) => urs.rol.nombre))];
+      this.sucursalesDisponibles = [
+        ...new Set(data.map((urs) => urs.sucursal.nombre)),
+      ];
       this.filtrar();
     });
   }
@@ -49,6 +59,17 @@ export class ListarUsuarioRolSucursalComponent implements OnInit {
     const texto = this.busqueda.trim().toLowerCase();
     this.filtrados = this.usuarioRolSucursales.filter((urs) =>
       urs.usuario.nombre.toLowerCase().includes(texto),
+    );
+    this.limite = 10;
+    this.actualizarMostrados();
+
+    this.filtrados = this.usuarioRolSucursales.filter(
+      (urs) =>
+        urs.usuario.nombre.toLowerCase().includes(texto) &&
+        (this.rolSeleccionado === '' ||
+          urs.rol.nombre === this.rolSeleccionado) &&
+        (this.sucursalSeleccionada === '' ||
+          urs.sucursal.nombre === this.sucursalSeleccionada),
     );
     this.limite = 10;
     this.actualizarMostrados();

@@ -17,6 +17,9 @@ import { Inject, PLATFORM_ID } from '@angular/core';
 import { ErrorComponent } from '../Mensajes/error/error.component';
 import { OkComponent } from '../Mensajes/ok/ok.component';
 
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 @Component({
   selector: 'app-vender',
   standalone: true,
@@ -692,5 +695,117 @@ export class VenderComponent implements OnInit {
   }
   manejarError() {
     this.mensajeError = '';
+  }
+
+  imprimirPDFCarrito(): void {
+    const elementId = 'carritoParaPDF';
+    const data = document.getElementById(elementId);
+
+    if (!data) return;
+
+    // Ocultar elementos que no quieres exportar (por ejemplo, botón de imprimir)
+    const noExportElements = data.querySelectorAll('.no-export');
+    noExportElements.forEach(
+      (el) => ((el as HTMLElement).style.display = 'none'),
+    );
+
+    // Ocultar columna "Acciones"
+    const thAcciones = data.querySelector('th:last-child');
+    const tdAcciones = data.querySelectorAll('td:last-child');
+    if (thAcciones) (thAcciones as HTMLElement).style.display = 'none';
+    tdAcciones.forEach((td) => ((td as HTMLElement).style.display = 'none'));
+
+    const options = {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: data.scrollWidth,
+      windowHeight: data.scrollHeight,
+    };
+
+    html2canvas(data, options).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdfWidth = 140;
+      const pdfHeight = 220;
+      const margin = 10;
+      const contentWidth = pdfWidth - margin * 2;
+
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [pdfWidth, pdfHeight],
+      });
+
+      const logoUrl =
+        'https://res.cloudinary.com/dtqv5ejlr/image/upload/v1749490014/LogoBarracaTransparente_in88nf.png';
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous'; // Para evitar problemas CORS
+      logoImg.src = logoUrl;
+
+      logoImg.onload = () => {
+        // Agregar logo 20x20 mm en esquina superior izquierda
+        pdf.addImage(logoImg, 'PNG', margin, 10, 20, 20);
+
+        // Fecha actual arriba a la derecha
+        const fecha = new Date().toLocaleDateString();
+        pdf.setFontSize(10);
+        pdf.text(`Fecha: ${fecha}`, pdfWidth - margin - 40, 15);
+
+        // Título centrado
+        pdf.setFontSize(16);
+        pdf.text('Cotizacion', pdfWidth / 2, 30, { align: 'center' });
+
+        // Imagen de la tabla debajo del encabezado
+        const imgWidth = contentWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const marginX = (pdfWidth - imgWidth) / 2;
+        const startY = 35;
+
+        pdf.addImage(imgData, 'PNG', marginX, startY, imgWidth, imgHeight);
+
+        pdf.save('carrito.pdf');
+
+        // Restaurar visibilidad elementos ocultos
+        noExportElements.forEach(
+          (el) => ((el as HTMLElement).style.display = ''),
+        );
+        if (thAcciones) (thAcciones as HTMLElement).style.display = '';
+        tdAcciones.forEach((td) => ((td as HTMLElement).style.display = ''));
+      };
+
+      logoImg.onerror = () => {
+        console.error('Error cargando el logo desde la URL.');
+        // En caso de error, generamos PDF sin logo pero con fecha y título
+
+        // Fecha actual arriba a la derecha
+        const fecha = new Date().toLocaleDateString();
+        pdf.setFontSize(10);
+        pdf.text(`Fecha: ${fecha}`, pdfWidth - margin - 40, 15);
+
+        // Título centrado
+        pdf.setFontSize(16);
+        pdf.text('Detalle de Venta', pdfWidth / 2, 30, { align: 'center' });
+
+        // Imagen de la tabla debajo del encabezado
+        const imgWidth = contentWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const marginX = (pdfWidth - imgWidth) / 2;
+        const startY = 35;
+
+        pdf.addImage(imgData, 'PNG', marginX, startY, imgWidth, imgHeight);
+
+        pdf.save('carrito.pdf');
+
+        // Restaurar visibilidad elementos ocultos
+        noExportElements.forEach(
+          (el) => ((el as HTMLElement).style.display = ''),
+        );
+        if (thAcciones) (thAcciones as HTMLElement).style.display = '';
+        tdAcciones.forEach((td) => ((td as HTMLElement).style.display = ''));
+      };
+    });
   }
 }

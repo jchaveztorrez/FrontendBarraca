@@ -3,7 +3,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Venta } from '../../models/models';
+import { DetalleVentaMadera, Venta } from '../../models/models';
 import { ServiceService } from '../../services/service.service';
 
 @Component({
@@ -17,73 +17,136 @@ export class ReportesComponent implements OnInit {
   ventasFiltradas: Venta[] = [];
   totalVentas: number = 0;
   filtroVentas: string = 'dia';
-
   fechaInicio: string = '';
   fechaFin: string = '';
-
   fechaGeneracion: Date = new Date();
 
   constructor(private service: ServiceService) {}
+
+  mostradas: DetalleVentaMadera[] = [];
+  detalleVentas: DetalleVentaMadera[] = [];
+
+  vendedorFiltro: string = '';
+  sucursalFiltro: string = '';
+  categoriaFiltro: string = '';
+  especieFiltro: string = '';
+
+  vendedores: string[] = [];
+  sucursales: string[] = [];
+  categorias: string[] = [];
+  especies: string[] = [];
+  vendedorSucursalMap: { [nombreCompleto: string]: string } = {};
 
   ngOnInit(): void {
     this.obtenerVentas();
   }
 
   obtenerVentas(): void {
-    this.service.getVentas().subscribe((datos) => {
-      this.ventas = datos;
-      this.generarReporteVentas();
+    this.service.getVentas().subscribe((ventas) => {
+      this.ventas = ventas;
+
+      // Una vez cargadas las ventas, cargamos los detalles
+      this.service.getDetalleVentaMadera().subscribe((detalles) => {
+        this.detalleVentas = detalles;
+
+        // Generar el reporte una vez que ambos están cargados
+        this.generarReporteVentas();
+      });
+    });
+  }
+
+  obtenerDetalleVentas(): void {
+    this.service.getDetalleVentaMadera().subscribe((datos) => {
+      this.detalleVentas = datos;
+      this.mostradas = datos;
     });
   }
 
   generarReporteVentas(): void {
-    const hoy = new Date();
     this.ventasFiltradas = this.ventas.filter((venta) => {
       const fecha = new Date(venta.fecha);
-
-      switch (this.filtroVentas) {
-        case 'dia':
-          return (
-            fecha.getDate() === hoy.getDate() &&
-            fecha.getMonth() === hoy.getMonth() &&
-            fecha.getFullYear() === hoy.getFullYear()
-          );
-        case 'semana': {
-          const primerDiaSemana = new Date(hoy);
-          primerDiaSemana.setDate(hoy.getDate() - hoy.getDay());
-          const ultimoDiaSemana = new Date(primerDiaSemana);
-          ultimoDiaSemana.setDate(primerDiaSemana.getDate() + 6);
-          return fecha >= primerDiaSemana && fecha <= ultimoDiaSemana;
-        }
-        case 'mes':
-          return (
-            fecha.getMonth() === hoy.getMonth() &&
-            fecha.getFullYear() === hoy.getFullYear()
-          );
-        case 'anio':
-          return fecha.getFullYear() === hoy.getFullYear();
-        case 'rango':
-          if (!this.fechaInicio || !this.fechaFin) return false;
-          const inicio = new Date(this.fechaInicio);
-          const fin = new Date(this.fechaFin);
-          fin.setHours(23, 59, 59, 999); // incluir todo el día
-          return fecha >= inicio && fecha <= fin;
-        default:
-          return true;
+      if (this.fechaInicio && this.fechaFin) {
+        const inicio = new Date(this.fechaInicio);
+        const fin = new Date(this.fechaFin);
+        fin.setHours(23, 59, 59, 999);
+        return fecha >= inicio && fecha <= fin;
       }
+      return true;
     });
 
-    // Sumar el total de las ventas filtradas
-    this.totalVentas = this.ventasFiltradas.reduce((suma, venta) => {
-      const totalVenta = Number(venta.total);
-      return !isNaN(totalVenta) ? suma + totalVenta : suma;
+    const ventaIds = this.ventasFiltradas.map((v) => v.id);
+
+    // Limpiar mapa
+    this.vendedorSucursalMap = {};
+
+    // Filtrar detalles y construir mapa vendedor -> sucursal
+    this.mostradas = this.detalleVentas.filter((detalle) => {
+      const venta = detalle.venta;
+      const nombreVendedor = `${venta.vendedor.nombre} ${venta.vendedor.apellido}`;
+      const nombreSucursal = venta.sucursal.nombre;
+
+      this.vendedorSucursalMap[nombreVendedor] = nombreSucursal;
+
+      // Filtro por vendedor y actualizar sucursal si aplica
+      if (this.vendedorFiltro && nombreVendedor !== this.vendedorFiltro) {
+        return false;
+      }
+
+      // Si se seleccionó un vendedor, forzar que sucursalFiltro se actualice
+      if (this.vendedorFiltro) {
+        this.sucursalFiltro = this.vendedorSucursalMap[this.vendedorFiltro];
+      }
+
+      // Filtro por sucursal y actualizar lista de vendedores válidos
+      if (this.sucursalFiltro && nombreSucursal !== this.sucursalFiltro) {
+        return false;
+      }
+
+      if (
+        this.categoriaFiltro &&
+        detalle.producto.categoria.nombre !== this.categoriaFiltro
+      ) {
+        return false;
+      }
+
+      if (
+        this.especieFiltro &&
+        detalle.producto.especie !== this.especieFiltro
+      ) {
+        return false;
+      }
+
+      return ventaIds.includes(venta.id);
+    });
+
+    // Actualizar listas únicas (considerando filtros aplicados)
+    const vendedoresMostrados = this.mostradas.map(
+      (d) => `${d.venta.vendedor.nombre} ${d.venta.vendedor.apellido}`,
+    );
+    this.vendedores = Array.from(new Set(vendedoresMostrados));
+
+    const sucursalesMostradas = this.mostradas.map(
+      (d) => d.venta.sucursal.nombre,
+    );
+    this.sucursales = Array.from(new Set(sucursalesMostradas));
+
+    this.categorias = Array.from(
+      new Set(this.mostradas.map((d) => d.producto.categoria.nombre)),
+    );
+
+    this.especies = Array.from(
+      new Set(this.mostradas.map((d) => d.producto.especie)),
+    );
+
+    // Calcular total
+    this.totalVentas = this.mostradas.reduce((suma, detalle) => {
+      return suma + (Number(detalle.subtotal) || 0);
     }, 0);
 
-    // Establecer la fecha de generación del reporte
-    this.fechaGeneracion = new Date(); // Fecha y hora actual
+    this.fechaGeneracion = new Date();
   }
 
-  descargarPDF(elementId: string) {
+  private generarPDF(elementId: string, action: 'download' | 'print'): void {
     const data = document.getElementById(elementId);
     if (data) {
       html2canvas(data).then((canvas) => {
@@ -92,36 +155,29 @@ export class ReportesComponent implements OnInit {
         const logoUrl =
           'https://res.cloudinary.com/dtqv5ejlr/image/upload/v1749490019/logoBarraca1_x4slj1.png';
 
-        // Obtener fecha y hora actual del sistema
         const ahora = new Date();
         const fechaHora = `${ahora.getDate()}/${ahora.getMonth() + 1}/${ahora.getFullYear()} ${ahora.getHours()}:${ahora.getMinutes().toString().padStart(2, '0')}`;
 
-        // Cargar el logo
         const img = new Image();
         img.crossOrigin = 'Anonymous';
         img.src = logoUrl;
 
         img.onload = () => {
-          // Tamaño y posición del logo (ajustables)
-          const logoWidth = 30; // Ancho en mm
-          const logoHeight = 30; // Alto en mm
-          const marginRight = 15; // Margen derecho en mm
-          const marginTop = 15; // Margen superior en mm
+          const logoWidth = 30;
+          const logoHeight = 30;
+          const marginRight = 15;
+          const marginTop = 15;
 
-          // Posicionar el logo en esquina superior derecha
           const logoX =
             pdf.internal.pageSize.getWidth() - logoWidth - marginRight;
           const logoY = marginTop;
 
-          // Agregar logo
           pdf.addImage(img, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
-          // Configuración del encabezado
           pdf.setFontSize(16);
           pdf.setFont('helvetica', 'bold');
           pdf.text('Reporte de Ventas', 105, 20, { align: 'center' });
 
-          // Línea decorativa (ajustada para no chocar con el logo)
           pdf.setDrawColor(0, 0, 0);
           pdf.line(
             20,
@@ -130,42 +186,51 @@ export class ReportesComponent implements OnInit {
             25,
           );
 
-          // Información de Barraca y Fecha/Hora
           pdf.setFontSize(12);
           pdf.setFont('helvetica', 'normal');
           pdf.text('Barraca: Torrez', 20, 35);
           pdf.text(`Fecha: ${fechaHora}`, 20, 45);
 
-          // Calcular posición del contenido (tabla)
-          const contentStartY = 55; // Espacio después del encabezado
+          const contentStartY = 55;
 
-          // Agregar contenido de la tabla
           const imgProps = (pdf as any).getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth() - 20; // -20 para márgenes laterales
+          const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
           pdf.addImage(imgData, 'PNG', 10, contentStartY, pdfWidth, pdfHeight);
 
-          pdf.save('reporte_ventas.pdf');
-        };
-
-        img.onerror = () => {
-          console.error('Error al cargar el logo');
-          // Generar PDF sin logo manteniendo el formato
-          pdf.setFontSize(16);
-          pdf.setFont('helvetica', 'bold');
-          pdf.text('Reporte de Ventas', 105, 20, { align: 'center' });
-          pdf.line(20, 25, 190, 25);
-          pdf.setFontSize(12);
-          pdf.text('Barraca: Torrez', 20, 35);
-          pdf.text(`Fecha: ${fechaHora}`, 20, 45);
-          const imgProps = (pdf as any).getImageProperties(imgData);
-          const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          pdf.addImage(imgData, 'PNG', 10, 55, pdfWidth, pdfHeight);
-          pdf.save('reporte_ventas.pdf');
+          if (action === 'download') {
+            pdf.save('reporte_ventas.pdf');
+          } else if (action === 'print') {
+            const pdfBlob = pdf.output('blob');
+            const url = URL.createObjectURL(pdfBlob);
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'absolute';
+            iframe.style.top = '-9999px';
+            iframe.src = url;
+            document.body.appendChild(iframe);
+            iframe.contentWindow?.print();
+          }
         };
       });
     }
+  }
+
+  descargarPDF(elementId: string) {
+    this.generarPDF(elementId, 'download');
+  }
+
+  imprimirPDF(elementId: string) {
+    this.generarPDF(elementId, 'print');
+  }
+
+  limpiarFiltros(): void {
+    this.fechaInicio = '';
+    this.fechaFin = '';
+    this.vendedorFiltro = '';
+    this.sucursalFiltro = '';
+    this.categoriaFiltro = '';
+    this.especieFiltro = '';
+    this.generarReporteVentas();
   }
 }

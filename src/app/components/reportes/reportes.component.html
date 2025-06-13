@@ -1,23 +1,7 @@
 <h2 class="mb-4 text-primary text-center">Reporte de Ventas</h2>
-<!-- Filtro de Fechas -->
-<div class="row mb-3 justify-content-center">
-  <div class="col-md-4">
-    <select
-      [(ngModel)]="filtroVentas"
-      class="form-select"
-      (change)="generarReporteVentas()"
-    >
-      <option value="dia">Por Día</option>
-      <option value="semana">Por Semana</option>
-      <option value="mes">Por Mes</option>
-      <option value="anio">Por Año</option>
-      <option value="rango">Por Rango de Fechas</option>
-    </select>
-  </div>
-</div>
 
 <!-- Mostrar campos de fecha y hora cuando se selecciona "rango" -->
-<div class="row mb-3 justify-content-center" *ngIf="filtroVentas === 'rango'">
+<div class="row mb-3 justify-content-center">
   <div class="col-md-3">
     <label>Desde:</label>
     <input
@@ -36,6 +20,60 @@
       (change)="generarReporteVentas()"
     />
   </div>
+  <div class="row mb-3 justify-content-center">
+    <div class="col-md-2">
+      <label>Vendedor:</label>
+      <select
+        class="form-control"
+        [(ngModel)]="vendedorFiltro"
+        (change)="generarReporteVentas()"
+      >
+        <option value="">Todos</option>
+        <option *ngFor="let v of vendedores" [value]="v">{{ v }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label>Sucursal:</label>
+      <select
+        class="form-control"
+        [(ngModel)]="sucursalFiltro"
+        (change)="vendedorFiltro = ''; generarReporteVentas()"
+      >
+        <option value="">Todas</option>
+        <option *ngFor="let s of sucursales" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label>Categoría:</label>
+      <select
+        class="form-control"
+        [(ngModel)]="categoriaFiltro"
+        (change)="generarReporteVentas()"
+      >
+        <option value="">Todas</option>
+        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label>Especie:</label>
+      <select
+        class="form-control"
+        [(ngModel)]="especieFiltro"
+        (change)="generarReporteVentas()"
+      >
+        <option value="">Todas</option>
+        <option *ngFor="let e of especies" [value]="e">{{ e }}</option>
+      </select>
+    </div>
+  </div>
+  <div class="col-md-2 d-flex align-items-end">
+    <button class="btn btn-danger w-100" (click)="limpiarFiltros()">
+      <i class="bi bi-x-circle-fill"></i> Limpiar filtros
+    </button>
+  </div>
 </div>
 
 <!-- TABLA -->
@@ -46,24 +84,32 @@
   <table class="table table-bordered text-center align-middle">
     <thead class="table-primary">
       <tr>
-        <th>ID</th>
         <th>Fecha</th>
-        <th>Total (Bs)</th>
         <th>Vendedor</th>
+        <th>Sucursal</th>
+        <th>Categoria</th>
+        <th>Especie</th>
+        <th>Subtotal (Bs)</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let venta of ventasFiltradas">
-        <td>{{ venta.id }}</td>
-        <td>{{ venta.fecha | date: "dd/MM/yyyy HH:mm" }}</td>
-        <td>{{ venta.total | number: "1.2-2" }}</td>
-        <td>{{ venta.vendedor.nombre }} {{ venta.vendedor.apellido }}</td>
+      <tr *ngFor="let detalle of mostradas">
+        <td>{{ detalle.venta.fecha | date: "dd/MM/yyyy HH:mm" }}</td>
+        <td class="text-start">
+          {{ detalle.venta.vendedor.nombre }}
+          {{ detalle.venta.vendedor.apellido }}
+        </td>
+        <td class="text-start">{{ detalle.venta.sucursal.nombre }}</td>
+        <td class="text-start">{{ detalle.producto.categoria.nombre }}</td>
+        <td class="text-start">{{ detalle.producto.especie }}</td>
+        <td>{{ detalle.subtotal | number: "1.2-2" }}</td>
       </tr>
     </tbody>
+
     <tfoot>
       <tr>
-        <td colspan="2"><strong>Total General:</strong></td>
-        <td colspan="2">
+        <td colspan="5" class="text-end"><strong>Total General:</strong></td>
+        <td colspan="6">
           <strong>{{ totalVentas | number: "1.2-2" }} Bs</strong>
         </td>
       </tr>
@@ -72,7 +118,10 @@
 </div>
 
 <div class="text-center mb-5">
-  <button class="btn btn-success" (click)="descargarPDF('reporteVentas')">
+  <button class="btn btn-success m-3" (click)="descargarPDF('reporteVentas')">
     Descargar PDF
+  </button>
+  <button class="btn btn-primary m-3" (click)="imprimirPDF('reporteVentas')">
+    Imprimir Reporte
   </button>
 </div>

@@ -16,6 +16,14 @@ export class VentaListarComponent implements OnInit {
   mostradas: Venta[] = [];
   busqueda: string = '';
 
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  vendedorSeleccionado: number | '' = '';
+  sucursalSeleccionada: number | '' = '';
+
+  vendedores: any[] = [];
+  sucursales: any[] = [];
+
   constructor(private ventaService: ServiceService) {}
 
   ngOnInit(): void {
@@ -26,13 +34,35 @@ export class VentaListarComponent implements OnInit {
     this.ventaService.getVentas().subscribe((datos) => {
       this.ventas = datos;
       this.mostradas = datos;
+      this.vendedores = [...new Set(datos.map((v) => v.vendedor))];
+      this.sucursales = [...new Set(datos.map((v) => v.sucursal))];
     });
   }
 
   filtrar(): void {
     const texto = this.busqueda.toLowerCase();
-    this.mostradas = this.ventas.filter((v) =>
-      v.vendedor.nombre.toLowerCase().includes(texto),
-    );
+    this.mostradas = this.ventas.filter((v) => {
+      const coincideBusqueda = v.vendedor.nombre.toLowerCase().includes(texto);
+      const coincideVendedor = this.vendedorSeleccionado
+        ? v.vendedor.id === Number(this.vendedorSeleccionado)
+        : true;
+
+      const coincideSucursal = this.sucursalSeleccionada
+        ? v.sucursal.id === Number(this.sucursalSeleccionada)
+        : true;
+
+      const fecha = new Date(v.fecha);
+      const desde = this.fechaInicio ? new Date(this.fechaInicio) : null;
+      const hasta = this.fechaFin ? new Date(this.fechaFin) : null;
+      const dentroDelRango =
+        (!desde || fecha >= desde) && (!hasta || fecha <= hasta);
+
+      return (
+        coincideBusqueda &&
+        coincideVendedor &&
+        coincideSucursal &&
+        dentroDelRango
+      );
+    });
   }
 }

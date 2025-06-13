@@ -6,17 +6,55 @@
         <i [ngClass]="isSidebarOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
       </button>
       <div class="ms-auto d-flex align-items-center gap-2">
-        <button
-          class="btn rounded-circle d-flex justify-content-center align-items-center"
-          style="width: 40px; height: 40px"
-          title="Cerrar Sesión"
-          (click)="logout()"
-        >
-          <i class="fas fa-power-off text-danger fs-4"></i>
-        </button>
+        <div class="dropdown d-flex align-items-center">
+          <div class="me-2">
+            <img
+              *ngIf="imagenUrl"
+              [src]="imagenUrl"
+              alt="Foto de usuario"
+              class="rounded-circle img-fluid"
+              style="width: 40px; height: 40px"
+            />
+          </div>
+
+          <button
+            class="btn btn-secondary dropdown-toggle d-flex align-items-center"
+            type="button"
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ userName }}
+          </button>
+
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="dropdownMenuButton"
+          >
+            <li>
+              <div
+                class="dropdown-item d-flex align-items-center"
+                (click)="verPerfil()"
+              >
+                <i class="fas fa-user-circle me-2"></i>
+                <span>Ver Perfil</span>
+              </div>
+            </li>
+            <li>
+              <div
+                class="dropdown-item text-danger d-flex align-items-center"
+                (click)="onSelectChange('cerrarSesion')"
+              >
+                <i class="fas fa-power-off text-danger fs-6 me-2"></i>
+                <span> Cerrar Sesión</span>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
+
   <!-- Sidebar (leftSide) -->
   <aside
     class="leftSide bg-light p-3"
@@ -33,13 +71,14 @@
       </div>
 
       <hr class="text-dark" />
-      <p class="text-dark mb-0">Nombre: Andres</p>
-      <p class="text-dark">Rol: Andres</p>
+      <p class="text-dark mb-0">Nombre: {{ userName }}</p>
+      <p class="text-dark">Rol: {{ userRole }}</p>
+
       <hr class="text-dark" />
     </div>
 
     <ul class="list-group">
-      <li class="d-flex align-items-center">
+      <li class="d-flex align-items-center" *ngIf="puedeVer('vender')">
         <div class="col-auto pe-2">
           <i class="bi bi-cart fs-2 text-dark"></i>
         </div>
@@ -58,6 +97,7 @@
         class="d-flex align-items-center"
         (click)="toggleSection('GestióndeUsuarios')"
         style="cursor: pointer"
+        *ngIf="puedeVer('GestiónDeUsuarios')"
       >
         <div class="col-auto pe-2">
           <i class="bi bi-people fs-2 text-dark"></i>
@@ -78,7 +118,10 @@
         </div>
       </li>
       <ul class="list-group ps-3" *ngIf="isActive('GestióndeUsuarios')">
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('listarSucursal')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-building fs-2 text-dark"></i>
           </div>
@@ -91,7 +134,7 @@
             >
           </div>
         </li>
-        <li class="d-flex align-items-center">
+        <li class="d-flex align-items-center" *ngIf="puedeVer('listarRol')">
           <div class="col-auto pe-2">
             <i class="bi bi-shield-lock fs-2 text-dark"></i>
           </div>
@@ -104,7 +147,7 @@
             >
           </div>
         </li>
-        <li class="d-flex align-items-center">
+        <li class="d-flex align-items-center" *ngIf="puedeVer('listarPermiso')">
           <div class="col-auto pe-2">
             <i class="bi bi-key fs-2 text-dark"></i>
           </div>
@@ -117,7 +160,7 @@
             >
           </div>
         </li>
-        <li class="d-flex align-items-center">
+        <li class="d-flex align-items-center" *ngIf="puedeVer('listarUsuario')">
           <div class="col-auto pe-2">
             <i class="bi bi-person-badge fs-2 text-dark"></i>
           </div>
@@ -130,7 +173,10 @@
             >
           </div>
         </li>
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('listarUsuarioRolSucursal')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-person-lines-fill fs-2 text-dark"></i>
           </div>
@@ -143,7 +189,10 @@
             >
           </div>
         </li>
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('listarRolPermiso')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-shield-check fs-2 text-dark"></i>
           </div>
@@ -162,6 +211,7 @@
         class="d-flex align-items-center"
         (click)="toggleSection('productos')"
         style="cursor: pointer"
+        *ngIf="puedeVer('GestionDeProductos')"
       >
         <div class="col-auto pe-2">
           <i class="bi bi-box-seam fs-2 text-dark"></i>
@@ -182,7 +232,10 @@
       </li>
       <ul class="list-group ps-3" *ngIf="isActive('productos')">
         <!-- Categoria -->
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('listarCategoria')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-tags fs-2 text-dark"></i>
             <!-- Etiquetas para categorías -->
@@ -199,7 +252,10 @@
         </li>
 
         <!-- Producto Madera -->
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('listarProductoMadera')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-tree fs-2 text-dark"></i>
             <!-- Árbol para productos forestales -->
@@ -216,7 +272,7 @@
         </li>
 
         <!-- Venta -->
-        <li class="d-flex align-items-center">
+        <li class="d-flex align-items-center" *ngIf="puedeVer('listarVenta')">
           <div class="col-auto pe-2">
             <i class="bi bi-cart-check fs-2 text-dark"></i>
             <!-- Carrito con check -->
@@ -233,7 +289,10 @@
         </li>
 
         <!-- Detalle Venta -->
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('listarDetalleVenta')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-file-text fs-2 text-dark"></i>
             <!-- Documento para detalle -->
@@ -250,7 +309,10 @@
         </li>
 
         <!-- Factura Recibo -->
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('listarFacturaRecibo')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-receipt-cutoff fs-2 text-dark"></i>
             <!-- Icono de recibo cortado -->
@@ -272,12 +334,13 @@
         class="d-flex align-items-center"
         (click)="toggleSection('reportes')"
         style="cursor: pointer"
+        *ngIf="puedeVer('GestionDeReportes')"
       >
         <div class="col-auto pe-2">
           <i class="bi bi-bar-chart-line fs-2 text-dark"></i>
         </div>
         <div class="col text-start">
-          <span class="text-dark">Reportes</span>
+          <span class="text-dark">Gestion Reportes</span>
         </div>
         <div class="col-auto pe-2">
           <i
@@ -291,7 +354,7 @@
       </li>
       <ul class="list-group ps-3" *ngIf="isActive('reportes')">
         <!-- Reporte de Ventas -->
-        <li class="d-flex align-items-center">
+        <li class="d-flex align-items-center" *ngIf="puedeVer('reportes')">
           <div class="col-auto pe-2">
             <i class="bi bi-receipt fs-2 text-dark"></i>
           </div>
@@ -307,13 +370,16 @@
         </li>
 
         <!-- Reporte de Inventario -->
-        <li class="d-flex align-items-center">
+        <li
+          class="d-flex align-items-center"
+          *ngIf="puedeVer('reportesgrafica')"
+        >
           <div class="col-auto pe-2">
             <i class="bi bi-clipboard-data fs-2 text-dark"></i>
           </div>
           <div class="col text-start">
             <a
-              routerLink="/app-panel-control/reporte-inventario"
+              routerLink="/app-panel-control/reportesgrafica"
               class="text-dark text-decoration-none"
               (click)="closeSidebarOnMobile()"
             >
@@ -324,7 +390,6 @@
       </ul>
     </ul>
   </aside>
-  <!-- Overlay para móvil (opcional) -->
   <!-- Overlay para móvil -->
   <div
     class="overlay"

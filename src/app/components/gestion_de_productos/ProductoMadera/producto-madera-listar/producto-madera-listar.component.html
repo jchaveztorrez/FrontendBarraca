@@ -1,5 +1,6 @@
-<h2 class="mb-4 text-primary">Lista de Producto Madera</h2>
-
+<h2 class="mb-4 text-primary text-center text-uppercase">
+  Lista de Producto Madera
+</h2>
 <!-- Filtros -->
 <div
   class="mb-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2"
@@ -12,6 +13,23 @@
       class="form-control"
       placeholder="Buscar por nombre de especie..."
     />
+    <select
+      class="form-select"
+      [(ngModel)]="sucursalSeleccionada"
+      (change)="filtrar()"
+    >
+      <option value="">Todas las sucursales</option>
+      <option *ngFor="let s of sucursales" [value]="s">{{ s }}</option>
+    </select>
+
+    <select
+      class="form-select"
+      [(ngModel)]="categoriaSeleccionada"
+      (change)="filtrar()"
+    >
+      <option value="">Todas las categorías</option>
+      <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+    </select>
   </div>
 
   <button class="btn btn-success" (click)="irARegistrar()">

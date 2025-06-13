@@ -1,4 +1,4 @@
-<h2 class="mb-4 text-primary">Lista de Ventas</h2>
+<h2 class="mb-4 text-primary text-center text-uppercase">Lista de Ventas</h2>
 
 <!-- Filtros -->
 <div
@@ -11,6 +11,42 @@
       (input)="filtrar()"
       class="form-control"
       placeholder="Buscar por nombre del vendedor..."
+    />
+
+    <select
+      class="form-select"
+      [(ngModel)]="vendedorSeleccionado"
+      (change)="filtrar()"
+    >
+      <option value="">Todos los vendedores</option>
+      <option *ngFor="let v of vendedores" [ngValue]="v.id">
+        {{ v.nombre }} {{ v.apellido }}
+      </option>
+    </select>
+
+    <select
+      class="form-select"
+      [(ngModel)]="sucursalSeleccionada"
+      (change)="filtrar()"
+    >
+      <option value="">Todas las sucursales</option>
+      <option *ngFor="let s of sucursales" [ngValue]="s.id">
+        {{ s.nombre }}
+      </option>
+    </select>
+
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="fechaInicio"
+      (change)="filtrar()"
+    />
+
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="fechaFin"
+      (change)="filtrar()"
     />
   </div>
 </div>

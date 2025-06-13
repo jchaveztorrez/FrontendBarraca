@@ -18,13 +18,23 @@ export class ListarRolPermisoComponent implements OnInit {
   mostrados: RolPermiso[] = [];
   busqueda = '';
   limite = 10;
+
+  roles: { nombre: string }[] = [];
+  permisos: { nombre: string }[] = [];
+
+  filtroRol = '';
+  filtroPermiso = '';
+
   constructor(
     private servicio: ServiceService,
     private router: Router,
   ) {}
+
   ngOnInit(): void {
     this.servicio.getRolPermiso().subscribe((data) => {
       this.usuarioRolSucursales = data;
+      this.roles = this.extraerUnicos(data.map((x) => x.rol));
+      this.permisos = this.extraerUnicos(data.map((x) => x.permiso));
       this.filtrar();
     });
   }
@@ -41,11 +51,19 @@ export class ListarRolPermisoComponent implements OnInit {
   }
   filtrar(): void {
     const texto = this.busqueda.trim().toLowerCase();
-    this.filtrados = this.usuarioRolSucursales.filter((urs) =>
-      urs.rol.nombre.toLowerCase().includes(texto),
+    this.filtrados = this.usuarioRolSucursales.filter(
+      (rp) =>
+        rp.rol.nombre.toLowerCase().includes(texto) &&
+        (this.filtroRol === '' || rp.rol.nombre === this.filtroRol) &&
+        (this.filtroPermiso === '' || rp.permiso.nombre === this.filtroPermiso),
     );
     this.limite = 10;
     this.actualizarMostrados();
+  }
+
+  extraerUnicos(arr: { nombre: string }[]): { nombre: string }[] {
+    const nombresUnicos = [...new Set(arr.map((x) => x.nombre))];
+    return nombresUnicos.map((nombre) => ({ nombre }));
   }
   irAEditar(id: number): void {
     this.router.navigate(['app-panel-control/editar-rol-permiso', id]);

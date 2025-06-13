@@ -1,4 +1,6 @@
-<h2 class="mb-4 text-primary">Lista de Usuario - Rol - Sucursal</h2>
+<h2 class="mb-4 text-primary text-center text-uppercase">
+  Lista de Usuario Rol Sucursal
+</h2>
 
 <!-- Filtros -->
 <div
@@ -13,6 +15,23 @@
       placeholder="Buscar por nombre de usuario..."
     />
   </div>
+  <select
+    class="form-select me-2"
+    [(ngModel)]="rolSeleccionado"
+    (change)="filtrar()"
+  >
+    <option value="">Todos los roles</option>
+    <option *ngFor="let r of rolesDisponibles" [value]="r">{{ r }}</option>
+  </select>
+
+  <select
+    class="form-select me-2"
+    [(ngModel)]="sucursalSeleccionada"
+    (change)="filtrar()"
+  >
+    <option value="">Todas las sucursales</option>
+    <option *ngFor="let s of sucursalesDisponibles" [value]="s">{{ s }}</option>
+  </select>
 
   <button class="btn btn-success" (click)="irARegistrar()">
     <i class="bi bi-plus-circle me-1"></i> Registrar

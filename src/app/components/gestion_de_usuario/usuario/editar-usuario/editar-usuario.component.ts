@@ -25,7 +25,7 @@ export class EditarUsuarioComponent implements OnInit {
   errorMensaje: string | null = null;
   mensajeExito: string = '';
   mensajeError: string = '';
-
+  showPassword: boolean = false;
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -132,6 +132,9 @@ export class EditarUsuarioComponent implements OnInit {
     }
   }
 
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
   manejarOk() {
     this.mensajeExito = '';
     this.router.navigate(['app-panel-control/listar-usuario']);

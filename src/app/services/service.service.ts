@@ -248,7 +248,10 @@ export class ServiceService {
   getFacturaReciboID(id: number): Observable<FacturaRecibo> {
     return this.http.get<FacturaRecibo>(`${this.apiUrl}facturarecibo/${id}/`);
   }
-
+  /*   getFacturaReciboPorId(id: number): Observable<FacturaRecibo> {
+    return this.http.get<FacturaRecibo>(`${this.apiUrl}/facturarecibo/${id}/`);
+  }
+ */
   createFacturaRecibo(factura: FacturaRecibo): Observable<FacturaRecibo> {
     return this.http.post<FacturaRecibo>(`${this.apiUrl}facturarecibo/`, {
       ...factura,

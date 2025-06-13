@@ -1,4 +1,8 @@
 <div class="container-fluid mt-4">
+  <button class="btn btn-primary p-3 float-end" (click)="manejarOk()">
+    <i class="fas fa-arrow-left me-2"></i> Volver a la factura
+  </button>
+
   <div class="row">
     <!-- Columna izquierda: Lista de Ventas -->
     <div class="col-md-6 mb-4">
@@ -27,10 +31,12 @@
           />
 
           <!-- Tabla de ventas filtradas -->
+          <!-- Tabla de ventas filtradas -->
           <div
             class="table-responsive"
             style="max-height: 400px; overflow-y: auto"
           >
+            <!-- TABLA 1 -->
             <table class="table table-bordered table-hover text-center mb-0">
               <thead class="table-primary">
                 <tr>
@@ -39,12 +45,21 @@
                   <th>Fecha</th>
                   <th>Vendedor</th>
                   <th>Sucursal</th>
+                  <th>R/F</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
-
               <tbody>
-                <tr *ngFor="let venta of ventasMostradas">
+                <tr
+                  *ngFor="let venta of ventasMostradas"
+                  [ngClass]="{
+                    'table-warning':
+                      tipoDocumentoParaVenta(venta.id) === 'recibo',
+                    'table-success':
+                      tipoDocumentoParaVenta(venta.id) === 'factura',
+                    'table-light': tipoDocumentoParaVenta(venta.id) === '',
+                  }"
+                >
                   <td>{{ venta.id }}</td>
                   <td>{{ venta.total | number: "1.2-2" }}</td>
                   <td>{{ venta.fecha | date: "dd/MM/yyyy HH:mm" }}</td>
@@ -52,9 +67,10 @@
                     {{ venta.vendedor.nombre }} {{ venta.vendedor.apellido }}
                   </td>
                   <td>{{ venta.sucursal.nombre }}</td>
+                  <td>{{ obtenerTipoDocumento(venta) }}</td>
                   <td>
                     <button
-                      class="btn btn-sm btn-success"
+                      class="btn btn-sm btn-success m-3"
                       (click)="generarFactura(venta)"
                     >
                       Generar Factura
@@ -67,8 +83,9 @@
                     </button>
                   </td>
                 </tr>
+
                 <tr *ngIf="ventasMostradas.length === 0">
-                  <td colspan="6" class="text-muted text-center">
+                  <td colspan="7" class="text-muted text-center">
                     No hay ventas para mostrar.
                   </td>
                 </tr>
@@ -86,129 +103,214 @@
     >
       <div class="card">
         <!-- Cabecera -->
-        <div class="card-header bg-success text-white">
-          <h5 class="mb-0">
-            Generar {{ tipoDocumentoSeleccionado | titlecase }}
-          </h5>
+        <div
+          class="card-header bg-success text-white d-flex justify-content-between align-items-center"
+        >
+          <!-- Título del tipo de documento -->
+          <h5 class="mb-0">{{ tipoDocumentoSeleccionado | titlecase }}</h5>
+
+          <!-- ID de la venta -->
+          <p class="text-end fw-bold mb-0">
+            Venta N° {{ ventaSeleccionada?.id }}
+          </p>
+
+          <!-- ID del recibo o factura -->
+          <p class="text-end fw-bold mb-0" *ngIf="reciboSeleccionado">
+            Factura/Recivo N° {{ reciboSeleccionado.id }}
+          </p>
         </div>
 
         <!-- Cuerpo del formulario -->
         <div class="card-body">
-          <!-- Encabezado con logo, título y fecha -->
-          <div class="row mb-3 align-items-center">
-            <div class="col-6">
-              <img
-                src="https://www.shutterstock.com/image-vector/vector-logo-carpentry-workshop-woodwork-600nw-2554072869.jpg"
-                alt="Logo de la Empresa"
-                class="img-fluid"
-                style="max-width: 150px"
-              />
-            </div>
-            <div class="col-6 text-end">
-              <div style="display: inline-block; text-align: left">
-                <h3 class="fw-bold text-center">Proforma</h3>
-                <table
-                  class="table table-bordered table-sm text-center mb-0"
-                  style="width: 100%; font-size: 0.85rem"
-                >
-                  <thead class="table-primary">
-                    <tr>
-                      <th style="padding: 4px">Día</th>
-                      <th style="padding: 4px">Mes</th>
-                      <th style="padding: 4px">Año</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style="padding: 4px">{{ fechaHoy | date: "dd" }}</td>
-                      <td style="padding: 4px">
-                        {{ fechaHoy | date: "MMMM" }}
-                      </td>
-                      <td style="padding: 4px">
-                        {{ fechaHoy | date: "yyyy" }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+          <!-- Contenedor principal para PDF (SOLO UNO con este ID) -->
+          <div
+            id="contenidoParaPDF"
+            class="container-fluid p-3"
+            style="width: 210mm"
+          >
+            <!-- Logo y Fecha -->
+            <div class="row mb-3 align-items-center">
+              <h2 class="fw-bold text-uppercase text-end" style="color: green">
+                {{
+                  tipoDocumentoSeleccionado === "factura" ? "FACTURA" : "RECIBO"
+                }}
+              </h2>
+
+              <div class="col-6">
+                <img
+                  src="https://res.cloudinary.com/dtqv5ejlr/image/upload/v1749490014/LogoBarracaTransparente_in88nf.png"
+                  alt="Logo de la Empresa"
+                  class="img-fluid"
+                  style="max-width: 150px"
+                />
               </div>
-            </div>
-          </div>
 
-          <!-- Contacto -->
-          <div class="mb-3 text-start">
-            <i class="bi bi-whatsapp text-success"></i>
-            <strong>CELL:</strong> +591 77777777 - 72937437
-            <div>SUCURSALES: Sucursal 1, Sucursal 2</div>
-          </div>
+              <div class="col-12 col-md-6 text-end">
+                <div class="text-end">
+                  <!-- Tabla de Fecha alineada a la derecha -->
+                  <div class="d-flex justify-content-end">
+                    <table
+                      class="table table-bordered border-dark text-center mb-5"
+                      style="
+                        border-collapse: collapse !important;
+                        width: 50%;
+                        font-size: 0.7rem;
+                      "
+                    >
+                      <thead class="table-primary">
+                        <!-- Título de fecha con texto más grande y sin bordes -->
+                        <p
+                          class="fw-bold text-start mb-2"
+                          style="font-size: 1rem; margin-bottom: 0.5rem"
+                        >
+                          Fecha:
+                        </p>
 
-          <!-- Formulario de datos del cliente -->
-          <form>
-            <div class="form-group mb-3 text-start">
-              <label for="nombre_cliente">Nombre del Cliente:</label>
-              <input
-                type="text"
-                id="nombre_cliente"
-                class="form-control"
-                [(ngModel)]="nombre_cliente"
-                name="nombre_cliente"
-                required
-              />
-            </div>
+                        <tr>
+                          <th class="border-dark border-1 p-2">Día</th>
+                          <th class="border-dark border-1 p-2">Mes</th>
+                          <th class="border-dark border-1 p-2">Año</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="border-dark border-1 p-2">
+                            {{ fechaHoy | date: "dd" }}
+                          </td>
+                          <td class="border-dark border-1 p-2">
+                            {{ fechaHoy | date: "MMMM" }}
+                          </td>
+                          <td class="border-dark border-1 p-2">
+                            {{ fechaHoy | date: "yyyy" }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
 
-            <div class="form-group mb-3 text-start">
-              <label for="ci_nit">CI/NIT:</label>
-              <input
-                type="text"
-                id="ci_nit"
-                class="form-control"
-                [(ngModel)]="ci_nit"
-                name="ci_nit"
-                required
-              />
-            </div>
-          </form>
+              <!-- Contacto -->
+              <div class="mb-3">
+                <strong>CELL:</strong> +591 77777777 - 72937437 <br />
+                <small>SUCURSALES: Sucursal 1, Sucursal 2</small>
+              </div>
 
-          <!-- Tabla de detalles -->
-          <table class="table table-bordered text-center mb-0">
-            <thead class="table-primary">
-              <tr>
-                <th style="width: 10%">CANT.</th>
-                <th style="width: 50%">DETALLE</th>
-                <th style="width: 20%">P/UNIT.</th>
-                <th style="width: 20%">TOTAL</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of detallesVenta">
-                <td>{{ item.cantidad_vendida }}</td>
-                <td>
-                  {{ item.producto.especie }} -
-                  {{ item.producto.categoria.nombre }} -
-                  {{ item.producto.ancho }}x{{ item.producto.espesor }}x{{
-                    item.producto.largo
-                  }}
-                </td>
-                <td>{{ item.precio_unitario }}</td>
-                <td>{{ item.subtotal }}</td>
-              </tr>
-            </tbody>
-
-            <!-- Total alineado a la columna de TOTAL -->
-            <tfoot *ngIf="ventaSeleccionada">
-              <tr>
-                <td colspan="3" class="text-end"><strong>TOTAL Bs.</strong></td>
-                <td>
-                  <strong
-                    >{{ ventaSeleccionada.total | number: "1.2-2" }} Bs</strong
+              <!-- Formulario -->
+              <!-- Formulario -->
+              <form>
+                <div class="mb-3">
+                  <label for="nombre_cliente" class="form-label"
+                    >Nombre del Cliente:</label
                   >
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="nombre_cliente"
+                    name="nombre_cliente"
+                    maxlength="100"
+                    required
+                    (keypress)="soloLetrasNumerosEspacios($event)"
+                    (ngModelChange)="verificarCoincidenciasCliente()"
+                    title="Solo se permiten letras, números y espacios (hasta 100 caracteres)"
+                  />
+                </div>
 
-          <!-- Botones de acción -->
-          <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-primary" (click)="guardarDocumento()">
+                <div class="mb-3">
+                  <label for="ci_nit" class="form-label">CI/NIT:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="ci_nit"
+                    name="ci_nit"
+                    maxlength="15"
+                    required
+                    pattern="^[0-9]{1,15}$"
+                    (keypress)="soloNumeros($event)"
+                    (paste)="evitarPegadoInvalidoNumeros($event)"
+                    (ngModelChange)="verificarCoincidenciasCliente()"
+                    title="Solo se permiten números (hasta 15 dígitos)"
+                  />
+                </div>
+              </form>
+
+              <!-- Tabla de Detalles de Productos -->
+              <table
+                class="table table-bordered border-1 border-dark text-center mb-0"
+                style="border-collapse: collapse !important"
+              >
+                <thead class="table-primary">
+                  <tr>
+                    <th class="border-dark border-1 p-2" style="width: 10%">
+                      CANT.
+                    </th>
+                    <th class="border-dark border-1 p-2" style="width: 50%">
+                      DETALLE
+                    </th>
+                    <th class="border-dark border-1 p-2" style="width: 20%">
+                      P/UNIT.
+                    </th>
+                    <th class="border-dark border-1 p-2" style="width: 20%">
+                      TOTAL
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of detallesVenta">
+                    <td class="border-dark border-1 p-2">
+                      {{ item.cantidad_vendida }}
+                    </td>
+                    <td class="border-dark border-1 p-2">
+                      {{ item.producto.especie }} -
+                      {{ item.producto.categoria.nombre }} -
+                      {{ item.producto.ancho }}x{{ item.producto.espesor }}x{{
+                        item.producto.largo
+                      }}
+                    </td>
+                    <td class="border-dark border-1 p-2">
+                      {{ item.precio_unitario }}
+                    </td>
+                    <td class="border-dark border-1 p-2">
+                      {{ item.subtotal }}
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot *ngIf="ventaSeleccionada">
+                  <tr>
+                    <td colspan="3" class="text-end border-dark border-1 p-2">
+                      <strong>TOTAL Bs.</strong>
+                    </td>
+                    <td class="border-dark border-1 p-2">
+                      <strong
+                        >{{
+                          ventaSeleccionada.total | number: "1.2-2"
+                        }}
+                        Bs</strong
+                      >
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- Cierre del div con id="contenidoParaPDF" -->
+          </div>
+          <div *ngIf="coincidenciasCliente > 0" class="alert alert-info mt-2">
+            Hay {{ coincidenciasCliente }} registro(s) existentes con ese nombre
+            y CI/NIT.
+          </div>
+
+          <!-- Botones DENTRO del card-body pero FUERA del contenidoParaPDF -->
+          <div class="d-flex justify-content-between mt-3 no-export">
+            <button class="btn btn-primary" (click)="imprimirDocumentoPDF()">
+              Descargar PDF
+            </button>
+            <button
+              class="btn btn-primary"
+              (click)="imprimirDocumentoPDFDireto()"
+            >
+              Imprimir PDF
+            </button>
+            <button class="btn btn-success" (click)="guardarDocumento()">
               Guardar Documento
             </button>
             <button class="btn btn-secondary" (click)="cancelarFormulario()">

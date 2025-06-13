@@ -125,3 +125,16 @@
     </div>
   </div>
 </div>
+<!-- Modal de Éxito -->
+<app-ok
+  *ngIf="mensajeExito"
+  [mensaje]="mensajeExito"
+  (close)="manejarOk()"
+></app-ok>
+
+<!-- Modal de Error -->
+<app-error
+  *ngIf="mensajeError"
+  [mensaje]="mensajeError"
+  (close)="manejarError()"
+></app-error>

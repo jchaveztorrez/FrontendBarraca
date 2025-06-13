@@ -1,0 +1,136 @@
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4">Dashboard de Reportes</h3>
+
+        <!-- Fila 1 -->
+        <div class="row">
+          <!-- 1. Productos más vendidos por Sucursal -->
+          <div class="col-md-4 mb-4">
+            <h5 class="text-center">Productos más vendidos por Sucursal</h5>
+            <ngx-charts-bar-vertical-2d
+              [view]="view"
+              [scheme]="colorScheme"
+              [results]="productosMasVendidosPorSucursal"
+              [xAxis]="true"
+              [yAxis]="true"
+              [legend]="true"
+              [showXAxisLabel]="true"
+              [showYAxisLabel]="true"
+              [xAxisLabel]="'Sucursales'"
+              [yAxisLabel]="'Cantidad Vendida'"
+              [roundDomains]="true"
+              [animations]="true"
+            ></ngx-charts-bar-vertical-2d>
+          </div>
+          <!-- 3. Productos Más Vendidos -->
+          <div class="col-md-4 mb-4">
+            <h5 class="text-center">Productos Más Vendidos</h5>
+            <ngx-charts-bar-vertical
+              [view]="view"
+              [results]="productosMasVendidos"
+              [scheme]="colorScheme"
+              [xAxis]="true"
+              [yAxis]="true"
+              [showXAxisLabel]="true"
+              [showYAxisLabel]="true"
+              [xAxisLabel]="'Producto'"
+              [yAxisLabel]="'Cantidad Vendida'"
+            ></ngx-charts-bar-vertical>
+          </div>
+          <!-- 5. Stock por Sucursal -->
+          <div class="col-md-4 mb-4">
+            <h5 class="text-center">Stock por Sucursal</h5>
+            <ngx-charts-bar-vertical-2d
+              [view]="view"
+              [results]="stockPorSucursal"
+              [scheme]="colorScheme"
+              [legend]="true"
+              [xAxis]="true"
+              [yAxis]="true"
+              [showXAxisLabel]="true"
+              [showYAxisLabel]="true"
+              [xAxisLabel]="'Sucursal'"
+              [yAxisLabel]="'Cantidad / Volumen'"
+            ></ngx-charts-bar-vertical-2d>
+          </div>
+        </div>
+        <!-- Fila 3 -->
+        <div class="row">
+          <!-- 6. Rentabilidad por Producto -->
+          <div class="col-md-4 mb-4">
+            <h5 class="text-center">Rentabilidad por Producto</h5>
+            <ngx-charts-bar-vertical
+              [view]="view"
+              [results]="rentabilidadProducto"
+              [scheme]="colorScheme"
+              [xAxis]="true"
+              [yAxis]="true"
+              [showXAxisLabel]="true"
+              [showYAxisLabel]="true"
+              [xAxisLabel]="'Producto'"
+              [yAxisLabel]="'Ganancia (Bs)'"
+            ></ngx-charts-bar-vertical>
+          </div>
+          <!-- 7. Facturación por Tipo -->
+          <div class="col-md-4 mb-4">
+            <h5 class="text-center">Facturación por Tipo</h5>
+            <ngx-charts-pie-chart
+              [view]="view"
+              [results]="facturacionPorTipo"
+              [scheme]="colorScheme"
+              [legend]="true"
+              [labels]="true"
+              [doughnut]="true"
+            ></ngx-charts-pie-chart>
+          </div>
+
+          <!-- 9. Volumen Vendido por Producto -->
+          <div class="col-md-4 mb-4">
+            <h5 class="text-center">Volumen Vendido por Producto</h5>
+            <ngx-charts-bar-vertical
+              [view]="view"
+              [results]="volumenPorProducto"
+              [scheme]="colorScheme"
+              [xAxis]="true"
+              [yAxis]="true"
+              [showXAxisLabel]="true"
+              [showYAxisLabel]="true"
+              [xAxisLabel]="'Producto'"
+              [yAxisLabel]="'Volumen Total (m³)'"
+            ></ngx-charts-bar-vertical>
+          </div>
+        </div>
+
+        <!-- Fila 4 -->
+        <div class="row">
+          <!-- 10. Productos sin Movimiento -->
+          <div class="col-md-12 mb-4">
+            <h5 class="text-center">Productos sin Movimiento</h5>
+            <table class="table table-bordered table-hover table-sm">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Volumen</th>
+                  <th>Sucursal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let prod of productosSinMovimiento; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ prod.especie }}</td>
+                  <td>{{ prod.cantidad }}</td>
+                  <td>{{ prod.volumen }}</td>
+                  <td>{{ prod.sucursal.nombre }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

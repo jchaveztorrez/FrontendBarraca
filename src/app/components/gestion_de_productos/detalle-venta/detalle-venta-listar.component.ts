@@ -15,6 +15,10 @@ export class DetalleVentaListarComponent implements OnInit {
   mostradas: DetalleVentaMadera[] = [];
   busqueda: string = '';
 
+  numeroVentaBusqueda: string = '';
+  productoSeleccionado: string = '';
+  especiesDisponibles: string[] = [];
+
   constructor(private service: ServiceService) {}
 
   ngOnInit(): void {
@@ -25,13 +29,30 @@ export class DetalleVentaListarComponent implements OnInit {
     this.service.getDetalleVentaMadera().subscribe((datos) => {
       this.detalleVentas = datos;
       this.mostradas = datos;
+
+      // Generar lista de especies únicas para el select
+      const especiesSet = new Set(datos.map((d) => d.producto.especie));
+      this.especiesDisponibles = Array.from(especiesSet);
     });
   }
 
   filtrar(): void {
     const texto = this.busqueda.toLowerCase();
-    this.mostradas = this.detalleVentas.filter((detalle) =>
-      detalle.producto.especie.toLowerCase().includes(texto),
-    );
+    const numeroVenta = this.numeroVentaBusqueda.trim();
+    const especieFiltro = this.productoSeleccionado;
+
+    this.mostradas = this.detalleVentas.filter((detalle) => {
+      const coincideEspecie = detalle.producto.especie
+        .toLowerCase()
+        .includes(texto);
+      const coincideNumeroVenta = numeroVenta
+        ? detalle.venta.id.toString().includes(numeroVenta)
+        : true;
+      const coincideProducto = especieFiltro
+        ? detalle.producto.especie === especieFiltro
+        : true;
+
+      return coincideEspecie && coincideNumeroVenta && coincideProducto;
+    });
   }
 }

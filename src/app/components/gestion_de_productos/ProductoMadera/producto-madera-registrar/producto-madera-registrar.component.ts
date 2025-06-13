@@ -64,7 +64,7 @@ export class ProductoMaderaRegistrarComponent {
           Validators.min(1),
           Validators.max(1000),
           this.customValidators.NoNegativo(),
-          this.customValidators.soloNumeros(),
+          this.customValidators.soloPositivosNumericos(),
         ],
       ],
       espesor: [
@@ -74,7 +74,7 @@ export class ProductoMaderaRegistrarComponent {
           Validators.min(1),
           Validators.max(1000),
           this.customValidators.NoNegativo(),
-          this.customValidators.soloNumeros(),
+          this.customValidators.soloPositivosNumericos(),
         ],
       ],
       largo: [
@@ -84,7 +84,7 @@ export class ProductoMaderaRegistrarComponent {
           Validators.min(1),
           Validators.max(1000),
           this.customValidators.NoNegativo(),
-          this.customValidators.soloNumeros(),
+          this.customValidators.soloPositivosNumericos(),
         ],
       ],
       cantidad: [
@@ -94,7 +94,7 @@ export class ProductoMaderaRegistrarComponent {
           Validators.min(1),
           Validators.max(1000),
           this.customValidators.NoNegativo(),
-          this.customValidators.soloNumeros(),
+          this.customValidators.soloPositivosNumericos(),
         ],
       ],
       precio_compra: [
@@ -104,7 +104,7 @@ export class ProductoMaderaRegistrarComponent {
           Validators.min(1),
           Validators.max(1000),
           this.customValidators.NoNegativo(),
-          this.customValidators.soloNumeros(),
+          this.customValidators.soloPositivosNumericos(),
         ],
       ],
       precio_barraca: [
@@ -114,7 +114,7 @@ export class ProductoMaderaRegistrarComponent {
           Validators.min(1),
           Validators.max(1000),
           this.customValidators.NoNegativo(),
-          this.customValidators.soloNumeros(),
+          this.customValidators.soloPositivosNumericos(),
         ],
       ],
       precio_venta: [
@@ -124,7 +124,7 @@ export class ProductoMaderaRegistrarComponent {
           Validators.min(1),
           Validators.max(1000),
           this.customValidators.NoNegativo(),
-          this.customValidators.soloNumeros(),
+          this.customValidators.soloPositivosNumericos(),
         ],
       ],
       sucursal: ['', Validators.required], // Puedes enviar solo el ID

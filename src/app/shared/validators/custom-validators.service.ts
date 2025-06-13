@@ -236,6 +236,17 @@ export class CustomValidatorsService {
       return regex.test(value.toString()) ? null : { soloNumeros: true };
     };
   }
+  soloDosDecimales(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value === null || value === undefined || value === '') {
+        return null;
+      }
+
+      const regex = /^\d+(\.\d{1,2})?$/; // enteros o decimales con 1 o 2 decimales
+      return regex.test(value.toString()) ? null : { soloDosDecimales: true };
+    };
+  }
 
   soloPositivosNumericos(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

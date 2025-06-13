@@ -1,9 +1,11 @@
-<h2 class="mb-4 text-primary">Lista de Usuario - Rol - Sucursal</h2>
-
+<h2 class="mb-4 text-primary text-center text-uppercase">
+  Lista de Rol Permiso
+</h2>
 <!-- Filtros -->
 <div
   class="mb-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2"
 >
+  <!-- NUEVOS SELECTS DE FILTRADO -->
   <div class="d-flex flex-row gap-2 w-100">
     <input
       type="text"
@@ -12,6 +14,22 @@
       class="form-control"
       placeholder="Buscar por nombre de rol..."
     />
+
+    <select class="form-select" [(ngModel)]="filtroRol" (change)="filtrar()">
+      <option value="">Todos los Roles</option>
+      <option *ngFor="let r of roles" [value]="r.nombre">{{ r.nombre }}</option>
+    </select>
+
+    <select
+      class="form-select"
+      [(ngModel)]="filtroPermiso"
+      (change)="filtrar()"
+    >
+      <option value="">Todos los Permisos</option>
+      <option *ngFor="let p of permisos" [value]="p.nombre">
+        {{ p.nombre }}
+      </option>
+    </select>
   </div>
 
   <button class="btn btn-success" (click)="irARegistrar()">
@@ -35,8 +53,8 @@
     </thead>
     <tbody>
       <tr *ngFor="let rp of mostrados">
-        <td>{{ rp.rol.nombre }}</td>
-        <td>{{ rp.permiso.nombre }}</td>
+        <td class="text-start">{{ rp.rol.nombre }}</td>
+        <td class="text-start">{{ rp.permiso.nombre }}</td>
         <td>
           <button class="btn btn-warning btn-sm" (click)="irAEditar(rp.id)">
             <i class="bi bi-pencil"></i> Editar

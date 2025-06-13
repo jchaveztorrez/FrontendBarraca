@@ -158,9 +158,9 @@
               <thead class="thead-dark">
                 <tr>
                   <th>Especie</th>
-                  <th>Ancho (plg / cm)</th>
-                  <th>Espesor (plg )</th>
-                  <th>Largo (pies / m)</th>
+                  <th>Ancho (plg/cm)</th>
+                  <th>Espesor (plg)</th>
+                  <th>Largo (pies/m)</th>
                   <th>Cantidad</th>
                   <th>Precio Venta</th>
                   <th>Sucursal</th>
@@ -289,22 +289,27 @@
             </div>
           </div>
           <!-- Carrito -->
-          <div *ngIf="detalleVentas.length > 0">
+          <div *ngIf="detalleVentas.length > 0" id="carritoParaPDF">
             <div class="table-responsive">
-              <table class="table table-bordered">
+              <table class="table table-bordered table-striped">
                 <thead class="thead-light">
                   <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario</th>
-                    <th>Subtotal</th>
-                    <th>Acciones</th>
+                    <th class="border border-1">Producto</th>
+                    <th class="border border-1">Cantidad</th>
+                    <th class="border border-1">Precio Unitario</th>
+                    <th class="border border-1">Subtotal</th>
+                    <th class="border border-1">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let detalle of detalleVentas">
-                    <td>{{ detalle.producto.especie }}</td>
-                    <td>
+                  <tr
+                    *ngFor="let detalle of detalleVentas"
+                    class="border border-1"
+                  >
+                    <td class="border border-1">
+                      {{ detalle.producto.especie }}
+                    </td>
+                    <td class="border border-1">
                       <input
                         type="number"
                         class="form-control form-control-sm"
@@ -316,10 +321,13 @@
                         [max]="detalle.producto.cantidad"
                       />
                     </td>
-
-                    <td>Bs {{ detalle.precio_unitario }}</td>
-                    <td>Bs {{ detalle.subtotal | number: "1.2-2" }}</td>
-                    <td>
+                    <td class="border border-1">
+                      Bs {{ detalle.precio_unitario }}
+                    </td>
+                    <td class="border border-1">
+                      Bs {{ detalle.subtotal | number: "1.2-2" }}
+                    </td>
+                    <td class="border border-1">
                       <button
                         class="btn btn-outline-danger btn-sm"
                         (click)="quitarDelCarrito(detalle.producto.id)"
@@ -342,6 +350,9 @@
 
           <!-- Botón para registrar venta -->
           <div class="text-center mt-4">
+            <button class="btn btn-primary" (click)="imprimirPDFCarrito()">
+              Cotizar
+            </button>
             <button
               class="btn btn-outline-primary me-2"
               [disabled]="
