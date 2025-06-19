@@ -81,6 +81,7 @@ export class VenderComponent implements OnInit {
 
   mensajeExito: string = '';
   mensajeError: string = '';
+  whatsappNumber: string = ''; // Add this line
 
   constructor(
     private service: ServiceService,
@@ -808,4 +809,59 @@ export class VenderComponent implements OnInit {
       };
     });
   }
+  generarYEnviarTextoWhatsApp(): void {
+    if (!this.whatsappNumber) {
+      alert('Por favor, ingresa un número de WhatsApp válido.');
+      return;
+    }
+  
+    if (!this.detalleVentas || this.detalleVentas.length === 0) {
+      alert('No hay productos en la cotización.');
+      return;
+    }
+  
+    const fechaObj = new Date();
+    const fecha = fechaObj.toLocaleDateString();
+    const hora = fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const cliente = this.usuarioSeleccionado?.nombre || 'N/D';
+    const sucursal = this.sucursal?.nombre || 'N/D';
+  
+    let mensaje = `📄 *           COTIZACIÓN           *\n\n`; // centrado con espacios manuales
+    mensaje += `👤 *Cliente:* ${cliente}\n`;
+    mensaje += `📍 *Sucursal:* ${sucursal}\n`;
+    mensaje += `📅 *Fecha:* ${fecha} - ${hora}\n\n`;
+  
+    mensaje += `🪵 *\tDetalle de Cotización:*\n\n`;
+  
+    let total = 0;
+    this.detalleVentas.forEach((detalle, index) => {
+      if (index > 0) {
+        mensaje += `--------------------------\n`;
+      }
+  
+      mensaje += `*Producto ${index + 1}:*\n`;
+      mensaje += `  - *Categoria:* ${detalle.producto.categoria.nombre}\n`;
+      mensaje += `  - *Especie:* ${detalle.producto.especie}\n`;
+      mensaje += `  - *Cantidad:* ${detalle.cantidad_vendida}\n`;
+      mensaje += `  - *Precio Unitario:* Bs ${this.formatearMonto(detalle.precio_unitario)}\n`;
+      mensaje += `  - *Subtotal:* Bs ${this.formatearMonto(detalle.subtotal)}\n`;
+  
+      total += detalle.subtotal;
+    });
+  
+    mensaje += `\n💵 *Total: Bs ${this.formatearMonto(total)}*`;
+  
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${this.whatsappNumber}&text=${encodeURIComponent(mensaje)}`;
+    window.open(whatsappUrl, '_blank');
+  }
+  
+
+  // Helper function remains the same
+  formatearMonto(monto: number): string {
+      return monto.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+      });
+  }
+
 }
