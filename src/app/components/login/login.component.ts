@@ -58,10 +58,11 @@ export class LoginComponent {
           sucursalId: response.sucursal.id,
           sucursalNombre: response.sucursal.nombre,
         };
-
+      
         localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));
-        this.mensajeExito = 'Autenticación exitosa. Bienvenido al sistema.';
-      },
+        this.router.navigate(['/app-panel-control']); // << Mover aquí directamente
+        // opcional: quitar el modal de éxito
+      },      
       error: (error) => {
         console.error('Error al iniciar sesión', error);
         this.mensajeError =
