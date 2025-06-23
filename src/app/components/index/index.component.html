@@ -2,36 +2,28 @@
 <header class="bg-white text-dark py-2 fixed-top">
   <div class="container-fluid">
     <div class="d-flex align-items-center justify-content-between">
+
       <!-- Logo a la izquierda -->
       <div class="d-flex align-items-center">
-        <img
-          src="assets/LogoBarracaBlanco.png"
-          alt="Logo Barraca"
-          class="img-fluid"
-          style="max-width: 80px; margin-right: 10px"
-        />
+        <img src="assets/LogoBarracaBlanco.png" alt="Logo Barraca" class="img-fluid"
+          style="max-width: 80px; margin-right: 10px" />
         <div class="text-center">
           <span class="h5 mb-0 fst-italic">Barraca Torrez</span>
         </div>
       </div>
 
-      <!-- Opciones de navegación -->
+      <!-- Opciones de navegación para escritorio -->
       <nav class="d-none d-md-flex gap-4">
         <a href="#" class="nav-link">Inicio</a>
         <a href="#" class="nav-link">Productos</a>
         <a href="#" class="nav-link">Servicios</a>
         <a href="#" class="nav-link">Sobre Nosotros</a>
-        <a (click)="navigateToLogin()">Iniciar Sesión</a>
+        <a class="nav-link btn" (click)="navigateToLogin()" style="cursor: pointer">Iniciar Sesión</a>
       </nav>
 
       <!-- Menú hamburguesa para móviles -->
       <div class="d-md-none">
-        <button
-          class="btn btn-light"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#menuMobile"
-        >
+        <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#menuMobile">
           <i class="bi bi-list"></i>
         </button>
       </div>
@@ -43,16 +35,14 @@
         <a href="#" class="text-dark text-decoration-none py-1">Inicio</a>
         <a href="#" class="text-dark text-decoration-none py-1">Productos</a>
         <a href="#" class="text-dark text-decoration-none py-1">Servicios</a>
-        <a href="#" class="text-dark text-decoration-none py-1"
-          >Sobre Nosotros</a
-        >
-        <a href="#" class="text-dark text-decoration-none py-1"
-          >Iniciar Sesión</a
-        >
+        <a href="#" class="text-dark text-decoration-none py-1">Sobre Nosotros</a>
+        <a class="text-dark text-decoration-none py-1 btn" (click)="navigateToLogin()" style="cursor: pointer">Iniciar
+          Sesión</a>
       </nav>
     </div>
   </div>
 </header>
+
 
 <!-- Para que no tape el contenido -->
 <div style="margin-top: 100px"></div>
